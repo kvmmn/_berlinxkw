@@ -19,6 +19,13 @@ export function normalizeState(state: AppState): AppState {
   return state;
 }
 
+function readSeedFromDisk(): AppState {
+  if (existsSync(SEED_PATH)) {
+    return normalizeState(JSON.parse(readFileSync(SEED_PATH, "utf-8")) as AppState);
+  }
+  return seedState();
+}
+
 function readFilesystemStore(): AppState {
   if (!existsSync(STORE_PATH)) {
     if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
@@ -34,79 +41,104 @@ function writeFilesystemStore(state: AppState): void {
   writeFileSync(STORE_PATH, JSON.stringify(state, null, 2), "utf-8");
 }
 
+function hasBlobToken(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+async function blobPutOnce(state: AppState): Promise<void> {
+  const { put } = await import("@vercel/blob");
+  await put(BLOB_PATH, JSON.stringify(state, null, 2), {
+    access: "public",
+    addRandomSuffix: false,
+    contentType: "application/json",
+  });
+}
+
 async function readBlobStore(): Promise<AppState | null> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) return null;
-  try {
-    const { list, put } = await import("@vercel/blob");
-    const { blobs } = await list({ prefix: BLOB_PATH, limit: 1 });
-    if (blobs.length === 0) {
-      const initial = seedState();
-      await put(BLOB_PATH, JSON.stringify(initial, null, 2), {
-        access: "public",
-        addRandomSuffix: false,
-        contentType: "application/json",
-      });
-      return initial;
+  if (!hasBlobToken()) return null;
+
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const { list } = await import("@vercel/blob");
+      const { blobs } = await list({ prefix: BLOB_PATH, limit: 1 });
+      if (blobs.length === 0) {
+        const initial = seedState();
+        await blobPutOnce(initial);
+        return initial;
+      }
+      const res = await fetch(blobs[0].url, { cache: "no-store" });
+      if (!res.ok) {
+        lastError = new Error(`Blob fetch failed: ${res.status}`);
+        continue;
+      }
+      return normalizeState((await res.json()) as AppState);
+    } catch (err) {
+      lastError = err;
     }
-    const res = await fetch(blobs[0].url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return normalizeState((await res.json()) as AppState);
-  } catch {
-    return null;
   }
+
+  console.error("[storage] readBlobStore failed after retry:", lastError);
+  return null;
 }
 
 async function writeBlobStore(state: AppState): Promise<boolean> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return false;
-  try {
-    const { put } = await import("@vercel/blob");
-    await put(BLOB_PATH, JSON.stringify(state, null, 2), {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
-    return true;
-  } catch {
-    return false;
+  if (!hasBlobToken()) return false;
+
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      await blobPutOnce(state);
+      return true;
+    } catch (err) {
+      lastError = err;
+    }
   }
+
+  console.error("[storage] writeBlobStore failed after retry:", lastError);
+  return false;
 }
 
+/** Configured backend (does not reflect transient Blob failures). */
 export function getStorageMode(): StorageMode {
-  if (process.env.BLOB_READ_WRITE_TOKEN) return "blob";
+  if (hasBlobToken()) return "blob";
   if (process.env.VERCEL) return "readonly";
   return "filesystem";
 }
 
+export function isStorageWritable(mode: StorageMode): boolean {
+  return mode === "filesystem" || mode === "blob";
+}
+
 export async function loadState(): Promise<{ state: AppState; mode: StorageMode }> {
-  const mode = getStorageMode();
-  if (mode === "blob") {
+  const configured = getStorageMode();
+
+  if (configured === "blob") {
     const fromBlob = await readBlobStore();
-    if (fromBlob) return { state: fromBlob, mode };
+    if (fromBlob) return { state: fromBlob, mode: "blob" };
+    return { state: readSeedFromDisk(), mode: "blob-error" };
   }
-  if (mode === "filesystem") {
-    return { state: readFilesystemStore(), mode };
+
+  if (configured === "filesystem") {
+    return { state: readFilesystemStore(), mode: "filesystem" };
   }
-  // Vercel without blob: read-only seed
-  if (existsSync(SEED_PATH)) {
-    return {
-      state: normalizeState(JSON.parse(readFileSync(SEED_PATH, "utf-8")) as AppState),
-      mode: "readonly",
-    };
-  }
-  return { state: seedState(), mode: "readonly" };
+
+  return { state: readSeedFromDisk(), mode: "readonly" };
 }
 
 export async function saveState(state: AppState): Promise<{ ok: boolean; mode: StorageMode }> {
-  const mode = getStorageMode();
-  if (mode === "blob") {
+  const configured = getStorageMode();
+
+  if (configured === "blob") {
     const ok = await writeBlobStore(state);
-    return { ok, mode };
+    return { ok, mode: ok ? "blob" : "blob-error" };
   }
-  if (mode === "filesystem") {
+
+  if (configured === "filesystem") {
     writeFilesystemStore(state);
-    return { ok: true, mode };
+    return { ok: true, mode: "filesystem" };
   }
+
   return { ok: false, mode: "readonly" };
 }
 

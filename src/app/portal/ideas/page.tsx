@@ -6,5 +6,10 @@ export default async function IdeasPage() {
   const ideas = [...(state.ideas ?? [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
-  return <IdeasInbox initialIdeas={ideas} readOnly={storageMode === "readonly"} />;
+  return (
+    <IdeasInbox
+      initialIdeas={ideas}
+      readOnly={storageMode === "readonly" || storageMode === "blob-error"}
+    />
+  );
 }

@@ -1,87 +1,67 @@
-import { openai } from "@ai-sdk/openai";
-import { streamText, convertToModelMessages, type UIMessage } from "ai";
-import { v4 as uuidv4 } from "uuid";
-import { buildBrainSystemPrompt, extractDecisionsFromAssistantText } from "@/lib/brain";
-import { loadState, saveState } from "@/lib/storage";
-import type { ChatMessage, Decision } from "@/lib/types";
+import { runPortalAgentStream } from "@/agents/stream";
 
+export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as {
-    messages: UIMessage[];
-    sessionId?: string;
-    weekId?: string;
-  };
-
   if (!process.env.OPENAI_API_KEY) {
     return new Response(
       JSON.stringify({
         error:
-          "OPENAI_API_KEY is not set. Add it to .env.local for streaming Company Brain chat.",
+          "OPENAI_API_KEY is not set. Add it to .env.local for LangGraph Company Brain chat.",
       }),
       { status: 503, headers: { "Content-Type": "application/json" } },
     );
   }
 
-  const { state } = await loadState();
-  const system = buildBrainSystemPrompt(state);
+  const body = (await req.json()) as {
+    message?: string;
+    sessionId?: string;
+    weekId?: string;
+    threadId?: string;
+  };
+
+  const userText = body.message?.trim();
   const sessionId = body.sessionId;
   const weekId = body.weekId;
 
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    system,
-    messages: convertToModelMessages(body.messages),
-    onFinish: async ({ text }) => {
-      if (!sessionId) return;
-      const { state: fresh } = await loadState();
-      const session = fresh.sessions.find((s) => s.id === sessionId);
-      if (!session) return;
+  if (!userText || !sessionId || !weekId) {
+    return new Response(JSON.stringify({ error: "Missing message, sessionId, or weekId" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
-      const lastUser = [...body.messages].reverse().find((m) => m.role === "user");
-      const userText =
-        lastUser?.parts
-          ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-          .map((p) => p.text)
-          .join("") ?? "";
+  const threadId = body.threadId ?? sessionId;
 
-      if (userText) {
-        const userMsg: ChatMessage = {
-          id: `m-${uuidv4()}`,
-          role: "user",
-          content: userText,
-          createdAt: new Date().toISOString(),
-        };
-        session.messages.push(userMsg);
-      }
-
-      const assistantMsg: ChatMessage = {
-        id: `m-${uuidv4()}`,
-        role: "assistant",
-        content: text,
-        createdAt: new Date().toISOString(),
-      };
-      session.messages.push(assistantMsg);
-
-      const proposals = extractDecisionsFromAssistantText(text);
-      for (const proposal of proposals) {
-        const decision: Decision = {
-          id: `dec-${uuidv4()}`,
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      try {
+        for await (const event of runPortalAgentStream({
+          threadId,
           sessionId,
-          weekId: weekId ?? session.weekId,
-          text: proposal,
-          owner: "brain",
-          status: "proposed",
-          createdAt: new Date().toISOString(),
-        };
-        fresh.decisions.push(decision);
-        session.decisionIds.push(decision.id);
+          weekId,
+          userText,
+        })) {
+          controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Stream error";
+        controller.enqueue(
+          encoder.encode(`${JSON.stringify({ type: "error", message })}\n`),
+        );
+      } finally {
+        controller.close();
       }
-
-      await saveState(fresh);
     },
   });
 
-  return result.toUIMessageStreamResponse();
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "application/x-ndjson",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+    },
+  });
 }

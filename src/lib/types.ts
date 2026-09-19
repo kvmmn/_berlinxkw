@@ -53,6 +53,8 @@ export interface ChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
   createdAt: string;
+  /** LangGraph specialist that produced this assistant turn (if known). */
+  agent?: string;
 }
 
 export interface DecisionEvaluation {
@@ -88,4 +90,4 @@ export interface AppState {
   ideas: IdeaInput[];
 }
 
-export type StorageMode = "filesystem" | "blob" | "readonly";
+export type StorageMode = "filesystem" | "blob" | "blob-error" | "readonly";
