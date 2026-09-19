@@ -1,6 +1,7 @@
 import { getCurrentWeek, getPreviousWeek } from "./brain";
+import { getWeekMetricsSource } from "./metrics-provenance";
 import { getStorageMode, loadState } from "./storage";
-import type { StorageMode } from "./types";
+import type { MetricsSource, StorageMode } from "./types";
 
 export function storageBannerForMode(mode: StorageMode): string | undefined {
   if (mode === "readonly") {
@@ -17,10 +18,13 @@ export async function getPortalContext() {
   const currentWeek = getCurrentWeek(state);
   const previousWeek = getPreviousWeek(state, currentWeek);
   const storageNote = storageBannerForMode(mode);
+  const currentMetricsSource: MetricsSource = getWeekMetricsSource(currentWeek);
+
   return {
     state,
     currentWeek,
     previousWeek,
+    currentMetricsSource,
     storageNote,
     storageMode: mode,
     configuredStorageMode: getStorageMode(),

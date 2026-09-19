@@ -60,7 +60,7 @@ flowchart TB
 | **supervisor** | Company Brain / CEO — routes specialists, owns final fa/en answer |
 | **brand_guardian** | Brand lockup, visual thesis, rejects off-brand work |
 | **content_strategist** | Ideas Inbox → experiments/backlog (no posting) |
-| **growth_analyst** | Week/daily metrics → measurable priorities |
+| **growth_analyst** | Week/daily metrics → measurable priorities (respects demo vs live provenance) |
 | **decision_scribe** | `DECISION::` lines + `propose_decision` persistence |
 
 LangChain tools: `get_portal_state`, `list_ideas`, `update_idea_status`, `propose_decision`, `list_decisions`, `get_brand_rules`.
@@ -104,8 +104,10 @@ Open [http://localhost:3000](http://localhost:3000). Default passcode: `berlinxk
 | `DATABASE_URL` | Optional | Postgres checkpointer for durable threads |
 | `LANGCHAIN_TRACING_V2` / `LANGSMITH_*` | Optional | LangSmith traces (tagged with thread/week) |
 | `LANGFUSE_*` | Optional | Secondary tracing |
+| `INSTAGRAM_ACCESS_TOKEN` | Optional | Free Meta Graph API sync for @berlinxkw metrics |
+| `INSTAGRAM_BUSINESS_ACCOUNT_ID` | Optional | Instagram user id for sync |
 
-Copy from [`.env.example`](.env.example).
+Copy from [`.env.example`](.env.example). **Instagram metrics:** manual entry on `/portal/system` always works; optional Meta sync — see [`docs/INSTAGRAM_METRICS.md`](docs/INSTAGRAM_METRICS.md).
 
 ## Deploy on Vercel
 
@@ -124,7 +126,7 @@ Copy from [`.env.example`](.env.example).
 | `/portal/review` | Evaluate prior-week decisions |
 | `/portal/ideas` | **Ideas Inbox** — founder drops for agents |
 | `/portal/chat` | LangGraph streaming OS (Persian-friendly) |
-| `/portal/system` | **راهبری** — agents, storage/tracing status, edit `brainMemory` |
+| `/portal/system` | **راهبری** — agents, **Instagram metrics** (manual + optional Meta sync), `brainMemory` |
 
 ### Chat API
 

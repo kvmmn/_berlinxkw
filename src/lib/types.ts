@@ -32,6 +32,9 @@ export interface WeekMetrics {
   profileVisits: number;
 }
 
+/** Where the current week's Instagram metrics came from. */
+export type MetricsSource = "demo" | "manual" | "meta";
+
 export interface DailySnapshot {
   date: string;
   followers: number;
@@ -46,6 +49,9 @@ export interface Week {
   metrics: WeekMetrics;
   dailySnapshots: DailySnapshot[];
   summary: string;
+  /** Omit or `demo` = seeded placeholder metrics — not real @berlinxkw numbers. */
+  metricsSource?: MetricsSource;
+  metricsUpdatedAt?: string;
 }
 
 export interface ChatMessage {

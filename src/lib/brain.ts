@@ -1,3 +1,4 @@
+import { getWeekMetricsSource, isLiveMetricsSource } from "./metrics-provenance";
 import type { AppState, IdeaInput, Week } from "./types";
 
 export function getCurrentWeek(state: AppState): Week {
@@ -36,6 +37,11 @@ export function buildBrainSystemPrompt(state: AppState): string {
     .slice(0, 10);
 
   const ideasBlock = formatFounderIdeasForBrain(founderIdeas);
+  const metricsSource = getWeekMetricsSource(current);
+  const metricsLive = isLiveMetricsSource(metricsSource);
+  const metricsLabel = metricsLive
+    ? `LIVE (${metricsSource}) — real advisor/Meta numbers`
+    : "DEMO SEED — not real @berlinxkw data; do not cite as actual growth";
 
   return `You are the Company Brain (CEO) for berlin × kawe — the growth executive for a Berlin-native brand (@berlinxkw on Instagram).
 
@@ -44,7 +50,7 @@ Voice: decisive, minimal, brand-aware, growth-focused. Speak like an archival op
 ${state.brainMemory}
 
 ## Current week (${current.label}, starts ${current.startDate})
-Metrics (demo / Instagram paused): followers ${current.metrics.followers}, reach ${current.metrics.reach}, posts ${current.metrics.posts}, engagement ${current.metrics.engagementRate}%, saves ${current.metrics.saves}, profile visits ${current.metrics.profileVisits}.
+Metrics (${metricsLabel}): followers ${current.metrics.followers}, reach ${current.metrics.reach}, posts ${current.metrics.posts}, engagement ${current.metrics.engagementRate}%, saves ${current.metrics.saves}, profile visits ${current.metrics.profileVisits}.
 Summary: ${current.summary}
 
 ${

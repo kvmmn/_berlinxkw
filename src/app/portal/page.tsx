@@ -3,7 +3,7 @@ import { countOpenIdeas } from "@/lib/brain";
 import { getPortalContext } from "@/lib/portal-data";
 
 export default async function PortalWeeklyPage() {
-  const { state, currentWeek, previousWeek } = await getPortalContext();
+  const { state, currentWeek, previousWeek, currentMetricsSource } = await getPortalContext();
   const decisions = state.decisions.filter((d) => d.weekId === currentWeek.id);
 
   return (
@@ -12,6 +12,7 @@ export default async function PortalWeeklyPage() {
       previousWeek={previousWeek}
       decisions={decisions}
       openIdeasCount={countOpenIdeas(state)}
+      metricsSource={currentMetricsSource}
     />
   );
 }
