@@ -1,138 +1,94 @@
 # berlin × kawe
 
-Brand kit and **multi-agent operating system** for **berlin × kawe** ([@berlinxkw](https://instagram.com/berlinxkw)).
+**Brand kit + multi-agent operating system** for [@berlinxkw](https://instagram.com/berlinxkw).  
+*کیت برند + سیستم‌عامل چندعامله*
 
-Repository layout:
+| | |
+|---|---|
+| **Live portal** | [https://berlinxkw.vercel.app](https://berlinxkw.vercel.app) *(set when deployed)* |
+| **Founder surface** | Advisor Portal — strategy, inbox, chat, review |
+| **Instagram** | Posting / automation **paused** (by design) |
 
-- `Berlin_x_Kawe_Typeface_Kit/` — typography and brand templates (preserved)
-- `inspiration for brand/` — reference assets
-- `logo.png` — mark (neon lime orb + bear)
-- `src/` — **Advisor Portal** (founder control plane) + LangGraph agents
+---
 
-## Architecture
+## What lives in this repo
 
-The Advisor Portal is the long-lived **control & steering surface**: strategy (`brainMemory`), Ideas Inbox, decisions, metrics review, and bilingual chat with the OS.
+1. **`Berlin_x_Kawe_Typeface_Kit/`** — typography, lockups, social templates, [type tokens](Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css). See [Brand kit README](Berlin_x_Kawe_Typeface_Kit/README.md) and [راهنمای فارسی](Berlin_x_Kawe_Typeface_Kit/README_FA.md).
+2. **`src/`** — **Advisor Portal** (Next.js) + **LangGraph** Company Brain (supervisor + 4 specialists).
+3. **`inspiration for brand/`**, **`logo.png`** — reference assets and mark.
+
+Always write the name **berlin × kawe** with the multiplication sign **×**, never the letter `x`.
+
+---
+
+## Architecture (one screen)
 
 ```mermaid
 flowchart TB
-  subgraph portal [Advisor Portal - Next.js]
-    Chat["/portal/chat"]
-    Ideas["/portal/ideas"]
-    System["/portal/system راهبری"]
-    Weekly["/portal weekly/daily/review"]
+  subgraph human [Founder / Advisor]
+    K[Kaveh]
   end
 
-  subgraph api [API]
-    ChatAPI["POST /api/chat NDJSON stream"]
-    SystemAPI["/api/system"]
-    StateAPI["/api/state ideas decisions"]
+  subgraph portal [Advisor Portal · Next.js]
+    UI[Weekly · Daily · Inbox · Review · Chat · System]
   end
 
-  subgraph agents [LangGraph - src/agents]
-    Sup[supervisor Company Brain]
-    BG[brand_guardian]
-    CS[content_strategist]
-    GA[growth_analyst]
-    DS[decision_scribe]
-    Sup --> BG
-    Sup --> CS
-    Sup --> GA
-    Sup --> DS
+  subgraph brain [LangGraph · src/agents]
+    S[supervisor · Company Brain]
+    S --> BG[brand_guardian]
+    S --> CS[content_strategist]
+    S --> GA[growth_analyst]
+    S --> DS[decision_scribe]
   end
 
-  subgraph persist [Durable storage]
-    AppState["AppState JSON Blob or filesystem"]
-    CP["Checkpoints Postgres or Blob JSON"]
+  subgraph data [Storage]
+    AS[(AppState JSON)]
+    CP[(Checkpoints)]
   end
 
-  Chat --> ChatAPI
-  System --> SystemAPI
-  Ideas --> StateAPI
-  ChatAPI --> Sup
-  agents --> AppState
-  ChatAPI --> CP
+  K --> UI
+  UI --> S
+  brain --> AS
+  brain --> CP
 ```
 
-### Agents (`src/agents/`)
+**Deeper reading:** [Architecture](docs/ARCHITECTURE.md) · [Workflows](docs/WORKFLOWS.md) · [Portal tour](docs/PORTAL_GUIDE.md)
 
-| Agent | Role |
-|-------|------|
-| **supervisor** | Company Brain / CEO — routes specialists, owns final fa/en answer |
-| **brand_guardian** | Brand lockup, visual thesis, rejects off-brand work |
-| **content_strategist** | Ideas Inbox → experiments/backlog (no posting) |
-| **growth_analyst** | Week/daily metrics → measurable priorities |
-| **decision_scribe** | `DECISION::` lines + `propose_decision` persistence |
+---
 
-LangChain tools: `get_portal_state`, `list_ideas`, `update_idea_status`, `propose_decision`, `list_decisions`, `get_brand_rules`.
+## Quick start
 
-### Checkpoints (no MemorySaver-only production path)
+1. **Clone & install**
+   ```bash
+   git clone https://github.com/kvmmn/_berlinxkw.git && cd _berlinxkw
+   npm install
+   ```
+2. **Configure env** — `cp .env.example .env.local` and set `OPENAI_API_KEY` (required for chat).
+3. **Run locally** — `npm run dev` → [http://localhost:3000](http://localhost:3000).
+4. **Log in** — default passcode `berlinxkw` (override with `PORTAL_PASSCODE`).
+5. **Steer the OS** — drop ideas at `/portal/ideas`, chat at `/portal/chat`, edit strategy on `/portal/system`.
 
-| Env | AppState | LangGraph threads |
-|-----|----------|-------------------|
-| Local dev | `data/store.json` | `data/langgraph-checkpoints.json` |
-| Vercel + Blob | `berlinxkw/store.json` | `berlinxkw/langgraph-checkpoints.json` |
-| `DATABASE_URL` (Neon, etc.) | Blob/filesystem as above | **Postgres** via `@langchain/langgraph-checkpoint-postgres` |
+Production: see [Deploy / env checklist](docs/WORKFLOWS.md#e-deploy--environment) in the workflows doc.
 
-`thread_id` defaults to portal **session id** for durable advisor threads.
+---
 
-### Observability (optional)
+## Documentation map
 
-- **LangSmith:** set `LANGCHAIN_TRACING_V2=true`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT=berlinxkw` (see [LangSmith + Next.js](https://docs.langchain.com/langsmith/deploy-nextjs)).
-- **Langfuse:** set `LANGFUSE_PUBLIC_KEY` + `LANGFUSE_SECRET_KEY` (optional `LANGFUSE_BASE_URL`; `@langfuse/langchain` handler).
+| Doc | Purpose |
+|-----|---------|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Layers, agents, storage, observability |
+| [docs/WORKFLOWS.md](docs/WORKFLOWS.md) | Daily OS, inbox, chat, weekly review, deploy |
+| [docs/PORTAL_GUIDE.md](docs/PORTAL_GUIDE.md) | Route-by-route tour (EN + FA one-liner) |
+| [Berlin_x_Kawe_Typeface_Kit/README.md](Berlin_x_Kawe_Typeface_Kit/README.md) | Brand typography & templates |
 
-Chat works with **OpenAI only** — tracing keys are not required locally.
+---
 
-## Run locally
+## UI tokens
 
-```bash
-npm install
-cp .env.example .env.local
-# Add OPENAI_API_KEY
-npm run dev
-```
+Portal UI imports [`Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css`](Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css). Accent `--bk-lime` matches the logo orb.
 
-Open [http://localhost:3000](http://localhost:3000). Default passcode: `berlinxkw` (override with `PORTAL_PASSCODE`).
+---
 
-## Environment variables
+## License & contact
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENAI_API_KEY` | For chat | OpenAI key for LangGraph agents |
-| `OPENAI_CHAT_MODEL` | Optional | Default `gpt-4o-mini` |
-| `PORTAL_PASSCODE` | Recommended | Advisor login passcode |
-| `BLOB_READ_WRITE_TOKEN` | Production | Vercel Blob for AppState + checkpoint JSON |
-| `DATABASE_URL` | Optional | Postgres checkpointer for durable threads |
-| `LANGCHAIN_TRACING_V2` / `LANGSMITH_*` | Optional | LangSmith traces (tagged with thread/week) |
-| `LANGFUSE_*` | Optional | Secondary tracing |
-
-Copy from [`.env.example`](.env.example).
-
-## Deploy on Vercel
-
-1. Import this repo (root = repository root).
-2. Set `OPENAI_API_KEY` and `PORTAL_PASSCODE`.
-3. Add **Blob** storage for AppState + checkpoints, **or** attach Neon and set `DATABASE_URL` for Postgres checkpoints.
-4. Agent routes use **Node.js** runtime (`export const runtime = "nodejs"`).
-
-## App routes
-
-| Path | Purpose |
-|------|---------|
-| `/login` | Passcode gate |
-| `/portal` | Weekly report |
-| `/portal/daily` | Daily metric snapshots |
-| `/portal/review` | Evaluate prior-week decisions |
-| `/portal/ideas` | **Ideas Inbox** — founder drops for agents |
-| `/portal/chat` | LangGraph streaming OS (Persian-friendly) |
-| `/portal/system` | **راهبری** — agents, storage/tracing status, edit `brainMemory` |
-
-### Chat API
-
-`POST /api/chat` — NDJSON stream: `{ type: "token" | "agent" | "done" | "error", ... }`.  
-Body: `{ message, sessionId, weekId, threadId? }`.
-
-Instagram posting/automation remains **out of scope**.
-
-## Type tokens
-
-UI imports [`Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css`](Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css). Accent `--bk-lime` matches the logo orb.
+Private operating repo for berlin × kawe. Questions: open an issue or contact the maintainer.
