@@ -226,8 +226,8 @@ export function MetricsControl({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
-            style={{ display: "block", marginTop: 4, fontSize: "0.8rem" }}
+            accept="image/png,image/jpeg,image/webp,image/*"
+            className="bk-metrics-file-input"
             onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
           />
         </label>
@@ -241,14 +241,7 @@ export function MetricsControl({
         </button>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-          gap: "0.75rem",
-          marginBottom: "1rem",
-        }}
-      >
+      <div className="bk-metrics-grid">
         {(
           [
             ["followers", "followers"],

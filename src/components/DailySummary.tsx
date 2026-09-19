@@ -32,17 +32,7 @@ export function DailySummary({
       </p>
       <div style={{ display: "grid", gap: "0.75rem" }}>
         {snaps.map((s) => (
-          <div
-            key={s.date}
-            className="bk-panel"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "120px 1fr 1fr 1fr",
-              gap: "1rem",
-              padding: "1rem",
-              alignItems: "center",
-            }}
-          >
+          <div key={s.date} className="bk-panel bk-daily-row">
             <span className="bk-meta" style={{ fontSize: "0.7rem" }}>
               {s.date}
             </span>

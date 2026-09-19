@@ -10,8 +10,8 @@ const NAV = [
   { href: "/portal/ideas", label: "inbox" },
   { href: "/portal/review", label: "review" },
   { href: "/portal/chat", label: "company brain" },
-  { href: "/portal/system", label: "راهبری" },
-];
+  { href: "/portal/system", label: "راهبری", persian: true },
+] as const;
 
 export function PortalShell({
   children,
@@ -23,25 +23,15 @@ export function PortalShell({
   const pathname = usePathname();
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <header
-        style={{
-          borderBottom: "1px solid var(--bk-border)",
-          padding: "0.75rem 1.25rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
-          flexWrap: "wrap",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+    <div className="bk-portal-root">
+      <header className="bk-portal-header">
+        <div className="bk-portal-brand">
           <Image src="/logo.png" alt="berlin × kawe" width={36} height={36} />
           <span className="bk-meta" style={{ fontSize: "var(--bk-size-meta)" }}>
             berlin × kawe / advisor portal
           </span>
         </div>
-        <nav style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+        <nav className="bk-portal-nav" aria-label="Portal sections">
           {NAV.map((item) => {
             const active =
               pathname === item.href ||
@@ -50,13 +40,8 @@ export function PortalShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className="bk-meta"
-                style={{
-                  fontSize: "var(--bk-size-meta)",
-                  opacity: active ? 1 : 0.55,
-                  borderBottom: active ? "1px solid var(--bk-lime)" : "none",
-                  paddingBottom: 2,
-                }}
+                className={`bk-meta bk-portal-nav-link${"persian" in item && item.persian ? " bk-persian" : ""}`}
+                data-active={active ? "true" : "false"}
               >
                 {item.label}
               </Link>
@@ -65,22 +50,9 @@ export function PortalShell({
         </nav>
       </header>
       {storageNote ? (
-        <div
-          className="bk-meta"
-          style={{
-            padding: "0.5rem 1.25rem",
-            background: "#1a1a00",
-            color: "var(--bk-lime)",
-            fontSize: "0.75rem",
-            borderBottom: "1px solid var(--bk-border)",
-          }}
-        >
-          {storageNote}
-        </div>
+        <div className="bk-meta bk-portal-storage-banner">{storageNote}</div>
       ) : null}
-      <main style={{ flex: 1, padding: "1.5rem 1.25rem 3rem", maxWidth: 1200, width: "100%", margin: "0 auto" }}>
-        {children}
-      </main>
+      <main className="bk-portal-main">{children}</main>
     </div>
   );
 }

@@ -188,8 +188,8 @@ export function BrainChat({
   const lastAssistantText = lastAssistant?.content ?? "";
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "1.5rem" }}>
-      <section>
+    <div className="bk-chat-layout">
+      <section className="bk-chat-main">
         <p className="bk-meta" style={{ color: "var(--bk-gray-70)" }}>
           berlin × kawe OS / session {session.id.slice(-8)}
         </p>
@@ -202,17 +202,7 @@ export function BrainChat({
         {error ? (
           <p style={{ color: "#ff6b6b", fontSize: "0.875rem" }}>{error}</p>
         ) : null}
-        <div
-          ref={scrollRef}
-          className="bk-panel"
-          style={{
-            minHeight: 320,
-            maxHeight: "52vh",
-            overflow: "auto",
-            padding: "1rem",
-            marginBottom: "1rem",
-          }}
-        >
+        <div ref={scrollRef} className="bk-panel bk-chat-transcript">
           {messages.length === 0 ? (
             <p dir="auto" className="bk-chat-auto" style={{ color: "var(--bk-gray-45)" }}>
               سلام — اولویت این هفته، آزمایش محتوا، یا بررسی برند را بپرسید.
@@ -226,8 +216,9 @@ export function BrainChat({
             messages.map((m) => (
               <div key={m.id} className="bk-chat-auto" style={{ marginBottom: "1rem" }} dir="auto">
                 <div
-                  className="bk-meta"
+                  className="bk-meta bk-chat-auto"
                   style={{ fontSize: "0.65rem", color: "var(--bk-gray-45)" }}
+                  dir="auto"
                 >
                   {m.role === "user" ? "مشاور / advisor" : "مغز شرکت / brain"}
                   {m.role === "assistant" && m.agent && m.agent !== "supervisor" ? (
@@ -246,7 +237,7 @@ export function BrainChat({
             ))
           )}
           {status === "streaming" ? (
-            <p className="bk-meta" style={{ color: "var(--bk-lime)" }} dir="auto">
+            <p className="bk-meta bk-chat-auto" style={{ color: "var(--bk-lime)" }} dir="auto">
               {streamingAgent && streamingAgent !== "supervisor"
                 ? `${AGENT_LABELS[streamingAgent] ?? streamingAgent}…`
                 : "در حال فکر کردن… / thinking…"}
@@ -254,10 +245,10 @@ export function BrainChat({
           ) : null}
           <div ref={bottomRef} />
         </div>
-        <form onSubmit={onSubmit} style={{ display: "flex", gap: "0.5rem" }}>
+        <form onSubmit={onSubmit} className="bk-chat-composer">
           <input
             name="prompt"
-            className="bk-input"
+            className="bk-input bk-persian"
             placeholder="این هفته روی چه چیزی تمرکز کنیم؟"
             disabled={status !== "ready"}
             autoComplete="off"
@@ -279,7 +270,7 @@ export function BrainChat({
         ) : null}
       </section>
 
-      <aside>
+      <aside className="bk-chat-aside">
         <p className="bk-meta" style={{ color: "var(--bk-gray-70)" }}>
           session decisions
         </p>
@@ -287,6 +278,7 @@ export function BrainChat({
           {decisions.map((d) => (
             <li
               key={d.id}
+              className="bk-chat-auto"
               style={{
                 borderTop: "1px solid var(--bk-border)",
                 padding: "0.5rem 0",
@@ -320,7 +312,7 @@ export function BrainChat({
           ))}
         </ul>
         <textarea
-          className="bk-input"
+          className="bk-input bk-persian"
           rows={3}
           placeholder="Manual decision…"
           value={logText}
