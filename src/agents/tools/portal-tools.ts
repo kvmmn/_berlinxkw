@@ -35,7 +35,7 @@ export const getPortalStateTool = tool(
           isLive: isLiveMetricsSource(currentMetricsSource),
           note:
             currentMetricsSource === "demo"
-              ? "Current week metrics are DEMO SEED placeholders — do NOT treat as real @berlinxkw growth. Advisor should enter live metrics on /portal/system or sync Meta Graph API."
+              ? "Current week metrics are DEMO SEED placeholders — do NOT treat as real @berlinxkw growth. Advisor should enter live metrics on /portal/system (manual or Insights paste/import)."
               : `Current week metrics are LIVE (${currentMetricsSource}) — safe to use for growth analysis.`,
         },
         currentWeek: current,

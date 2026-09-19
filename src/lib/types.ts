@@ -33,7 +33,7 @@ export interface WeekMetrics {
 }
 
 /** Where the current week's Instagram metrics came from. */
-export type MetricsSource = "demo" | "manual" | "meta";
+export type MetricsSource = "demo" | "manual" | "import" | "meta";
 
 export interface DailySnapshot {
   date: string;

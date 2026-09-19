@@ -19,8 +19,8 @@ export function instagramSyncHint(): { en: string; fa: string } {
     };
   }
   return {
-    en: "Set INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_BUSINESS_ACCOUNT_ID in Vercel env to enable sync (free Meta Graph API).",
-    fa: "برای همگام‌سازی رایگان، INSTAGRAM_ACCESS_TOKEN و INSTAGRAM_BUSINESS_ACCOUNT_ID را در env تنظیم کنید.",
+    en: "Meta Graph sync is optional — app review is often blocked. Prefer manual entry or Insights paste/import below. Set INSTAGRAM_* env only if Meta grants access.",
+    fa: "همگام‌سازی متا اختیاری است — اغلب مسدود می‌شود. ورود دستی یا چسباندن Insights را ترجیح دهید.",
   };
 }
 
