@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+<title>02-not-a-backdrop</title>
+<rect width="1080" height="1080" fill="#ffffff"/>
+<text x="72" y="300" font-family="Nimbus Sans" font-size="125" font-weight="bold" text-anchor="start" fill="#000000" letter-spacing="-6" opacity="1.0" style="">BERLIN</text><text x="72" y="470" font-family="Nimbus Sans" font-size="125" font-weight="bold" text-anchor="start" fill="#000000" letter-spacing="-6" opacity="1.0" style="">IS NOT A</text><text x="72" y="640" font-family="Nimbus Sans" font-size="125" font-weight="bold" text-anchor="start" fill="#000000" letter-spacing="-6" opacity="1.0" style="">BACKDROP.</text><text x="72" y="995" font-family="Nimbus Mono PS" font-size="18" font-weight="normal" text-anchor="start" fill="#70706b" letter-spacing="0" opacity="1.0" style="">OBSERVATION / 02</text>
+</svg>

@@ -1,0 +1,72 @@
+{
+  "brand": "berlin × kawe",
+  "fonts": {
+    "display": {
+      "family": "Nimbus Sans",
+      "production_recommendation": [
+        "Neue Haas Grotesk Display Black",
+        "Helvetica Now Display Black"
+      ],
+      "weight": 700,
+      "tracking_em": -0.04,
+      "line_height": 0.92
+    },
+    "text": {
+      "family": "Nimbus Sans",
+      "weight_regular": 400,
+      "weight_bold": 700,
+      "line_height": 1.45
+    },
+    "mono": {
+      "family": "Nimbus Mono PS",
+      "weight": 400,
+      "tracking_em": 0.02,
+      "line_height": 1.35
+    },
+    "persian": {
+      "recommended": [
+        "Vazirmatn Variable",
+        "Peyda"
+      ],
+      "fallback": "DejaVu Sans"
+    }
+  },
+  "sizes_px": {
+    "display_xl": 220,
+    "display": 96,
+    "heading": 48,
+    "subheading": 32,
+    "body": 24,
+    "meta": 16
+  },
+  "frame": {
+    "quiet_margin_percent": 8,
+    "standard_margin_percent": 7,
+    "pressure_max_edges": 2
+  },
+  "colors": {
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "gray_95": "#F5F5F2",
+    "gray_70": "#B8B8B2",
+    "gray_45": "#70706B"
+  },
+  "exports": {
+    "square": [
+      1080,
+      1080
+    ],
+    "portrait": [
+      1080,
+      1350
+    ],
+    "story": [
+      1080,
+      1920
+    ],
+    "desktop": [
+      1440,
+      900
+    ]
+  }
+}

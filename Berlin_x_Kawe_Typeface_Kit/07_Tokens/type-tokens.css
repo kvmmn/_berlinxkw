@@ -1,0 +1,33 @@
+:root {
+  --bk-font-display: "Nimbus Sans", "Helvetica Neue", Arial, sans-serif;
+  --bk-font-text: "Nimbus Sans", "Helvetica Neue", Arial, sans-serif;
+  --bk-font-mono: "Nimbus Mono PS", "Courier New", monospace;
+  --bk-display-weight: 700;
+  --bk-display-tracking: -0.04em;
+  --bk-display-leading: .92;
+  --bk-body-leading: 1.45;
+  --bk-frame-space: 7vw;
+  --bk-black: #000000;
+  --bk-white: #ffffff;
+  --bk-gray-95: #f5f5f2;
+  --bk-gray-70: #b8b8b2;
+  --bk-gray-45: #70706b;
+}
+
+.bk-display {
+  font-family: var(--bk-font-display);
+  font-weight: var(--bk-display-weight);
+  letter-spacing: var(--bk-display-tracking);
+  line-height: var(--bk-display-leading);
+}
+
+.bk-body {
+  font-family: var(--bk-font-text);
+  line-height: var(--bk-body-leading);
+}
+
+.bk-meta {
+  font-family: var(--bk-font-mono);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
