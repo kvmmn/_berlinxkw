@@ -15,6 +15,11 @@ const BADGE_STYLES: Record<
     color: "var(--bk-lime)",
     background: "rgba(200, 255, 0, 0.08)",
   },
+  import: {
+    border: "#c4a8ff",
+    color: "#c4a8ff",
+    background: "rgba(196, 168, 255, 0.1)",
+  },
   meta: {
     border: "#6eb5ff",
     color: "#6eb5ff",

@@ -8,7 +8,7 @@ export function getWeekMetricsSource(week: Week): MetricsSource {
 export function metricsSourceLabel(source: MetricsSource): {
   en: string;
   fa: string;
-  badgeClass: "demo" | "manual" | "meta";
+  badgeClass: "demo" | "manual" | "import" | "meta";
 } {
   switch (source) {
     case "manual":
@@ -16,6 +16,12 @@ export function metricsSourceLabel(source: MetricsSource): {
         en: "live (manual)",
         fa: "زنده (دستی)",
         badgeClass: "manual",
+      };
+    case "import":
+      return {
+        en: "live (import)",
+        fa: "زنده (واردات)",
+        badgeClass: "import",
       };
     case "meta":
       return {
@@ -33,5 +39,5 @@ export function metricsSourceLabel(source: MetricsSource): {
 }
 
 export function isLiveMetricsSource(source: MetricsSource): boolean {
-  return source === "manual" || source === "meta";
+  return source === "manual" || source === "import" || source === "meta";
 }

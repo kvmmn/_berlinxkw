@@ -193,7 +193,10 @@ export function BrainChat({
         <p className="bk-meta" style={{ color: "var(--bk-gray-70)" }}>
           berlin × kawe OS / session {session.id.slice(-8)}
         </p>
-        <h1 className="bk-display" style={{ fontSize: "var(--bk-size-heading)", margin: "0 0 1rem" }}>
+        <h1
+          className="bk-display bk-persian"
+          style={{ fontSize: "var(--bk-size-heading)", margin: "0 0 1rem" }}
+        >
           مشاور · Company Brain
         </h1>
         {error ? (
@@ -211,7 +214,7 @@ export function BrainChat({
           }}
         >
           {messages.length === 0 ? (
-            <p dir="auto" style={{ color: "var(--bk-gray-45)" }}>
+            <p dir="auto" className="bk-chat-auto" style={{ color: "var(--bk-gray-45)" }}>
               سلام — اولویت این هفته، آزمایش محتوا، یا بررسی برند را بپرسید.
               <br />
               <span style={{ opacity: 0.75 }}>
@@ -221,7 +224,7 @@ export function BrainChat({
             </p>
           ) : (
             messages.map((m) => (
-              <div key={m.id} style={{ marginBottom: "1rem" }} dir="auto">
+              <div key={m.id} className="bk-chat-auto" style={{ marginBottom: "1rem" }} dir="auto">
                 <div
                   className="bk-meta"
                   style={{ fontSize: "0.65rem", color: "var(--bk-gray-45)" }}

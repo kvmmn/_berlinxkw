@@ -40,7 +40,7 @@ export function buildBrainSystemPrompt(state: AppState): string {
   const metricsSource = getWeekMetricsSource(current);
   const metricsLive = isLiveMetricsSource(metricsSource);
   const metricsLabel = metricsLive
-    ? `LIVE (${metricsSource}) — real advisor/Meta numbers`
+    ? `LIVE (${metricsSource}) — real advisor-entered or imported numbers`
     : "DEMO SEED — not real @berlinxkw data; do not cite as actual growth";
 
   return `You are the Company Brain (CEO) for berlin × kawe — the growth executive for a Berlin-native brand (@berlinxkw on Instagram).

@@ -9,6 +9,8 @@ Repository layout:
 - `logo.png` — mark (neon lime orb + bear)
 - `src/` — **Advisor Portal** (founder control plane) + LangGraph agents
 
+**Typography:** Persian UI uses **Estedad** (variable woff2 via jsDelivr); Latin chrome stays on Nimbus/Helvetica tokens from the typeface kit (type kit docs may still mention Vazirmatn/Peyda).
+
 ## Architecture
 
 The Advisor Portal is the long-lived **control & steering surface**: strategy (`brainMemory`), Ideas Inbox, decisions, metrics review, and bilingual chat with the OS.
@@ -97,17 +99,17 @@ Open [http://localhost:3000](http://localhost:3000). Default passcode: `berlinxk
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | For chat | OpenAI key for LangGraph agents |
+| `OPENAI_API_KEY` | For chat + metrics import | LangGraph agents; Insights paste/import on `/portal/system` |
 | `OPENAI_CHAT_MODEL` | Optional | Default `gpt-4o-mini` |
 | `PORTAL_PASSCODE` | Recommended | Advisor login passcode |
 | `BLOB_READ_WRITE_TOKEN` | Production | Vercel Blob for AppState + checkpoint JSON |
 | `DATABASE_URL` | Optional | Postgres checkpointer for durable threads |
 | `LANGCHAIN_TRACING_V2` / `LANGSMITH_*` | Optional | LangSmith traces (tagged with thread/week) |
 | `LANGFUSE_*` | Optional | Secondary tracing |
-| `INSTAGRAM_ACCESS_TOKEN` | Optional | Free Meta Graph API sync for @berlinxkw metrics |
-| `INSTAGRAM_BUSINESS_ACCOUNT_ID` | Optional | Instagram user id for sync |
+| `INSTAGRAM_ACCESS_TOKEN` | Optional | Meta Graph sync — often blocked; button hidden unless set |
+| `INSTAGRAM_BUSINESS_ACCOUNT_ID` | Optional | Instagram user id for optional Meta sync |
 
-Copy from [`.env.example`](.env.example). **Instagram metrics:** manual entry on `/portal/system` always works; optional Meta sync — see [`docs/INSTAGRAM_METRICS.md`](docs/INSTAGRAM_METRICS.md).
+Copy from [`.env.example`](.env.example). **Instagram metrics:** manual entry + Insights paste/import on `/portal/system` (no Meta required) — see [`docs/INSTAGRAM_METRICS.md`](docs/INSTAGRAM_METRICS.md).
 
 ## Deploy on Vercel
 

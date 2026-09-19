@@ -67,7 +67,11 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
       <h1 className="bk-display" style={{ fontSize: "var(--bk-size-heading)", margin: "0 0 1rem" }}>
         Agents & steering
       </h1>
-      <p dir="auto" style={{ color: "var(--bk-gray-45)", maxWidth: 640, marginBottom: "1.5rem" }}>
+      <p
+        dir="auto"
+        className="bk-persian"
+        style={{ color: "var(--bk-gray-45)", maxWidth: 640, marginBottom: "1.5rem" }}
+      >
         این صفحه کنترل پایدار OS است: متخصصان LangGraph، حافظه thread، و متن راهبری founder (
         brainMemory).
       </p>
@@ -124,7 +128,7 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
 
       <section>
         <h2 className="bk-meta">brainMemory (founder steering)</h2>
-        <p dir="auto" style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>
+        <p dir="auto" className="bk-persian" style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>
           استراتژی پایدار، اهداف فصل، و یادداشت‌های راهبری — همه agentها از get_portal_state /
           get_brand_rules می‌خوانند.
         </p>
