@@ -91,3 +91,25 @@ a {
   outline: 1px solid var(--bk-lime);
   border-color: var(--bk-lime);
 }
+
+.bk-weekly-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 2rem;
+}
+
+@media (max-width: 800px) {
+  .bk-weekly-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bk-ideas-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.bk-ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}

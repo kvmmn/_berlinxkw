@@ -13,6 +13,7 @@ Thumbs.db
 
 # Mutable local store (seed stays in data/seed.json)
 /data/store.json
+/public/uploads/ideas/
 
 # Debug
 npm-debug.log*

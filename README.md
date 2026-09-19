@@ -56,10 +56,25 @@ Copy from [`.env.example`](.env.example).
 | `/portal/daily` | Daily metric snapshots |
 | `/portal/review` | Evaluate prior-week decisions |
 | `/portal/chat` | Streaming Company Brain session |
+| `/portal/ideas` | **Ideas Inbox** — founder drops (text, image, video) for the OS |
+
+### Ideas Inbox
+
+Founder-facing capture for works that feed the Company Brain. Status flow: `inbox` → `queued` → `used` / `archived`.
+
+- **API:** `GET/POST /api/ideas`, `PATCH/DELETE /api/ideas/[id]` (same passcode session as other portal APIs).
+- **Brain context:** Latest ~10 `inbox` + `queued` ideas (title, description, status, media URLs) are appended to the Company Brain system prompt.
+- **Media limits:** images ≤ **8MB**, video ≤ **40MB** (validated client + server). Only `image/*` and `video/*`.
+- **Storage:**
+  - **Vercel Blob** (`BLOB_READ_WRITE_TOKEN`): JSON store at `berlinxkw/store.json`; media at `berlinxkw/ideas/<ideaId>/<filename>` (public URLs returned by Blob).
+  - **Local dev:** JSON at `data/store.json`; media files under `public/uploads/ideas/<ideaId>/` (gitignored), served as static assets at `/uploads/ideas/...`.
+  - **Read-only Vercel without Blob:** ideas UI loads seed/demo data; uploads return 503.
+
+On Vercel serverless, very large multipart bodies may hit platform payload limits — use local dev or Blob for heavy video uploads if a deploy rejects the request.
 
 ### Company Brain behavior
 
-System prompt includes brand rules, standing strategy (`brainMemory`), current/previous week metrics, and recent decisions. Proposed decisions may appear as `DECISION:: …` lines and are stored as `proposed` records when chat persistence is enabled.
+System prompt includes brand rules, standing strategy (`brainMemory`), current/previous week metrics, recent decisions, and founder **ideas inbox** entries. Proposed decisions may appear as `DECISION:: …` lines and are stored as `proposed` records when chat persistence is enabled.
 
 Instagram posting/automation is **out of scope** for this MVP.
 

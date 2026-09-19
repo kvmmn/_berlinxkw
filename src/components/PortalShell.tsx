@@ -7,6 +7,7 @@ import Image from "next/image";
 const NAV = [
   { href: "/portal", label: "weekly report" },
   { href: "/portal/daily", label: "daily" },
+  { href: "/portal/ideas", label: "inbox" },
   { href: "/portal/review", label: "review" },
   { href: "/portal/chat", label: "company brain" },
 ];
@@ -34,7 +35,7 @@ export function PortalShell({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Image src="/logo.png" alt="" width={36} height={36} />
+          <Image src="/logo.png" alt="berlin × kawe" width={36} height={36} />
           <span className="bk-meta" style={{ fontSize: "var(--bk-size-meta)" }}>
             berlin × kawe / advisor portal
           </span>
