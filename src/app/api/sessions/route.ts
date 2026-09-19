@@ -24,7 +24,11 @@ export async function POST(req: Request) {
   const { ok, mode } = await saveState(state);
   if (!ok) {
     return NextResponse.json(
-      { error: "Persistence unavailable on this deployment. Link Vercel Blob (BLOB_READ_WRITE_TOKEN) or run locally.", session, mode },
+      {
+        error: "Could not save this session — cloud storage is temporarily unavailable. Please try again shortly.",
+        session,
+        mode,
+      },
       { status: 503 },
     );
   }

@@ -88,4 +88,4 @@ export interface AppState {
   ideas: IdeaInput[];
 }
 
-export type StorageMode = "filesystem" | "blob" | "readonly";
+export type StorageMode = "filesystem" | "blob" | "blob-error" | "readonly";

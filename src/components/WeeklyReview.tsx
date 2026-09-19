@@ -26,7 +26,7 @@ export function WeeklyReview({
       body: JSON.stringify({ score, notes: notes[id] ?? "" }),
     });
     if (!res.ok) {
-      setMsg("Could not save evaluation — check storage (Blob token on Vercel).");
+      setMsg("Could not save evaluation — cloud storage is temporarily unavailable. Try again shortly.");
       return;
     }
     const { decision } = (await res.json()) as { decision: Decision };

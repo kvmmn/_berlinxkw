@@ -64,9 +64,11 @@ function LoginForm() {
           enter
         </button>
       </form>
-      <p className="bk-meta" style={{ color: "var(--bk-gray-45)", marginTop: "1.5rem", fontSize: "0.65rem" }}>
-        set PORTAL_PASSCODE in production
-      </p>
+      {process.env.NODE_ENV === "development" ? (
+        <p className="bk-meta" style={{ color: "var(--bk-gray-45)", marginTop: "1.5rem", fontSize: "0.65rem" }}>
+          Local dev: set advisor passcode in your environment file if needed.
+        </p>
+      ) : null}
     </div>
   );
 }
