@@ -27,15 +27,15 @@ export async function buildRunCallbacks(meta: {
 
   if (isLangfuseEnabled()) {
     try {
-      const { CallbackHandler } = await import("langfuse-langchain");
+      const { CallbackHandler } = await import("@langfuse/langchain");
+      if (process.env.LANGFUSE_HOST && !process.env.LANGFUSE_BASE_URL) {
+        process.env.LANGFUSE_BASE_URL = process.env.LANGFUSE_HOST;
+      }
       handlers.push(
         new CallbackHandler({
-          publicKey: process.env.LANGFUSE_PUBLIC_KEY,
-          secretKey: process.env.LANGFUSE_SECRET_KEY,
-          baseUrl: process.env.LANGFUSE_HOST ?? "https://cloud.langfuse.com",
           sessionId: meta.threadId,
           tags: ["berlinxkw", process.env.VERCEL_ENV ?? "local"],
-          metadata: {
+          traceMetadata: {
             thread_id: meta.threadId,
             week_id: meta.weekId,
             env: process.env.VERCEL_ENV ?? "development",
@@ -43,7 +43,7 @@ export async function buildRunCallbacks(meta: {
         }),
       );
     } catch {
-      // langfuse-langchain optional — skip if package missing
+      // Langfuse optional — skip if handler cannot load
     }
   }
 

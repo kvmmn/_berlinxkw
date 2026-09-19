@@ -78,7 +78,7 @@ LangChain tools: `get_portal_state`, `list_ideas`, `update_idea_status`, `propos
 ### Observability (optional)
 
 - **LangSmith:** set `LANGCHAIN_TRACING_V2=true`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT=berlinxkw` (see [LangSmith + Next.js](https://docs.langchain.com/langsmith/deploy-nextjs)).
-- **Langfuse:** set `LANGFUSE_PUBLIC_KEY` + `LANGFUSE_SECRET_KEY` (handler loads when compatible package is present).
+- **Langfuse:** set `LANGFUSE_PUBLIC_KEY` + `LANGFUSE_SECRET_KEY` (optional `LANGFUSE_BASE_URL`; `@langfuse/langchain` handler).
 
 Chat works with **OpenAI only** — tracing keys are not required locally.
 
