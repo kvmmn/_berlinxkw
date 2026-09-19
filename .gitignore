@@ -13,6 +13,7 @@ Thumbs.db
 
 # Mutable local store (seed stays in data/seed.json)
 /data/store.json
+/data/langgraph-checkpoints.json
 /public/uploads/ideas/
 
 # Debug

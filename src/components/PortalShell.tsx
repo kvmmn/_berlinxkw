@@ -10,6 +10,7 @@ const NAV = [
   { href: "/portal/ideas", label: "inbox" },
   { href: "/portal/review", label: "review" },
   { href: "/portal/chat", label: "company brain" },
+  { href: "/portal/system", label: "راهبری" },
 ];
 
 export function PortalShell({

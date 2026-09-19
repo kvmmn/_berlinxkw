@@ -53,6 +53,8 @@ export interface ChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
   createdAt: string;
+  /** LangGraph specialist that produced this assistant turn (if known). */
+  agent?: string;
 }
 
 export interface DecisionEvaluation {
