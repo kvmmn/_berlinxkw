@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MetricsControl } from "@/components/MetricsControl";
+import type { Week } from "@/lib/types";
 
 type SystemPayload = {
   agents: {
@@ -18,6 +20,11 @@ type SystemPayload = {
     langsmithUrl: string | null;
   };
   brainMemory: string;
+  currentWeek: Week;
+  instagramSync: {
+    configured: boolean;
+    hint: { en: string; fa: string };
+  };
 };
 
 export function SystemControl({ initial }: { initial: SystemPayload }) {
@@ -94,6 +101,8 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
           </li>
         </ul>
       </section>
+
+      <MetricsControl initialWeek={initial.currentWeek} syncConfig={initial.instagramSync} />
 
       <section style={{ marginBottom: "1.5rem" }}>
         <h2 className="bk-meta">Agents</h2>

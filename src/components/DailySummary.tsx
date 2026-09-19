@@ -1,7 +1,18 @@
-import type { Week } from "@/lib/types";
+import type { MetricsSource, Week } from "@/lib/types";
 import { IdeasOpenChip } from "@/components/IdeasOpenChip";
+import { MetricsSourceBadge } from "@/components/MetricsSourceBadge";
+import { getWeekMetricsSource } from "@/lib/metrics-provenance";
 
-export function DailySummary({ week, openIdeasCount = 0 }: { week: Week; openIdeasCount?: number }) {
+export function DailySummary({
+  week,
+  openIdeasCount = 0,
+  metricsSource,
+}: {
+  week: Week;
+  openIdeasCount?: number;
+  metricsSource?: MetricsSource;
+}) {
+  const source = metricsSource ?? getWeekMetricsSource(week);
   const snaps = [...week.dailySnapshots].reverse();
 
   return (
@@ -12,9 +23,12 @@ export function DailySummary({ week, openIdeasCount = 0 }: { week: Week; openIde
       </p>
       <h1 className="bk-display" style={{ fontSize: "var(--bk-size-heading)", margin: "0 0 1rem" }}>
         Pulse
+        <MetricsSourceBadge source={source} />
       </h1>
       <p style={{ color: "var(--bk-gray-70)", marginBottom: "2rem" }}>
-        Demo snapshots while Instagram is paused. Primary decisions use the weekly report.
+        {source === "demo"
+          ? "Demo seed snapshots — replace with live numbers on /portal/system (manual or Meta sync)."
+          : "Daily snapshots for the current week. Primary decisions use the weekly report."}
       </p>
       <div style={{ display: "grid", gap: "0.75rem" }}>
         {snaps.map((s) => (

@@ -6,10 +6,13 @@ import {
   isLangfuseEnabled,
   isLangSmithTracingEnabled,
 } from "@/agents/observability";
+import { getCurrentWeek } from "@/lib/brain";
+import { instagramSyncHint, isInstagramSyncConfigured } from "@/lib/instagram-metrics";
 import { getStorageMode, loadState } from "@/lib/storage";
 
 export default async function SystemPage() {
   const { state } = await loadState();
+  const currentWeek = getCurrentWeek(state);
 
   const initial = {
     agents: [...AGENT_REGISTRY],
@@ -24,6 +27,11 @@ export default async function SystemPage() {
       langsmithUrl: getLangSmithProjectUrl(),
     },
     brainMemory: state.brainMemory,
+    currentWeek,
+    instagramSync: {
+      configured: isInstagramSyncConfigured(),
+      hint: instagramSyncHint(),
+    },
   };
 
   return <SystemControl initial={initial} />;

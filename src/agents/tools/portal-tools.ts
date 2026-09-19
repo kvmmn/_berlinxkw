@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { STATIC_BRAND_RULES } from "@/agents/brand";
 import { getCurrentWeek, getPreviousWeek } from "@/lib/brain";
+import { getWeekMetricsSource, isLiveMetricsSource } from "@/lib/metrics-provenance";
 import { loadState, saveState } from "@/lib/storage";
 import type { Decision, IdeaStatus } from "@/lib/types";
 
@@ -20,12 +21,23 @@ export const getPortalStateTool = tool(
     const { state } = await loadState();
     const current = getCurrentWeek(state);
     const prev = getPreviousWeek(state, current);
+    const currentMetricsSource = getWeekMetricsSource(current);
+    const prevMetricsSource = prev ? getWeekMetricsSource(prev) : null;
     const ideas = (state.ideas ?? []).filter(
       (i) => i.status === "inbox" || i.status === "queued",
     );
     return JSON.stringify(
       {
         brainMemory: state.brainMemory,
+        metricsProvenance: {
+          currentWeek: currentMetricsSource,
+          previousWeek: prevMetricsSource,
+          isLive: isLiveMetricsSource(currentMetricsSource),
+          note:
+            currentMetricsSource === "demo"
+              ? "Current week metrics are DEMO SEED placeholders — do NOT treat as real @berlinxkw growth. Advisor should enter live metrics on /portal/system or sync Meta Graph API."
+              : `Current week metrics are LIVE (${currentMetricsSource}) — safe to use for growth analysis.`,
+        },
         currentWeek: current,
         previousWeek: prev ?? null,
         openIdeasCount: ideas.length,

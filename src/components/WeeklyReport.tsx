@@ -1,5 +1,7 @@
-import type { Week, Decision } from "@/lib/types";
+import type { Week, Decision, MetricsSource } from "@/lib/types";
 import { IdeasOpenChip } from "@/components/IdeasOpenChip";
+import { MetricsSourceBadge } from "@/components/MetricsSourceBadge";
+import { getWeekMetricsSource } from "@/lib/metrics-provenance";
 
 function delta(current: number, previous?: number): string {
   if (previous == null) return "—";
@@ -13,14 +15,17 @@ export function WeeklyReport({
   previousWeek,
   decisions,
   openIdeasCount = 0,
+  metricsSource,
 }: {
   week: Week;
   previousWeek?: Week;
   decisions: Decision[];
   openIdeasCount?: number;
+  metricsSource?: MetricsSource;
 }) {
   const m = week.metrics;
   const pm = previousWeek?.metrics;
+  const source = metricsSource ?? getWeekMetricsSource(week);
 
   return (
     <div className="bk-weekly-grid">
@@ -28,6 +33,7 @@ export function WeeklyReport({
         <IdeasOpenChip count={openIdeasCount} />
         <p className="bk-meta" style={{ color: "var(--bk-gray-70)", margin: "0 0 1rem" }}>
           {week.label} / primary report
+          <MetricsSourceBadge source={source} />
         </p>
         <h1
           className="bk-display"
@@ -75,7 +81,17 @@ export function WeeklyReport({
         </p>
         <dl style={{ margin: 0, fontSize: "var(--bk-size-meta)" }}>
           <MetaRow k="week start" v={week.startDate} />
-          <MetaRow k="instagram" v="@berlinxkw (demo)" />
+          <MetaRow k="instagram" v="@berlinxkw" />
+          <MetaRow
+            k="metrics"
+            v={
+              source === "demo"
+                ? "demo seed — enter live on /portal/system"
+                : source === "manual"
+                  ? "live (manual)"
+                  : "live (Meta sync)"
+            }
+          />
           <MetaRow k="status" v="observed" />
           <MetaRow k="posting" v="paused — os build" />
         </dl>
