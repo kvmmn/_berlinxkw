@@ -2,3 +2,17 @@
 **/.DS_Store
 .AppleDouble
 Thumbs.db
+
+# Next.js
+/node_modules
+/.next/
+/out/
+.env
+.env.local
+.env*.local
+
+# Mutable local store (seed stays in data/seed.json)
+/data/store.json
+
+# Debug
+npm-debug.log*

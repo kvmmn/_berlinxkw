@@ -1,0 +1,106 @@
+{
+  "brainMemory": "# berlin × kawe — Company Brain (standing strategy)\n\n## Brand\n- Always write **berlin × kawe** with the multiplication sign ×, lowercase one-line lockup.\n- Theme: Berlin's beauty emerging from chaos.\n- Visual: black bear in neon lime glass orb on black; UI is archival mono metadata on black.\n- Instagram @berlinxkw — paused until the operating system is live; no posting automation in MVP.\n\n## Growth thesis\n1. Build a recognizable Berlin-native aesthetic before scaling reach.\n2. Weekly experiments beat daily thrash; one primary metric per week.\n3. Archive-first content: observations, coordinates, timestamps — density over hype.\n\n## Current quarter goals\n- Ship advisor portal + Company Brain (this system).\n- Prepare content backlog for Instagram relaunch.\n- Target 2k followers within 90 days post-launch (demo tracking until live).\n",
+  "weeks": [
+    {
+      "id": "week-2025-w37",
+      "startDate": "2025-09-08",
+      "label": "W37 · archive baseline",
+      "metrics": {
+        "followers": 842,
+        "reach": 12400,
+        "posts": 3,
+        "engagementRate": 4.2,
+        "saves": 186,
+        "profileVisits": 920
+      },
+      "dailySnapshots": [
+        { "date": "2025-09-08", "followers": 831, "reach": 2100, "engagementRate": 3.8 },
+        { "date": "2025-09-09", "followers": 835, "reach": 1800, "engagementRate": 4.0 },
+        { "date": "2025-09-10", "followers": 838, "reach": 2400, "engagementRate": 4.1 }
+      ],
+      "summary": "Baseline week: Mitte observation series tested; engagement held above 4% on archive-style posts."
+    },
+    {
+      "id": "week-2025-w38",
+      "startDate": "2025-09-15",
+      "label": "W38 · portal build",
+      "metrics": {
+        "followers": 867,
+        "reach": 15800,
+        "posts": 2,
+        "engagementRate": 4.6,
+        "saves": 241,
+        "profileVisits": 1105
+      },
+      "dailySnapshots": [
+        { "date": "2025-09-15", "followers": 850, "reach": 3200, "engagementRate": 4.3 },
+        { "date": "2025-09-16", "followers": 858, "reach": 4100, "engagementRate": 4.5 },
+        { "date": "2025-09-17", "followers": 862, "reach": 3800, "engagementRate": 4.7 },
+        { "date": "2025-09-18", "followers": 865, "reach": 2900, "engagementRate": 4.6 },
+        { "date": "2025-09-19", "followers": 867, "reach": 1800, "engagementRate": 4.6 }
+      ],
+      "summary": "Focus shifted to internal OS; lightweight story tease maintained reach. Primary decision: defer heavy posting until portal ships."
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-w37-001",
+      "weekId": "week-2025-w37",
+      "startedAt": "2025-09-10T14:00:00.000Z",
+      "messages": [
+        {
+          "id": "m1",
+          "role": "assistant",
+          "content": "Week 37 close: engagement is healthy but reach is flat. I propose we double down on the Mitte observation format and cut generic skyline shots.",
+          "createdAt": "2025-09-10T14:00:05.000Z"
+        },
+        {
+          "id": "m2",
+          "role": "user",
+          "content": "Agreed. Let's make Mitte the hero district for two more weeks.",
+          "createdAt": "2025-09-10T14:01:00.000Z"
+        }
+      ],
+      "decisionIds": ["dec-w37-001", "dec-w37-002", "dec-w37-003"]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec-w37-001",
+      "sessionId": "session-w37-001",
+      "weekId": "week-2025-w37",
+      "text": "Run Mitte as primary district narrative for two weeks; all new posts must include coordinate metadata block.",
+      "owner": "brain",
+      "status": "accepted",
+      "createdAt": "2025-09-10T14:00:10.000Z",
+      "evaluation": {
+        "score": 4,
+        "notes": "Engagement +0.4pp vs prior week; saves up 22%. Keep format, add Kreuzberg B-roll next.",
+        "evaluatedAt": "2025-09-15T10:00:00.000Z"
+      }
+    },
+    {
+      "id": "dec-w37-002",
+      "sessionId": "session-w37-001",
+      "weekId": "week-2025-w37",
+      "text": "Pause paid boost tests until archive dashboard UI ships (brand consistency).",
+      "owner": "advisor",
+      "status": "accepted",
+      "createdAt": "2025-09-10T14:01:30.000Z",
+      "evaluation": {
+        "score": 5,
+        "notes": "Correct call — saved budget; organic reach still climbed with consistent visual system.",
+        "evaluatedAt": "2025-09-15T10:00:00.000Z"
+      }
+    },
+    {
+      "id": "dec-w37-003",
+      "sessionId": "session-w37-001",
+      "weekId": "week-2025-w37",
+      "text": "Publish one Kreuzberg crossing story as a format test before expanding districts.",
+      "owner": "brain",
+      "status": "accepted",
+      "createdAt": "2025-09-10T14:02:00.000Z"
+    }
+  ]
+}
