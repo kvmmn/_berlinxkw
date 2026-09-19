@@ -1,4 +1,5 @@
 import { WeeklyReport } from "@/components/WeeklyReport";
+import { countOpenIdeas } from "@/lib/brain";
 import { getPortalContext } from "@/lib/portal-data";
 
 export default async function PortalWeeklyPage() {
@@ -6,6 +7,11 @@ export default async function PortalWeeklyPage() {
   const decisions = state.decisions.filter((d) => d.weekId === currentWeek.id);
 
   return (
-    <WeeklyReport week={currentWeek} previousWeek={previousWeek} decisions={decisions} />
+    <WeeklyReport
+      week={currentWeek}
+      previousWeek={previousWeek}
+      decisions={decisions}
+      openIdeasCount={countOpenIdeas(state)}
+    />
   );
 }

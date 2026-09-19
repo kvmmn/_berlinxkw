@@ -9,7 +9,14 @@ const SEED_PATH = join(DATA_DIR, "seed.json");
 const BLOB_PATH = "berlinxkw/store.json";
 
 function seedState(): AppState {
-  return JSON.parse(JSON.stringify(seed)) as AppState;
+  return normalizeState(JSON.parse(JSON.stringify(seed)) as AppState);
+}
+
+export function normalizeState(state: AppState): AppState {
+  if (!Array.isArray(state.ideas)) {
+    state.ideas = [];
+  }
+  return state;
 }
 
 function readFilesystemStore(): AppState {
@@ -19,7 +26,7 @@ function readFilesystemStore(): AppState {
     writeFileSync(STORE_PATH, JSON.stringify(initial, null, 2), "utf-8");
     return initial;
   }
-  return JSON.parse(readFileSync(STORE_PATH, "utf-8")) as AppState;
+  return normalizeState(JSON.parse(readFileSync(STORE_PATH, "utf-8")) as AppState);
 }
 
 function writeFilesystemStore(state: AppState): void {
@@ -44,7 +51,7 @@ async function readBlobStore(): Promise<AppState | null> {
     }
     const res = await fetch(blobs[0].url, { cache: "no-store" });
     if (!res.ok) return null;
-    return (await res.json()) as AppState;
+    return normalizeState((await res.json()) as AppState);
   } catch {
     return null;
   }
@@ -83,7 +90,7 @@ export async function loadState(): Promise<{ state: AppState; mode: StorageMode 
   // Vercel without blob: read-only seed
   if (existsSync(SEED_PATH)) {
     return {
-      state: JSON.parse(readFileSync(SEED_PATH, "utf-8")) as AppState,
+      state: normalizeState(JSON.parse(readFileSync(SEED_PATH, "utf-8")) as AppState),
       mode: "readonly",
     };
   }

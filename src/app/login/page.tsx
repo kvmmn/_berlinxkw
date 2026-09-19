@@ -38,12 +38,15 @@ function LoginForm() {
         padding: "2rem",
       }}
     >
-      <Image src="/logo.png" alt="" width={72} height={72} style={{ marginBottom: "1.5rem" }} />
+      <Image src="/logo.png" alt="berlin × kawe" width={72} height={72} style={{ marginBottom: "1.5rem" }} />
       <h1 className="bk-display" style={{ fontSize: "2rem", margin: "0 0 0.5rem" }}>
         berlin × kawe
       </h1>
-      <p className="bk-meta" style={{ color: "var(--bk-gray-70)", marginBottom: "2rem" }}>
+      <p className="bk-meta" style={{ color: "var(--bk-gray-70)", marginBottom: "0.5rem" }}>
         advisor portal
+      </p>
+      <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-45)", marginBottom: "2rem", fontSize: "0.75rem" }}>
+        رمز ورود را وارد کنید
       </p>
       <form onSubmit={submit} style={{ width: "100%", maxWidth: 360 }}>
         <input

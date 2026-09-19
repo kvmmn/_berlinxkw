@@ -1,6 +1,28 @@
 export type DecisionOwner = "advisor" | "brain";
 export type DecisionStatus = "proposed" | "accepted" | "deferred";
 
+export type IdeaMediaKind = "image" | "video" | "none";
+export type IdeaStatus = "inbox" | "queued" | "used" | "archived";
+
+export interface IdeaMedia {
+  kind: IdeaMediaKind;
+  url?: string;
+  pathname?: string;
+  mime?: string;
+  size?: number;
+}
+
+export interface IdeaInput {
+  id: string;
+  createdAt: string;
+  title: string;
+  description: string;
+  media: IdeaMedia[];
+  tags?: string[];
+  status: IdeaStatus;
+  notes?: string;
+}
+
 export interface WeekMetrics {
   followers: number;
   reach: number;
@@ -63,6 +85,7 @@ export interface AppState {
   weeks: Week[];
   sessions: Session[];
   decisions: Decision[];
+  ideas: IdeaInput[];
 }
 
 export type StorageMode = "filesystem" | "blob" | "readonly";

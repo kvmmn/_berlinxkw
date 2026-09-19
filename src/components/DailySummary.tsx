@@ -1,10 +1,12 @@
 import type { Week } from "@/lib/types";
+import { IdeasOpenChip } from "@/components/IdeasOpenChip";
 
-export function DailySummary({ week }: { week: Week }) {
+export function DailySummary({ week, openIdeasCount = 0 }: { week: Week; openIdeasCount?: number }) {
   const snaps = [...week.dailySnapshots].reverse();
 
   return (
     <div>
+      <IdeasOpenChip count={openIdeasCount} />
       <p className="bk-meta" style={{ color: "var(--bk-gray-70)" }}>
         daily / secondary
       </p>

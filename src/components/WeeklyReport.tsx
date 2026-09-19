@@ -1,4 +1,5 @@
 import type { Week, Decision } from "@/lib/types";
+import { IdeasOpenChip } from "@/components/IdeasOpenChip";
 
 function delta(current: number, previous?: number): string {
   if (previous == null) return "—";
@@ -11,23 +12,20 @@ export function WeeklyReport({
   week,
   previousWeek,
   decisions,
+  openIdeasCount = 0,
 }: {
   week: Week;
   previousWeek?: Week;
   decisions: Decision[];
+  openIdeasCount?: number;
 }) {
   const m = week.metrics;
   const pm = previousWeek?.metrics;
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "minmax(0, 1fr) minmax(220px, 280px)",
-        gap: "2rem",
-      }}
-    >
+    <div className="bk-weekly-grid">
       <section>
+        <IdeasOpenChip count={openIdeasCount} />
         <p className="bk-meta" style={{ color: "var(--bk-gray-70)", margin: "0 0 1rem" }}>
           {week.label} / primary report
         </p>

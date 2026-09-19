@@ -102,5 +102,26 @@
       "status": "accepted",
       "createdAt": "2025-09-10T14:02:00.000Z"
     }
+  ],
+  "ideas": [
+    {
+      "id": "idea-demo-001",
+      "createdAt": "2025-09-18T10:00:00.000Z",
+      "title": "Mitte glass reflection study",
+      "description": "Short loop of U-Bahn entrance reflections at dusk — archive caption with coordinates only.",
+      "media": [],
+      "tags": ["mitte", "b-roll"],
+      "status": "inbox"
+    },
+    {
+      "id": "idea-demo-002",
+      "createdAt": "2025-09-17T16:30:00.000Z",
+      "title": "پل عابر پیاده Kreuzberg",
+      "description": "ایده برای استوری: عبور از پل با متادیتای زمان و مکان — بدون موزیک تند.",
+      "media": [],
+      "tags": ["kreuzberg", "story"],
+      "status": "queued",
+      "notes": "Brain: pair with crossing template from typeface kit."
+    }
   ]
 }

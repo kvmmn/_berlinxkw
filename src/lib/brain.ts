@@ -1,4 +1,4 @@
-import type { AppState, Week } from "./types";
+import type { AppState, IdeaInput, Week } from "./types";
 
 export function getCurrentWeek(state: AppState): Week {
   return [...state.weeks].sort(
@@ -30,6 +30,13 @@ export function buildBrainSystemPrompt(state: AppState): string {
     )
     .join("\n");
 
+  const founderIdeas = [...(state.ideas ?? [])]
+    .filter((i) => i.status === "inbox" || i.status === "queued")
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 10);
+
+  const ideasBlock = formatFounderIdeasForBrain(founderIdeas);
+
   return `You are the Company Brain (CEO) for berlin × kawe — the growth executive for a Berlin-native brand (@berlinxkw on Instagram).
 
 Voice: decisive, minimal, brand-aware, growth-focused. Speak like an archival operator, not a generic chatbot. Use lowercase for brand name: berlin × kawe (multiplication sign ×, never letter x).
@@ -54,10 +61,32 @@ ${recentDecisions || "(none yet)"}
 ## Pending evaluation this week
 ${pendingEval.map((d) => `- ${d.text}`).join("\n") || "(none)"}
 
+## Founder ideas inbox (high-priority creative fuel)
+Treat these as primary operating-system inputs from Kaveh (founder). When proposing weekly content experiments, prioritize turning inbox/queued ideas into concrete posts, series, or tests — cite which idea you are drawing from when relevant.
+${ideasBlock}
+
 When you propose a concrete decision the advisor should log, end your message with a line:
 DECISION:: <one sentence, imperative, measurable>
 
 Do not invent Instagram API actions — posting is paused until the OS ships. Focus on strategy, content system, experiments, and weekly priorities.`;
+}
+
+function formatFounderIdeasForBrain(ideas: IdeaInput[]): string {
+  if (ideas.length === 0) return "(no inbox or queued ideas yet)";
+  return ideas
+    .map((idea) => {
+      const mediaSummary =
+        idea.media.length === 0
+          ? "media: none"
+          : `media: ${idea.media.map((m) => `${m.kind}${m.url ? ` (${m.url})` : ""}`).join(", ")}`;
+      const tags = idea.tags?.length ? `tags: ${idea.tags.join(", ")}` : "";
+      return `- [${idea.status}] "${idea.title}" — ${idea.description}\n  ${mediaSummary}${tags ? `\n  ${tags}` : ""}${idea.notes ? `\n  brain notes: ${idea.notes}` : ""}`;
+    })
+    .join("\n");
+}
+
+export function countOpenIdeas(state: AppState): number {
+  return (state.ideas ?? []).filter((i) => i.status === "inbox" || i.status === "queued").length;
 }
 
 export function extractDecisionsFromAssistantText(text: string): string[] {
