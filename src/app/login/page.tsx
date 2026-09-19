@@ -28,16 +28,7 @@ function LoginForm() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-      }}
-    >
+    <div className="bk-login-page">
       <Image src="/logo.png" alt="berlin × kawe" width={72} height={72} style={{ marginBottom: "1.5rem" }} />
       <h1 className="bk-display" style={{ fontSize: "2rem", margin: "0 0 0.5rem" }}>
         berlin × kawe
@@ -48,7 +39,7 @@ function LoginForm() {
       <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-45)", marginBottom: "2rem", fontSize: "0.75rem" }}>
         رمز ورود را وارد کنید
       </p>
-      <form onSubmit={submit} style={{ width: "100%", maxWidth: 360 }}>
+      <form onSubmit={submit} className="bk-login-form">
         <input
           type="password"
           className="bk-input"
@@ -60,7 +51,7 @@ function LoginForm() {
         {error ? (
           <p style={{ color: "#ff6b6b", fontSize: "0.875rem", marginTop: "0.5rem" }}>{error}</p>
         ) : null}
-        <button type="submit" className="bk-btn bk-btn-primary" style={{ width: "100%", marginTop: "1rem" }}>
+        <button type="submit" className="bk-btn bk-btn-primary">
           enter
         </button>
       </form>

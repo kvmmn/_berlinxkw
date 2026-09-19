@@ -61,7 +61,7 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
 
   return (
     <div>
-      <p className="bk-meta" style={{ color: "var(--bk-gray-70)" }}>
+      <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-70)" }} dir="auto">
         راهبری سیستم · berlin × kawe OS
       </p>
       <h1 className="bk-display" style={{ fontSize: "var(--bk-size-heading)", margin: "0 0 1rem" }}>
@@ -112,7 +112,7 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
         <h2 className="bk-meta">Agents</h2>
         <div style={{ display: "grid", gap: "0.75rem" }}>
           {data.agents.map((a) => (
-            <div key={a.id} className="bk-panel" style={{ padding: "0.75rem 1rem" }} dir="auto">
+            <div key={a.id} className="bk-panel bk-persian" style={{ padding: "0.75rem 1rem" }} dir="auto">
               <div className="bk-meta" style={{ color: "var(--bk-lime)", fontSize: "0.65rem" }}>
                 {a.id}
               </div>
@@ -134,16 +134,17 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
         </p>
         {error ? <p style={{ color: "#ff6b6b" }}>{error}</p> : null}
         {saveStatus ? (
-          <p className="bk-meta" style={{ color: "var(--bk-lime)" }}>
+          <p className="bk-meta bk-persian" style={{ color: "var(--bk-lime)" }} dir="auto">
             {saveStatus}
           </p>
         ) : null}
         <textarea
-          className="bk-input"
+          className="bk-input bk-persian"
           rows={16}
           value={brainMemory}
           onChange={(e) => setBrainMemory(e.target.value)}
-          style={{ width: "100%", fontFamily: "monospace", fontSize: "0.8rem" }}
+          style={{ width: "100%", fontSize: "0.875rem" }}
+          dir="auto"
         />
         <button
           type="button"

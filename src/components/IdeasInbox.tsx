@@ -27,6 +27,7 @@ export function IdeasInbox({
   const [submitting, setSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/ideas");
@@ -123,13 +124,10 @@ export function IdeasInbox({
       </header>
 
       {!readOnly ? (
-        <form onSubmit={submit} className="bk-panel" style={{ padding: "1.25rem", marginBottom: "2rem" }}>
+        <form onSubmit={submit} className="bk-panel bk-ideas-form">
           <div
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
-            }}
+            className="bk-ideas-dropzone"
+            data-active={dragOver ? "true" : "false"}
             onDragOver={(e) => {
               e.preventDefault();
               setDragOver(true);
@@ -140,27 +138,45 @@ export function IdeasInbox({
               setDragOver(false);
               if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
             }}
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              border: `1px dashed ${dragOver ? "var(--bk-lime)" : "var(--bk-gray-45)"}`,
-              padding: "1.5rem",
-              textAlign: "center",
-              marginBottom: "1rem",
-              cursor: "pointer",
-              background: dragOver ? "color-mix(in srgb, var(--bk-lime) 6%, transparent)" : "transparent",
-            }}
           >
             <p className="bk-meta" style={{ margin: 0, color: "var(--bk-gray-70)" }}>
-              drop image or video · or click to browse
+              drop image or video here
             </p>
-            <p className="bk-meta" style={{ margin: "0.35rem 0 0", fontSize: "0.65rem", color: "var(--bk-gray-45)" }}>
+            <p className="bk-meta" style={{ margin: 0, fontSize: "0.75rem", color: "var(--bk-gray-45)" }}>
               images ≤ 8MB · video ≤ 40MB
             </p>
+            <div className="bk-ideas-media-actions">
+              <button
+                type="button"
+                className="bk-btn bk-btn-primary"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                choose photo / video
+              </button>
+              <button
+                type="button"
+                className="bk-btn"
+                onClick={() => cameraInputRef.current?.click()}
+              >
+                take photo
+              </button>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*,video/*"
               multiple
+              hidden
+              onChange={(e) => {
+                if (e.target.files?.length) addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
               hidden
               onChange={(e) => {
                 if (e.target.files?.length) addFiles(e.target.files);
@@ -220,13 +236,14 @@ export function IdeasInbox({
             style={{ marginBottom: "1rem" }}
           />
 
-          {error ? (
-            <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: "0 0 0.75rem" }}>{error}</p>
-          ) : null}
-
-          <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting}>
-            {submitting ? "saving…" : "add to inbox"}
-          </button>
+          <div className="bk-ideas-submit-bar">
+            {error ? (
+              <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>{error}</p>
+            ) : null}
+            <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting}>
+              {submitting ? "saving…" : "add to inbox"}
+            </button>
+          </div>
         </form>
       ) : (
         <p className="bk-meta" style={{ color: "var(--bk-lime)", marginBottom: "2rem" }}>
@@ -277,7 +294,7 @@ export function IdeasInbox({
                 </p>
               ) : null}
               {!readOnly ? (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "auto" }}>
+                <div className="bk-idea-actions">
                   {idea.status !== "queued" ? (
                     <ActionBtn label="queue" onClick={() => patchStatus(idea.id, "queued")} />
                   ) : null}
@@ -315,8 +332,6 @@ function ActionBtn({
       type="button"
       className="bk-btn"
       style={{
-        padding: "0.35rem 0.6rem",
-        fontSize: "0.6rem",
         borderColor: danger ? "#ff6b6b" : undefined,
         color: danger ? "#ff6b6b" : undefined,
       }}
@@ -349,19 +364,15 @@ function IdeaMediaPreview({ media }: { media: IdeaInput["media"] }) {
   }
   if (visual.kind === "video") {
     return (
-      <video
-        src={visual.url}
-        controls
-        style={{ width: "100%", maxHeight: 220, background: "#000", border: "1px solid var(--bk-border)" }}
-      />
+      <div className="bk-idea-card-media">
+        <video src={visual.url} controls playsInline />
+      </div>
     );
   }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={visual.url}
-      alt=""
-      style={{ width: "100%", maxHeight: 220, objectFit: "cover", border: "1px solid var(--bk-border)" }}
-    />
+    <div className="bk-idea-card-media">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={visual.url} alt="" />
+    </div>
   );
 }

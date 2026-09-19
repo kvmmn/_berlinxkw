@@ -33,7 +33,8 @@ export function MetricsSourceBadge({ source }: { source: MetricsSource }) {
   return (
     <span
       className="bk-meta"
-      title={`${en} · ${fa}`}
+      title={fa}
+      aria-label={`${en} — ${fa}`}
       style={{
         display: "inline-block",
         fontSize: "0.65rem",
