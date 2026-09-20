@@ -1,8 +1,9 @@
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { join } from "path";
+import { blobProxyUrl, isBlobStorePathname, writeBlob } from "./blob-private";
 import { MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from "./idea-limits";
 import { getStorageMode } from "./storage";
-import type { IdeaMedia } from "./types";
+import type { IdeaInput, IdeaMedia } from "./types";
 
 export { MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from "./idea-limits";
 
@@ -31,6 +32,30 @@ export function validateMediaFile(file: File): { ok: true; kind: "image" | "vide
   return { ok: true, kind };
 }
 
+/** Resolve stored media to a URL the authenticated portal can load (private Blob proxy). */
+export function clientMediaUrl(media: IdeaMedia): string | undefined {
+  if (media.pathname && isBlobStorePathname(media.pathname)) {
+    return blobProxyUrl(media.pathname);
+  }
+  if (media.url?.startsWith("/api/blob?")) {
+    return media.url;
+  }
+  if (media.url?.startsWith("/uploads/")) {
+    return media.url;
+  }
+  return media.url;
+}
+
+export function withClientMediaUrls(ideas: IdeaInput[]): IdeaInput[] {
+  return ideas.map((idea) => ({
+    ...idea,
+    media: idea.media.map((m) => {
+      const url = clientMediaUrl(m);
+      return url ? { ...m, url } : m;
+    }),
+  }));
+}
+
 export async function uploadIdeaMedia(
   ideaId: string,
   file: File,
@@ -45,17 +70,12 @@ export async function uploadIdeaMedia(
   if (mode === "blob") {
     const pathname = `berlinxkw/ideas/${ideaId}/${filename}`;
     try {
-      const { put } = await import("@vercel/blob");
-      const blob = await put(pathname, bytes, {
-        access: "public",
-        addRandomSuffix: false,
-        contentType: file.type,
-      });
+      await writeBlob(pathname, bytes, file.type);
       return {
         media: {
           kind: check.kind,
-          url: blob.url,
-          pathname: blob.pathname,
+          url: blobProxyUrl(pathname),
+          pathname,
           mime: file.type,
           size: file.size,
         },

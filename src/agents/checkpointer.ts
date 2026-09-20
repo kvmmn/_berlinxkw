@@ -5,6 +5,7 @@ import { join } from "path";
 import { MemorySaver } from "@langchain/langgraph-checkpoint";
 import type { BaseCheckpointSaver } from "@langchain/langgraph-checkpoint";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { readBlobByPrefix, writeBlobText } from "@/lib/blob-private";
 
 const DATA_DIR = join(process.cwd(), "data");
 const FS_CHECKPOINT_PATH = join(DATA_DIR, "langgraph-checkpoints.json");
@@ -65,12 +66,9 @@ class PersistingMemorySaver extends MemorySaver {
 async function readBlobDump(): Promise<CheckpointDump | null> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return null;
   try {
-    const { list } = await import("@vercel/blob");
-    const { blobs } = await list({ prefix: BLOB_CHECKPOINT_PATH, limit: 1 });
-    if (blobs.length === 0) return null;
-    const res = await fetch(blobs[0].url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return (await res.json()) as CheckpointDump;
+    const text = await readBlobByPrefix(BLOB_CHECKPOINT_PATH);
+    if (text === null) return null;
+    return JSON.parse(text) as CheckpointDump;
   } catch {
     return null;
   }
@@ -79,12 +77,7 @@ async function readBlobDump(): Promise<CheckpointDump | null> {
 async function writeBlobDump(dump: CheckpointDump): Promise<boolean> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) return false;
   try {
-    const { put } = await import("@vercel/blob");
-    await put(BLOB_CHECKPOINT_PATH, JSON.stringify(dump), {
-      access: "public",
-      addRandomSuffix: false,
-      contentType: "application/json",
-    });
+    await writeBlobText(BLOB_CHECKPOINT_PATH, JSON.stringify(dump), "application/json");
     return true;
   } catch {
     return false;

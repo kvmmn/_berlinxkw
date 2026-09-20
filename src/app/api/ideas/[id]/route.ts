@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { deleteIdeaMedia } from "@/lib/idea-media";
+import { deleteIdeaMedia, withClientMediaUrls } from "@/lib/idea-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { IdeaStatus } from "@/lib/types";
 
@@ -35,7 +35,7 @@ export async function PATCH(
   if (!ok) {
     return NextResponse.json({ error: "Could not persist", mode }, { status: 503 });
   }
-  return NextResponse.json({ idea });
+  return NextResponse.json({ idea: withClientMediaUrls([idea])[0] });
 }
 
 export async function DELETE(

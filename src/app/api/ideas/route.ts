@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 import { v4 as uuidv4 } from "uuid";
-import { uploadIdeaMedia } from "@/lib/idea-media";
+import { uploadIdeaMedia, withClientMediaUrls } from "@/lib/idea-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { IdeaInput, IdeaStatus } from "@/lib/types";
 
@@ -11,7 +11,7 @@ export async function GET() {
   const ideas = [...(state.ideas ?? [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
-  return NextResponse.json({ ideas });
+  return NextResponse.json({ ideas: withClientMediaUrls(ideas) });
 }
 
 export async function POST(req: Request) {
@@ -69,5 +69,5 @@ export async function POST(req: Request) {
   if (!ok) {
     return NextResponse.json({ error: "Could not persist idea", mode }, { status: 503 });
   }
-  return NextResponse.json({ idea });
+  return NextResponse.json({ idea: withClientMediaUrls([idea])[0] });
 }
