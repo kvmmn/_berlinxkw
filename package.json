@@ -18,7 +18,7 @@
     "@langchain/openai": "^1.5.13",
     "@langfuse/core": "^5.11.1",
     "@langfuse/langchain": "^5.11.1",
-    "@vercel/blob": "^0.27.0",
+    "@vercel/blob": "^2.8.0",
     "ai": "^5.0.0",
     "langchain": "^1.5.11",
     "next": "^15.5.0",

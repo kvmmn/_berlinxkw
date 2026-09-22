@@ -1,4 +1,5 @@
 import { IdeasInbox } from "@/components/IdeasInbox";
+import { withClientMediaUrls } from "@/lib/idea-media";
 import { getPortalContext } from "@/lib/portal-data";
 
 export default async function IdeasPage() {
@@ -8,7 +9,7 @@ export default async function IdeasPage() {
   );
   return (
     <IdeasInbox
-      initialIdeas={ideas}
+      initialIdeas={withClientMediaUrls(ideas)}
       readOnly={storageMode === "readonly" || storageMode === "blob-error"}
     />
   );

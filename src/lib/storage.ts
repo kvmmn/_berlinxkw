@@ -1,6 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import seed from "../../data/seed.json";
+import { hasBlobToken, readBlobByPrefix, writeBlobText } from "./blob-private";
 import type { AppState, StorageMode } from "./types";
 
 const DATA_DIR = join(process.cwd(), "data");
@@ -41,17 +42,8 @@ function writeFilesystemStore(state: AppState): void {
   writeFileSync(STORE_PATH, JSON.stringify(state, null, 2), "utf-8");
 }
 
-function hasBlobToken(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-}
-
 async function blobPutOnce(state: AppState): Promise<void> {
-  const { put } = await import("@vercel/blob");
-  await put(BLOB_PATH, JSON.stringify(state, null, 2), {
-    access: "public",
-    addRandomSuffix: false,
-    contentType: "application/json",
-  });
+  await writeBlobText(BLOB_PATH, JSON.stringify(state, null, 2), "application/json");
 }
 
 async function readBlobStore(): Promise<AppState | null> {
@@ -60,19 +52,13 @@ async function readBlobStore(): Promise<AppState | null> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const { list } = await import("@vercel/blob");
-      const { blobs } = await list({ prefix: BLOB_PATH, limit: 1 });
-      if (blobs.length === 0) {
+      const text = await readBlobByPrefix(BLOB_PATH);
+      if (text === null) {
         const initial = seedState();
         await blobPutOnce(initial);
         return initial;
       }
-      const res = await fetch(blobs[0].url, { cache: "no-store" });
-      if (!res.ok) {
-        lastError = new Error(`Blob fetch failed: ${res.status}`);
-        continue;
-      }
-      return normalizeState((await res.json()) as AppState);
+      return normalizeState(JSON.parse(text) as AppState);
     } catch (err) {
       lastError = err;
     }
