@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
-import { uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
+import { applyTabloMultipartImages, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { Tablo, TabloStatus } from "@/lib/types";
 
@@ -59,17 +59,6 @@ export async function POST(req: Request) {
   const slug = uniqueSlug(baseSlug, state.tablos);
 
   const id = `tablo-${uuidv4()}`;
-  let image: Tablo["image"] = null;
-
-  const file = form.get("image");
-  if (file instanceof File && file.size > 0) {
-    const uploaded = await uploadTabloImage(id, file);
-    if ("error" in uploaded) {
-      return NextResponse.json({ error: uploaded.error }, { status: 400 });
-    }
-    image = uploaded.image;
-  }
-
   const now = new Date().toISOString();
   const tablo: Tablo = {
     id,
@@ -80,10 +69,16 @@ export async function POST(req: Request) {
     description,
     priceEur,
     status,
-    image,
+    image: null,
+    framedImage: null,
     marketplaceUrl: marketplaceUrl || undefined,
     captionDraft: captionDraft || defaultCaptionDraft(title),
   };
+
+  const imagesApplied = await applyTabloMultipartImages(id, form, tablo);
+  if (!imagesApplied.ok) {
+    return NextResponse.json({ error: imagesApplied.error }, { status: 400 });
+  }
 
   state.tablos.push(tablo);
   const { ok, mode } = await saveState(state);

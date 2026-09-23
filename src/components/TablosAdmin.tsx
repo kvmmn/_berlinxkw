@@ -24,10 +24,12 @@ export function TablosAdmin({
   const [status, setStatus] = useState<TabloStatus>("draft");
   const [marketplaceUrl, setMarketplaceUrl] = useState("");
   const [captionDraft, setCaptionDraft] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [artworkFile, setArtworkFile] = useState<File | null>(null);
+  const [framedFile, setFramedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const artworkRef = useRef<HTMLInputElement>(null);
+  const framedRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/tablos");
@@ -46,8 +48,10 @@ export function TablosAdmin({
     setStatus("draft");
     setMarketplaceUrl("");
     setCaptionDraft("");
-    setImageFile(null);
-    if (fileRef.current) fileRef.current.value = "";
+    setArtworkFile(null);
+    setFramedFile(null);
+    if (artworkRef.current) artworkRef.current.value = "";
+    if (framedRef.current) framedRef.current.value = "";
   };
 
   const startEdit = (t: Tablo) => {
@@ -59,7 +63,8 @@ export function TablosAdmin({
     setStatus(t.status);
     setMarketplaceUrl(t.marketplaceUrl ?? "");
     setCaptionDraft(t.captionDraft ?? "");
-    setImageFile(null);
+    setArtworkFile(null);
+    setFramedFile(null);
     setError(null);
   };
 
@@ -87,7 +92,8 @@ export function TablosAdmin({
       "captionDraft",
       captionDraft.trim() || `${title.trim()} · ${SHOP_LINK_PLACEHOLDER}`,
     );
-    if (imageFile) form.set("image", imageFile);
+    if (artworkFile) form.set("artwork", artworkFile);
+    if (framedFile) form.set("framed", framedFile);
 
     const url = editingId ? `/api/tablos/${editingId}` : "/api/tablos";
     const method = editingId ? "PATCH" : "POST";
@@ -188,9 +194,9 @@ export function TablosAdmin({
           />
         </label>
         <label className="bk-field">
-          <span className="bk-meta">image</span>
+          <span className="bk-meta">artwork image (flat / original)</span>
           <input
-            ref={fileRef}
+            ref={artworkRef}
             type="file"
             accept="image/*"
             onChange={(e) => {
@@ -199,11 +205,50 @@ export function TablosAdmin({
                 setError("Image must be 8MB or smaller.");
                 return;
               }
-              setImageFile(f ?? null);
+              setArtworkFile(f ?? null);
               setError(null);
             }}
           />
         </label>
+        <label className="bk-field">
+          <span className="bk-meta">framed sample (on wall — optional)</span>
+          <input
+            ref={framedRef}
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f && f.size > MAX_IMAGE_BYTES) {
+                setError("Image must be 8MB or smaller.");
+                return;
+              }
+              setFramedFile(f ?? null);
+              setError(null);
+            }}
+          />
+        </label>
+        {editingId ? (
+          <div className="bk-tablo-admin-previews">
+            {tablos.find((x) => x.id === editingId)?.image?.url ? (
+              <figure className="bk-tablo-admin-preview">
+                <figcaption className="bk-meta">current artwork</figcaption>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={tablos.find((x) => x.id === editingId)!.image!.url} alt="" />
+              </figure>
+            ) : (
+              <p className="bk-meta">no artwork yet</p>
+            )}
+            {tablos.find((x) => x.id === editingId)?.framedImage?.url ? (
+              <figure className="bk-tablo-admin-preview">
+                <figcaption className="bk-meta">current framed</figcaption>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={tablos.find((x) => x.id === editingId)!.framedImage!.url} alt="" />
+              </figure>
+            ) : (
+              <p className="bk-meta bk-tablo-admin-framed-slot">framed slot empty</p>
+            )}
+          </div>
+        ) : null}
         <div className="bk-tablos-form-actions">
           <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting || readOnly}>
             {submitting ? "saving…" : editingId ? "update" : "create"}
@@ -222,10 +267,14 @@ export function TablosAdmin({
             <div className="bk-tablo-row-media">
               {t.image?.url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={t.image.url} alt="" />
+                <img src={t.image.url} alt="" title="artwork" />
               ) : (
                 <div className="bk-tablo-card-placeholder bk-meta">—</div>
               )}
+              {t.framedImage?.url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={t.framedImage.url} alt="" className="bk-tablo-row-framed" title="framed" />
+              ) : null}
             </div>
             <div className="bk-tablo-row-body">
               <div className="bk-tablo-row-head">

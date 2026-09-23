@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { TabloProductMedia } from "@/components/TabloProductMedia";
 import { ShopShell } from "@/components/ShopShell";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import { withPublicTabloImages } from "@/lib/tablo-media";
@@ -27,7 +28,6 @@ export default async function TabloDetailPage({
   if (!raw) notFound();
 
   const [tablo] = withPublicTabloImages([raw]);
-  const img = tablo.image?.url;
   const buyHref = tabloBuyUrl(tablo);
   const external = tabloBuyExternal(tablo);
   return (
@@ -38,12 +38,7 @@ export default async function TabloDetailPage({
         </Link>
         <div className="bk-tablo-detail-grid">
           <div className="bk-tablo-detail-media">
-            {img ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={img} alt={tablo.title} />
-            ) : (
-              <div className="bk-tablo-card-placeholder bk-meta">no image</div>
-            )}
+            <TabloProductMedia tablo={tablo} variant="detail" />
           </div>
           <div className="bk-tablo-detail-copy">
             <h1 className="bk-tablo-detail-title">{tablo.title}</h1>

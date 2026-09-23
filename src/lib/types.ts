@@ -106,7 +106,10 @@ export interface Tablo {
   description: string;
   priceEur: number;
   status: TabloStatus;
+  /** Flat / original artwork photo (primary shop image). */
   image: TabloImage | null;
+  /** Finished piece framed on the wall — optional second shop image. */
+  framedImage?: TabloImage | null;
   marketplaceUrl?: string;
   /** Instagram caption template; use {shopLink} for the public listing URL. */
   captionDraft?: string;

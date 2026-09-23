@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TabloProductMedia } from "@/components/TabloProductMedia";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import type { Tablo } from "@/lib/types";
 
@@ -11,19 +12,13 @@ function formatEur(price: number): string {
 }
 
 export function TabloCard({ tablo }: { tablo: Tablo }) {
-  const img = tablo.image?.url;
   const buyHref = tabloBuyUrl(tablo);
   const external = tabloBuyExternal(tablo);
 
   return (
     <article className="bk-tablo-card">
       <Link href={`/shop/${tablo.slug}`} className="bk-tablo-card-media">
-        {img ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={img} alt={tablo.title} loading="lazy" />
-        ) : (
-          <div className="bk-tablo-card-placeholder bk-meta">no image</div>
-        )}
+        <TabloProductMedia tablo={tablo} variant="card" />
       </Link>
       <div className="bk-tablo-card-body">
         <Link href={`/shop/${tablo.slug}`}>

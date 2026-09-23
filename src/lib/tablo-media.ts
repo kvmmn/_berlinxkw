@@ -12,6 +12,14 @@ function sanitizeFilename(name: string): string {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "file";
 }
 
+function withResolvedTabloImage(
+  image: TabloImage | null | undefined,
+  resolve: (image: TabloImage | null | undefined) => string | undefined,
+): TabloImage | null | undefined {
+  if (!image) return image ?? null;
+  return { ...image, url: resolve(image) ?? image.url };
+}
+
 function validateImageFile(file: File): { ok: true } | { ok: false; error: string } {
   if (!file.type.startsWith("image/")) {
     return { ok: false, error: "Only image files are allowed." };
@@ -52,19 +60,42 @@ export function publicTabloImageUrl(image: TabloImage | null | undefined): strin
 export function withPortalTabloImages(tablos: Tablo[]): Tablo[] {
   return tablos.map((t) => ({
     ...t,
-    image: t.image
-      ? { ...t.image, url: portalTabloImageUrl(t.image) ?? t.image.url }
-      : null,
+    image: withResolvedTabloImage(t.image, portalTabloImageUrl) ?? null,
+    framedImage: withResolvedTabloImage(t.framedImage, portalTabloImageUrl) ?? null,
   }));
 }
 
 export function withPublicTabloImages(tablos: Tablo[]): Tablo[] {
   return tablos.map((t) => ({
     ...t,
-    image: t.image
-      ? { ...t.image, url: publicTabloImageUrl(t.image) ?? t.image.url }
-      : null,
+    image: withResolvedTabloImage(t.image, publicTabloImageUrl) ?? null,
+    framedImage: withResolvedTabloImage(t.framedImage, publicTabloImageUrl) ?? null,
   }));
+}
+
+/** Read artwork / framed uploads from multipart form (`artwork`, `framed`; `image` = legacy artwork). */
+export async function applyTabloMultipartImages(
+  tabloId: string,
+  form: FormData,
+  tablo: { image: Tablo["image"]; framedImage?: Tablo["framedImage"] },
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const artworkFile = form.get("artwork") ?? form.get("image");
+  if (artworkFile instanceof File && artworkFile.size > 0) {
+    if (tablo.image) await deleteTabloImage(tablo.image);
+    const uploaded = await uploadTabloImage(tabloId, artworkFile);
+    if ("error" in uploaded) return { ok: false, error: uploaded.error };
+    tablo.image = uploaded.image;
+  }
+
+  const framedFile = form.get("framed");
+  if (framedFile instanceof File && framedFile.size > 0) {
+    if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
+    const uploaded = await uploadTabloImage(tabloId, framedFile);
+    if ("error" in uploaded) return { ok: false, error: uploaded.error };
+    tablo.framedImage = uploaded.image;
+  }
+
+  return { ok: true };
 }
 
 export async function uploadTabloImage(
