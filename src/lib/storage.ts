@@ -17,6 +17,9 @@ export function normalizeState(state: AppState): AppState {
   if (!Array.isArray(state.ideas)) {
     state.ideas = [];
   }
+  if (!Array.isArray(state.tablos)) {
+    state.tablos = [];
+  }
   return state;
 }
 

@@ -123,5 +123,40 @@
       "status": "queued",
       "notes": "Brain: pair with crossing template from typeface kit."
     }
+  ],
+  "tablos": [
+    {
+      "id": "tablo-demo-001",
+      "createdAt": "2025-09-20T12:00:00.000Z",
+      "updatedAt": "2025-09-22T10:00:00.000Z",
+      "title": "Mitte glass archive I",
+      "slug": "mitte-glass-archive-i",
+      "description": "Archival study — neon lime reflections on U-Bahn glass, black field. One-of-one tablo on canvas.",
+      "priceEur": 480,
+      "status": "listed",
+      "image": {
+        "url": "/shop/demo/mitte-glass-archive.svg",
+        "pathname": "/shop/demo/mitte-glass-archive.svg",
+        "mime": "image/svg+xml"
+      },
+      "marketplaceUrl": "https://www.etsy.com/listing/berlinxkw-mitte-demo",
+      "captionDraft": "Mitte glass archive I · original tablo · {shopLink}"
+    },
+    {
+      "id": "tablo-demo-002",
+      "createdAt": "2025-09-19T15:30:00.000Z",
+      "updatedAt": "2025-09-21T09:00:00.000Z",
+      "title": "Kreuzberg crossing no. 2",
+      "slug": "kreuzberg-crossing-no-2",
+      "description": "Pedestrian bridge at dusk — coordinate block stamped in mono. Listed on site; marketplace link TBD.",
+      "priceEur": 520,
+      "status": "listed",
+      "image": {
+        "url": "/shop/demo/kreuzberg-crossing-no-2.svg",
+        "pathname": "/shop/demo/kreuzberg-crossing-no-2.svg",
+        "mime": "image/svg+xml"
+      },
+      "captionDraft": "Kreuzberg crossing no. 2 · available · {shopLink}"
+    }
   ]
 }

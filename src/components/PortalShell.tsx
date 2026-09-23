@@ -8,6 +8,7 @@ const NAV = [
   { href: "/portal", label: "weekly report" },
   { href: "/portal/daily", label: "daily" },
   { href: "/portal/ideas", label: "inbox" },
+  { href: "/portal/tablos", label: "shop" },
   { href: "/portal/review", label: "review" },
   { href: "/portal/chat", label: "company brain" },
   { href: "/portal/system", label: "راهبری", persian: true },
