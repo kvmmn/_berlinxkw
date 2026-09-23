@@ -2,18 +2,23 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const AUTH_COOKIE = "bk_portal_session";
-const PUBLIC = ["/login", "/api/auth/login"];
+const PUBLIC_PREFIXES = [
+  "/login",
+  "/api/auth/login",
+  "/shop",
+  "/api/shop",
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
-    pathname.match(/\.(png|jpg|svg|ico)$/)
+    pathname.match(/\.(png|jpg|svg|ico|webp)$/)
   ) {
     return NextResponse.next();
   }
-  if (PUBLIC.some((p) => pathname === p || pathname.startsWith(p))) {
+  if (PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return NextResponse.next();
   }
   if (pathname.startsWith("/api/auth")) {

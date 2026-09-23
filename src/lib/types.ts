@@ -88,12 +88,37 @@ export interface Session {
   decisionIds: string[];
 }
 
+export type TabloStatus = "draft" | "listed" | "sold";
+
+export interface TabloImage {
+  url?: string;
+  pathname?: string;
+  mime?: string;
+  size?: number;
+}
+
+export interface Tablo {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  title: string;
+  slug: string;
+  description: string;
+  priceEur: number;
+  status: TabloStatus;
+  image: TabloImage | null;
+  marketplaceUrl?: string;
+  /** Instagram caption template; use {shopLink} for the public listing URL. */
+  captionDraft?: string;
+}
+
 export interface AppState {
   brainMemory: string;
   weeks: Week[];
   sessions: Session[];
   decisions: Decision[];
   ideas: IdeaInput[];
+  tablos: Tablo[];
 }
 
 export type StorageMode = "filesystem" | "blob" | "blob-error" | "readonly";
