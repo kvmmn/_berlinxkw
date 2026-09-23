@@ -50,7 +50,7 @@ export function WeeklyReview({
       {msg ? <p style={{ color: "#ff6b6b" }}>{msg}</p> : null}
 
       <section style={{ marginBottom: "2.5rem" }}>
-        <h2 className="bk-meta" style={{ color: "var(--bk-lime)", marginBottom: "1rem" }}>
+        <h2 className="bk-meta" style={{ color: "var(--bk-gray-95)", marginBottom: "1rem" }}>
           pending
         </h2>
         {unevaluated.length === 0 ? (

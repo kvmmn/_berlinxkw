@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import { BrandLockup } from "@/components/BrandLockup";
+import { BrandLogoMark } from "@/components/BrandLogoMark";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
@@ -29,9 +30,9 @@ function LoginForm() {
 
   return (
     <div className="bk-login-page">
-      <Image src="/logo.png" alt="berlin × kawe" width={72} height={72} style={{ marginBottom: "1.5rem" }} />
-      <h1 className="bk-display" style={{ fontSize: "2rem", margin: "0 0 0.5rem" }}>
-        berlin × kawe
+      <BrandLogoMark size={72} priority />
+      <h1 className="bk-display bk-landing-title" style={{ fontSize: "2rem", margin: "1rem 0 0.5rem" }}>
+        <BrandLockup size="md" />
       </h1>
       <p className="bk-meta" style={{ color: "var(--bk-gray-70)", marginBottom: "0.5rem" }}>
         advisor portal
