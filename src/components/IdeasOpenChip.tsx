@@ -19,8 +19,8 @@ export function IdeasOpenChip({ count }: { count: number }) {
     >
       <span
         style={{
-          background: "color-mix(in srgb, var(--bk-lime) 18%, transparent)",
-          color: "var(--bk-lime)",
+          background: "var(--bk-border)",
+          color: "var(--bk-gray-95)",
           padding: "0.1rem 0.35rem",
           fontWeight: 700,
         }}

@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 const AUTH_COOKIE = "bk_portal_session";
 const PUBLIC_PREFIXES = [
+  "/",
   "/login",
   "/api/auth/login",
   "/shop",
@@ -18,7 +19,10 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
-  if (PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+  if (
+    pathname === "/" ||
+    PUBLIC_PREFIXES.some((p) => p !== "/" && (pathname === p || pathname.startsWith(`${p}/`)))
+  ) {
     return NextResponse.next();
   }
   if (pathname.startsWith("/api/auth")) {

@@ -1,10 +1,19 @@
 @import "../../Berlin_x_Kawe_Typeface_Kit/07_Tokens/type-tokens.css";
 
+/*
+ * Brand visual tokens — tweak neon + motion here:
+ *   --bk-lime          neon accent (logo orb, hover/focus glow only)
+ *   --bk-logo-morph-duration   liquid logo loop speed
+ */
 :root {
   --bk-lime: #c8ff00;
-  --bk-lime-dim: #8fb300;
-  --bk-surface: #0a0a0a;
+  --bk-lime-glow: color-mix(in srgb, var(--bk-lime) 38%, transparent);
+  --bk-logo-morph-duration: 9s;
+  --bk-lockup-tracking: -0.06em;
+  --bk-surface: #000000;
   --bk-border: #2a2a28;
+  --bk-muted: var(--bk-gray-70);
+  --bk-muted-dim: var(--bk-gray-45);
   --bk-size-display: clamp(2.5rem, 5vw, 3.75rem);
   --bk-size-heading: clamp(1.75rem, 3vw, 3rem);
   --bk-size-body: 1.125rem;
@@ -105,7 +114,7 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-accent {
-  color: var(--bk-lime);
+  color: var(--bk-gray-95);
 }
 
 .bk-panel {
@@ -126,13 +135,26 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-btn:hover {
-  border-color: var(--bk-lime);
-  color: var(--bk-lime);
+  border-color: var(--bk-white);
+  color: var(--bk-white);
+  box-shadow: 0 0 20px var(--bk-lime-glow);
+}
+
+.bk-btn:focus-visible {
+  outline: 1px solid var(--bk-lime);
+  outline-offset: 2px;
+  box-shadow: 0 0 16px var(--bk-lime-glow);
 }
 
 .bk-btn-primary {
-  border-color: var(--bk-lime);
-  background: color-mix(in srgb, var(--bk-lime) 12%, transparent);
+  border-color: var(--bk-white);
+  background: transparent;
+  color: var(--bk-white);
+}
+
+.bk-btn-primary:hover {
+  border-color: var(--bk-white);
+  color: var(--bk-white);
 }
 
 .bk-input {
@@ -205,6 +227,25 @@ textarea.bk-input[dir="auto"] {
   flex-shrink: 0;
 }
 
+.bk-portal-brand-link {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.bk-portal-brand-label {
+  font-size: var(--bk-size-meta);
+  color: var(--bk-muted);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.bk-portal-brand-label .bk-lockup {
+  font-family: var(--bk-font-mono);
+  font-weight: 400;
+  font-size: inherit;
+  letter-spacing: 0.02em;
+}
+
 .bk-portal-nav {
   display: flex;
   gap: 0.5rem;
@@ -233,7 +274,13 @@ textarea.bk-input[dir="auto"] {
 
 .bk-portal-nav-link[data-active="true"] {
   opacity: 1;
-  border-bottom: 1px solid var(--bk-lime);
+  border-bottom: 1px solid var(--bk-white);
+}
+
+.bk-portal-nav-link:hover,
+.bk-portal-nav-link:focus-visible {
+  opacity: 1;
+  text-shadow: 0 0 12px var(--bk-lime-glow);
 }
 
 .bk-portal-main {
@@ -247,8 +294,8 @@ textarea.bk-input[dir="auto"] {
 
 .bk-portal-storage-banner {
   padding: 0.5rem max(1rem, env(safe-area-inset-left, 0px));
-  background: #1a1a00;
-  color: var(--bk-lime);
+  background: var(--bk-black);
+  color: var(--bk-gray-70);
   font-size: 0.75rem;
   border-bottom: 1px solid var(--bk-border);
 }
@@ -275,8 +322,8 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-ideas-dropzone[data-active="true"] {
-  border-color: var(--bk-lime);
-  background: color-mix(in srgb, var(--bk-lime) 6%, transparent);
+  border-color: var(--bk-white);
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--bk-lime) 8%, transparent);
 }
 
 .bk-ideas-media-actions {
@@ -526,19 +573,43 @@ textarea.bk-input[dir="auto"] {
   gap: 0.75rem;
 }
 
-.bk-shop-lockup {
+.bk-lockup {
   font-family: var(--bk-font-display);
-  font-size: var(--bk-size-heading);
-  letter-spacing: -0.02em;
+  font-weight: var(--bk-display-weight);
+  letter-spacing: var(--bk-lockup-tracking);
+  line-height: var(--bk-display-leading);
   text-transform: lowercase;
+  color: var(--bk-white);
 }
 
-.bk-shop-times {
-  color: var(--bk-lime);
+.bk-lockup--sm {
+  font-size: var(--bk-size-meta);
+}
+
+.bk-lockup--md {
+  font-size: var(--bk-size-heading);
+}
+
+.bk-lockup--lg {
+  font-size: var(--bk-size-display);
+}
+
+.bk-lockup-times {
+  display: inline-block;
+}
+
+.bk-lockup-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.bk-lockup-link:hover .bk-lockup,
+.bk-lockup-link:focus-visible .bk-lockup {
+  text-shadow: 0 0 20px var(--bk-lime-glow);
 }
 
 .bk-shop-meta {
-  color: var(--bk-lime-dim);
+  color: var(--bk-muted);
 }
 
 .bk-shop-main {
@@ -553,11 +624,17 @@ textarea.bk-input[dir="auto"] {
   justify-content: space-between;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--bk-border);
-  color: var(--bk-lime-dim);
+  color: var(--bk-muted-dim);
 }
 
 .bk-shop-footer-link {
-  color: var(--bk-lime);
+  color: var(--bk-muted);
+}
+
+.bk-shop-footer-link:hover,
+.bk-shop-footer-link:focus-visible {
+  color: var(--bk-white);
+  text-shadow: 0 0 12px var(--bk-lime-glow);
 }
 
 .bk-shop-empty {
@@ -618,7 +695,7 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-card-price {
-  color: var(--bk-lime);
+  color: var(--bk-gray-95);
 }
 
 .bk-tablo-buy {
@@ -627,17 +704,19 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-sold {
-  color: var(--bk-lime-dim);
+  color: var(--bk-muted-dim);
 }
 
 .bk-shop-back {
   display: inline-block;
   margin-bottom: 1.5rem;
-  color: var(--bk-lime-dim);
+  color: var(--bk-muted);
 }
 
-.bk-shop-back:hover {
-  color: var(--bk-lime);
+.bk-shop-back:hover,
+.bk-shop-back:focus-visible {
+  color: var(--bk-white);
+  text-shadow: 0 0 10px var(--bk-lime-glow);
 }
 
 .bk-tablo-detail-grid {
@@ -672,7 +751,7 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-detail-price {
-  color: var(--bk-lime);
+  color: var(--bk-gray-95);
   font-size: 1.25rem;
   margin: 0 0 1rem;
 }
@@ -752,4 +831,148 @@ textarea.bk-input[dir="auto"] {
 .bk-tablo-caption-preview,
 .bk-tablo-listing-url {
   word-break: break-all;
+}
+
+/* —— Animated logo mark (neon orb — only persistent color) —— */
+.bk-logo-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bk-logo-mark__liquid {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bk-logo-mark__liquid-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bk-logo-mark__blob {
+  transform-origin: center;
+  animation: bk-logo-morph var(--bk-logo-morph-duration) ease-in-out infinite;
+}
+
+.bk-logo-mark__blob--a {
+  animation-delay: 0s;
+}
+
+.bk-logo-mark__blob--b {
+  animation-delay: calc(var(--bk-logo-morph-duration) * -0.33);
+}
+
+.bk-logo-mark__blob--c {
+  animation-delay: calc(var(--bk-logo-morph-duration) * -0.66);
+}
+
+.bk-logo-mark__asset {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.bk-logo-mark__svg-bear {
+  border-radius: 50%;
+}
+
+@keyframes bk-logo-morph {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.85;
+  }
+  25% {
+    transform: translate(3%, -4%) scale(1.06);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate(-2%, 5%) scale(0.94);
+    opacity: 0.75;
+  }
+  75% {
+    transform: translate(-4%, -2%) scale(1.03);
+    opacity: 0.9;
+  }
+}
+
+/* —— Public landing —— */
+.bk-landing {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bk-black);
+  color: var(--bk-white);
+}
+
+.bk-landing-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--bk-border);
+}
+
+.bk-landing-nav-link {
+  color: var(--bk-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.bk-landing-nav-link:hover,
+.bk-landing-nav-link:focus-visible {
+  color: var(--bk-white);
+  text-shadow: 0 0 12px var(--bk-lime-glow);
+}
+
+.bk-landing-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 3rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.bk-landing-title {
+  margin: 0.5rem 0 0;
+  font-size: var(--bk-size-display);
+}
+
+.bk-landing-tagline {
+  color: var(--bk-muted);
+  margin: 0;
+}
+
+.bk-landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.bk-landing-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--bk-border);
+  color: var(--bk-muted-dim);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-logo-mark__blob {
+    animation: none;
+  }
 }

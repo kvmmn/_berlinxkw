@@ -222,7 +222,7 @@ export function BrainChat({
                 >
                   {m.role === "user" ? "مشاور / advisor" : "مغز شرکت / brain"}
                   {m.role === "assistant" && m.agent && m.agent !== "supervisor" ? (
-                    <span style={{ marginInlineStart: "0.5rem", color: "var(--bk-lime)" }}>
+                    <span style={{ marginInlineStart: "0.5rem", color: "var(--bk-gray-95)" }}>
                       · {AGENT_LABELS[m.agent] ?? m.agent}
                     </span>
                   ) : null}
@@ -237,7 +237,7 @@ export function BrainChat({
             ))
           )}
           {status === "streaming" ? (
-            <p className="bk-meta bk-chat-auto" style={{ color: "var(--bk-lime)" }} dir="auto">
+            <p className="bk-meta bk-chat-auto" style={{ color: "var(--bk-gray-70)" }} dir="auto">
               {streamingAgent && streamingAgent !== "supervisor"
                 ? `${AGENT_LABELS[streamingAgent] ?? streamingAgent}…`
                 : "در حال فکر کردن… / thinking…"}
@@ -286,7 +286,7 @@ export function BrainChat({
               }}
               dir="auto"
             >
-              <span className="bk-meta" style={{ fontSize: "0.65rem", color: "var(--bk-lime)" }}>
+              <span className="bk-meta" style={{ fontSize: "0.65rem", color: "var(--bk-gray-70)" }}>
                 {d.status}
               </span>
               <div>{d.text}</div>

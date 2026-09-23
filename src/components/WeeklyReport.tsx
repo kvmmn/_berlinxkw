@@ -112,7 +112,7 @@ export function WeeklyReport({
                   fontSize: "0.9375rem",
                 }}
               >
-                <span className="bk-meta" style={{ color: "var(--bk-lime)", fontSize: "0.7rem" }}>
+                <span className="bk-meta" style={{ color: "var(--bk-gray-95)", fontSize: "0.7rem" }}>
                   {d.status} · {d.owner}
                 </span>
                 <div>{d.text}</div>
