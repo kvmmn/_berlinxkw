@@ -9,6 +9,10 @@ import {
   FRAME_FINISH_LABELS,
   FRAMED_SAMPLE_ORIENTATION_HINT,
   FRAMED_SAMPLE_ORIENTATION_HINT_FA,
+  TABLO_FRAMED_SAMPLE_HELPER_EN,
+  TABLO_FRAMED_SAMPLE_HELPER_FA,
+  TABLO_PRESENTATION_OVERVIEW_EN,
+  TABLO_PRESENTATION_OVERVIEW_FA,
   tabloDefaultFrameFinish,
   tabloFrameFinishes,
 } from "@/lib/frame-finish";
@@ -169,7 +173,8 @@ export function TablosAdmin({
       </div>
       <p className="bk-meta bk-tablos-hint">
         List originals on <code>/shop</code>. Caption drafts use{" "}
-        <code>{SHOP_LINK_PLACEHOLDER}</code> for the live listing URL.
+        <code>{SHOP_LINK_PLACEHOLDER}</code> for the live listing URL. See{" "}
+        <code>docs/tablos-shop-admin.md</code> for artwork vs framed samples and finish slugs.
       </p>
 
       <form className="bk-panel bk-tablos-form" onSubmit={submit}>
@@ -225,30 +230,36 @@ export function TablosAdmin({
             placeholder={`… ${SHOP_LINK_PLACEHOLDER}`}
           />
         </label>
-        <label className="bk-field">
-          <span className="bk-meta">artwork image (flat original)</span>
-          <input
-            ref={artworkRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f && f.size > MAX_IMAGE_BYTES) {
-                setError("Image must be 8MB or smaller.");
-                return;
-              }
-              setArtworkFile(f ?? null);
-              setError(null);
-            }}
-          />
-        </label>
-        <fieldset className="bk-field bk-frame-finish-admin">
-          <legend className="bk-meta">frame finishes · گزینه‌های قاب</legend>
-          <p className="bk-meta bk-frame-finish-admin-hint">
-            {FRAMED_SAMPLE_ORIENTATION_HINT}
+        <fieldset className="bk-field bk-tablo-presentation">
+          <legend className="bk-meta">shop presentation · نمایش فروشگاه</legend>
+          <p className="bk-meta bk-tablo-presentation-overview">
+            {TABLO_PRESENTATION_OVERVIEW_EN}
             <span lang="fa" className="bk-frame-finish-admin-hint-fa">
-              {FRAMED_SAMPLE_ORIENTATION_HINT_FA}
+              {TABLO_PRESENTATION_OVERVIEW_FA}
             </span>
+          </p>
+          <label className="bk-field bk-tablo-presentation-artwork">
+            <span className="bk-meta">1 · artwork image (flat original → `image`)</span>
+            <input
+              ref={artworkRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size > MAX_IMAGE_BYTES) {
+                  setError("Image must be 8MB or smaller.");
+                  return;
+                }
+                setArtworkFile(f ?? null);
+                setError(null);
+              }}
+            />
+          </label>
+          <div className="bk-frame-finish-admin bk-tablo-presentation-finishes">
+            <p className="bk-meta bk-tablo-presentation-step">2 · frame finishes (buyer options → JSON)</p>
+          <p className="bk-meta bk-frame-finish-admin-hint">
+            Check which metals buyers can order. Stored as <code>frameFinishes</code> and{" "}
+            <code>defaultFrameFinish</code> — not caption text.
           </p>
           <div className="bk-frame-finish-admin-checks">
             {FRAME_FINISHES.map((finish) => {
@@ -282,38 +293,49 @@ export function TablosAdmin({
               ))}
             </select>
           </label>
+          </div>
+          <label className="bk-field bk-tablo-presentation-framed">
+            <span className="bk-meta">3 · framed sample (on wall → `framedImage`)</span>
+            <p className="bk-meta bk-frame-finish-admin-hint">
+              {TABLO_FRAMED_SAMPLE_HELPER_EN}
+              <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+                {TABLO_FRAMED_SAMPLE_HELPER_FA}
+              </span>
+              {FRAMED_SAMPLE_ORIENTATION_HINT}
+              <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+                {FRAMED_SAMPLE_ORIENTATION_HINT_FA}
+              </span>
+            </p>
+            <input
+              ref={framedRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size > MAX_IMAGE_BYTES) {
+                  setError("Image must be 8MB or smaller.");
+                  return;
+                }
+                setFramedFile(f ?? null);
+                setClearFramed(false);
+                setError(null);
+              }}
+            />
+            {editingId && tablos.find((x) => x.id === editingId)?.framedImage?.url ? (
+              <label className="bk-tablo-clear-framed">
+                <input
+                  type="checkbox"
+                  checked={clearFramed}
+                  onChange={(e) => {
+                    setClearFramed(e.target.checked);
+                    if (e.target.checked) setFramedFile(null);
+                  }}
+                />
+                <span className="bk-meta">remove current framed sample</span>
+              </label>
+            ) : null}
+          </label>
         </fieldset>
-        <label className="bk-field">
-          <span className="bk-meta">framed sample (on wall)</span>
-          <input
-            ref={framedRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f && f.size > MAX_IMAGE_BYTES) {
-                setError("Image must be 8MB or smaller.");
-                return;
-              }
-              setFramedFile(f ?? null);
-              setClearFramed(false);
-              setError(null);
-            }}
-          />
-          {editingId && tablos.find((x) => x.id === editingId)?.framedImage?.url ? (
-            <label className="bk-tablo-clear-framed">
-              <input
-                type="checkbox"
-                checked={clearFramed}
-                onChange={(e) => {
-                  setClearFramed(e.target.checked);
-                  if (e.target.checked) setFramedFile(null);
-                }}
-              />
-              <span className="bk-meta">remove current framed sample</span>
-            </label>
-          ) : null}
-        </label>
         <div className="bk-tablos-form-actions">
           <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting || readOnly}>
             {submitting ? "saving…" : editingId ? "update" : "create"}

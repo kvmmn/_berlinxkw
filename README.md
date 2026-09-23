@@ -129,6 +129,10 @@ Copy from [`.env.example`](.env.example). **Instagram metrics:** manual entry + 
 | `/portal/ideas` | **Ideas Inbox** — founder drops for agents |
 | `/portal/chat` | LangGraph streaming OS (Persian-friendly) |
 | `/portal/system` | **راهبری** — agents, **Instagram metrics** (manual + optional Meta sync), `brainMemory` |
+| `/portal/tablos` | Tablos shop admin — artwork, frame finishes, framed samples |
+| `/shop` | Public tablos storefront |
+
+Tablo artwork, orientation, and frame finish fields: [`docs/tablos-shop-admin.md`](docs/tablos-shop-admin.md).
 
 ### Chat API
 

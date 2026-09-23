@@ -35,6 +35,19 @@ export const FRAMED_SAMPLE_ORIENTATION_HINT =
 export const FRAMED_SAMPLE_ORIENTATION_HINT_FA =
   "عکس نمونهٔ قاب باید همان جهت اثر باشد (افقی افقی، عمودی عمودی). اثر را برای قاب برش ندهید و نچرخانید.";
 
+/** How artwork, finishes, and framed samples fit together on `/portal/tablos`. */
+export const TABLO_PRESENTATION_OVERVIEW_EN =
+  "Shop presentation: (1) artwork = flat original on `image`; (2) frame finishes = structured checkboxes saved as `frameFinishes` + `defaultFrameFinish` — buyers pick on the public listing; (3) framed sample = optional `framedImage` wall photo on the listing. Finishes do not require a mockup to list; add samples when ready.";
+
+export const TABLO_PRESENTATION_OVERVIEW_FA =
+  "نمایش فروشگاه: (۱) اثر تخت در `image`؛ (۲) جنس قاب = فیلدهای ثابت JSON برای انتخاب خریدار؛ (۳) نمونهٔ قاب = `framedImage` اختیاری. برای انتشار لازم نیست mockup داشته باشید.";
+
+export const TABLO_FRAMED_SAMPLE_HELPER_EN =
+  "Optional. Shown on the shop after artwork. One upload is reused for every enabled finish until per-finish assets exist in `framedImagesByFinish`. Automated mockup runs are separate — upload real photos here.";
+
+export const TABLO_FRAMED_SAMPLE_HELPER_FA =
+  "اختیاری. بعد از اثر نمایش داده می‌شود. یک عکس برای همهٔ جنس‌های فعال کافی است تا تصویر جدا per-finish اضافه شود.";
+
 export function parseFrameFinishes(raw: unknown): FrameFinish[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   const out: FrameFinish[] = [];
