@@ -44,6 +44,7 @@ export async function writeBlob(
   await put(pathname, body, {
     access: BLOB_ACCESS,
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType,
   });
 }
