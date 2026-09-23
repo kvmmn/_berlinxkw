@@ -817,6 +817,95 @@ textarea.bk-input[dir="auto"] {
   max-width: 36ch;
 }
 
+.bk-tablo-buy-finish {
+  margin-top: 0.5rem;
+}
+
+.bk-tablo-card-frames {
+  margin: 0.15rem 0 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+.bk-frame-finish-fieldset {
+  border: 1px solid var(--bk-border);
+  margin: 0 0 1.25rem;
+  padding: 0.75rem;
+}
+
+.bk-frame-finish-fieldset legend {
+  padding: 0 0.35rem;
+}
+
+.bk-frame-finish-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.bk-frame-finish-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.bk-frame-finish-option input {
+  accent-color: var(--bk-gray-95);
+}
+
+.bk-frame-finish-swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--bk-border);
+  flex-shrink: 0;
+}
+
+.bk-frame-finish-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.9rem;
+}
+
+.bk-frame-finish-label-fa {
+  font-size: 0.85rem;
+  color: var(--bk-gray-70);
+}
+
+.bk-frame-finish-admin {
+  border: 1px solid var(--bk-border);
+  padding: 0.75rem;
+}
+
+.bk-frame-finish-admin-hint {
+  margin: 0.35rem 0 0.75rem;
+  max-width: 52ch;
+  line-height: 1.45;
+}
+
+.bk-frame-finish-admin-hint-fa {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.bk-frame-finish-admin-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.bk-frame-finish-admin-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.bk-frame-finish-default {
+  margin: 0;
+}
+
 /* Portal tablos admin */
 .bk-tablos-admin-head {
   display: flex;

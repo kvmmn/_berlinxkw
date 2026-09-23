@@ -4,7 +4,15 @@ import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { SHOP_LINK_PLACEHOLDER, fillCaptionDraft, shopListingUrl } from "@/lib/shop-url";
 import { MAX_IMAGE_BYTES } from "@/lib/idea-limits";
-import type { Tablo, TabloStatus } from "@/lib/types";
+import {
+  FRAME_FINISHES,
+  FRAME_FINISH_LABELS,
+  FRAMED_SAMPLE_ORIENTATION_HINT,
+  FRAMED_SAMPLE_ORIENTATION_HINT_FA,
+  tabloDefaultFrameFinish,
+  tabloFrameFinishes,
+} from "@/lib/frame-finish";
+import type { FrameFinish, Tablo, TabloStatus } from "@/lib/types";
 
 const STATUS: TabloStatus[] = ["draft", "listed", "sold"];
 
@@ -27,6 +35,8 @@ export function TablosAdmin({
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
   const [framedFile, setFramedFile] = useState<File | null>(null);
   const [clearFramed, setClearFramed] = useState(false);
+  const [frameFinishes, setFrameFinishes] = useState<FrameFinish[]>([...FRAME_FINISHES]);
+  const [defaultFrameFinish, setDefaultFrameFinish] = useState<FrameFinish>("bronze");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const artworkRef = useRef<HTMLInputElement>(null);
@@ -52,6 +62,8 @@ export function TablosAdmin({
     setArtworkFile(null);
     setFramedFile(null);
     setClearFramed(false);
+    setFrameFinishes([...FRAME_FINISHES]);
+    setDefaultFrameFinish("bronze");
     if (artworkRef.current) artworkRef.current.value = "";
     if (framedRef.current) framedRef.current.value = "";
   };
@@ -68,7 +80,21 @@ export function TablosAdmin({
     setArtworkFile(null);
     setFramedFile(null);
     setClearFramed(false);
+    setFrameFinishes(tabloFrameFinishes(t));
+    setDefaultFrameFinish(tabloDefaultFrameFinish(t));
     setError(null);
+  };
+
+  const toggleFrameFinish = (finish: FrameFinish, on: boolean) => {
+    setFrameFinishes((prev) => {
+      let next = on ? [...prev, finish] : prev.filter((f) => f !== finish);
+      next = FRAME_FINISHES.filter((f) => next.includes(f));
+      if (next.length === 0) return prev;
+      if (!next.includes(defaultFrameFinish)) {
+        setDefaultFrameFinish(next[0]);
+      }
+      return next;
+    });
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -98,6 +124,8 @@ export function TablosAdmin({
     if (artworkFile) form.set("artwork", artworkFile);
     if (framedFile) form.set("framed", framedFile);
     if (clearFramed) form.set("clearFramed", "true");
+    form.set("frameFinishes", JSON.stringify(frameFinishes));
+    form.set("defaultFrameFinish", defaultFrameFinish);
 
     const url = editingId ? `/api/tablos/${editingId}` : "/api/tablos";
     const method = editingId ? "PATCH" : "POST";
@@ -214,6 +242,47 @@ export function TablosAdmin({
             }}
           />
         </label>
+        <fieldset className="bk-field bk-frame-finish-admin">
+          <legend className="bk-meta">frame finishes · گزینه‌های قاب</legend>
+          <p className="bk-meta bk-frame-finish-admin-hint">
+            {FRAMED_SAMPLE_ORIENTATION_HINT}
+            <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+              {FRAMED_SAMPLE_ORIENTATION_HINT_FA}
+            </span>
+          </p>
+          <div className="bk-frame-finish-admin-checks">
+            {FRAME_FINISHES.map((finish) => {
+              const label = FRAME_FINISH_LABELS[finish];
+              const checked = frameFinishes.includes(finish);
+              return (
+                <label key={finish} className="bk-frame-finish-admin-check">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={checked && frameFinishes.length === 1}
+                    onChange={(e) => toggleFrameFinish(finish, e.target.checked)}
+                  />
+                  <span>
+                    {label.en} · <span lang="fa">{label.fa}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          <label className="bk-field bk-frame-finish-default">
+            <span className="bk-meta">default finish · پیش‌فرض</span>
+            <select
+              value={defaultFrameFinish}
+              onChange={(e) => setDefaultFrameFinish(e.target.value as FrameFinish)}
+            >
+              {frameFinishes.map((finish) => (
+                <option key={finish} value={finish}>
+                  {FRAME_FINISH_LABELS[finish].en} · {FRAME_FINISH_LABELS[finish].fa}
+                </option>
+              ))}
+            </select>
+          </label>
+        </fieldset>
         <label className="bk-field">
           <span className="bk-meta">framed sample (on wall)</span>
           <input

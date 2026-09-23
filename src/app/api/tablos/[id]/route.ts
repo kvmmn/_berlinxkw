@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
 import {
+  applyFrameFinishFieldsFromForm,
+  applyFrameFinishFieldsFromJson,
+} from "@/lib/tablo-frame-api";
+import {
   deleteTabloImage,
   uploadTabloImage,
   withPortalTabloImages,
@@ -96,6 +100,11 @@ export async function PATCH(
       if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
       tablo.framedImage = null;
     }
+
+    const frameResult = applyFrameFinishFieldsFromForm(tablo, form);
+    if (!frameResult.ok) {
+      return NextResponse.json({ error: frameResult.error }, { status: 400 });
+    }
   } else {
     const body = (await req.json()) as {
       title?: string;
@@ -105,6 +114,8 @@ export async function PATCH(
       status?: TabloStatus;
       marketplaceUrl?: string;
       captionDraft?: string;
+      frameFinishes?: unknown;
+      defaultFrameFinish?: unknown;
     };
 
     if (body.title !== undefined) {
@@ -139,6 +150,11 @@ export async function PATCH(
       }
       tablo.slug = nextSlug;
     }
+
+    const frameResult = applyFrameFinishFieldsFromJson(tablo, body);
+    if (!frameResult.ok) {
+      return NextResponse.json({ error: frameResult.error }, { status: 400 });
+    }
   }
 
   tablo.updatedAt = new Date().toISOString();
@@ -163,6 +179,11 @@ export async function DELETE(
   const [removed] = state.tablos.splice(idx, 1);
   if (removed.image) await deleteTabloImage(removed.image);
   if (removed.framedImage) await deleteTabloImage(removed.framedImage);
+  if (removed.framedImagesByFinish) {
+    for (const img of Object.values(removed.framedImagesByFinish)) {
+      if (img) await deleteTabloImage(img);
+    }
+  }
 
   const { ok, mode } = await saveState(state);
   if (!ok) {
