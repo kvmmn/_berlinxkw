@@ -4,11 +4,8 @@ import {
   applyFrameFinishFieldsFromForm,
   applyFrameFinishFieldsFromJson,
 } from "@/lib/tablo-frame-api";
-import {
-  deleteTabloImage,
-  uploadTabloImage,
-  withPortalTabloImages,
-} from "@/lib/tablo-media";
+import { applyFramedMultipartUploads } from "@/lib/tablo-framed-upload";
+import { deleteTabloImage, uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { TabloStatus } from "@/lib/types";
 
@@ -86,24 +83,14 @@ export async function PATCH(
       tablo.image = uploaded.image;
     }
 
-    const framedFile = form.get("framed");
-    if (framedFile instanceof File && framedFile.size > 0) {
-      if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
-      const uploaded = await uploadTabloImage(id, framedFile, "framed");
-      if ("error" in uploaded) {
-        return NextResponse.json({ error: uploaded.error }, { status: 400 });
-      }
-      tablo.framedImage = uploaded.image;
-    }
-
-    if (String(form.get("clearFramed") ?? "").trim() === "true") {
-      if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
-      tablo.framedImage = null;
-    }
-
     const frameResult = applyFrameFinishFieldsFromForm(tablo, form);
     if (!frameResult.ok) {
       return NextResponse.json({ error: frameResult.error }, { status: 400 });
+    }
+
+    const framedResult = await applyFramedMultipartUploads(id, tablo, form);
+    if (!framedResult.ok) {
+      return NextResponse.json({ error: framedResult.error }, { status: 400 });
     }
   } else {
     const body = (await req.json()) as {

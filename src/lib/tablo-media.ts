@@ -3,7 +3,7 @@ import { join } from "path";
 import { blobProxyUrl, isBlobStorePathname, writeBlob } from "./blob-private";
 import { MAX_IMAGE_BYTES } from "./idea-limits";
 import { getStorageMode } from "./storage";
-import type { Tablo, TabloImage } from "./types";
+import type { FrameFinish, Tablo, TabloImage } from "./types";
 
 const LOCAL_UPLOADS = join(process.cwd(), "public", "uploads", "tablos");
 const TABLO_BLOB_PREFIX = "berlinxkw/tablos/";
@@ -103,7 +103,7 @@ export function withPublicTabloImages(tablos: Tablo[]): Tablo[] {
   }));
 }
 
-export type TabloImageSlot = "artwork" | "framed";
+export type TabloImageSlot = "artwork" | "framed" | `framed/${FrameFinish}`;
 
 export async function uploadTabloImage(
   tabloId: string,
