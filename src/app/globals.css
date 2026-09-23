@@ -596,6 +596,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-lockup-times {
   display: inline-block;
+  color: var(--bk-lime);
 }
 
 .bk-lockup-link {
