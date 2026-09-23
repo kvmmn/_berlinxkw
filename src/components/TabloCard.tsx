@@ -17,9 +17,9 @@ export function TabloCard({ tablo }: { tablo: Tablo }) {
 
   return (
     <article className="bk-tablo-card">
-      <Link href={`/shop/${tablo.slug}`} className="bk-tablo-card-media">
+      <div className="bk-tablo-card-media">
         <TabloCardMedia tablo={tablo} />
-      </Link>
+      </div>
       <div className="bk-tablo-card-body">
         <Link href={`/shop/${tablo.slug}`}>
           <h2 className="bk-tablo-card-title">{tablo.title}</h2>
