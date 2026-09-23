@@ -60,14 +60,24 @@ export async function POST(req: Request) {
 
   const id = `tablo-${uuidv4()}`;
   let image: Tablo["image"] = null;
+  let framedImage: Tablo["framedImage"] = null;
 
-  const file = form.get("image");
-  if (file instanceof File && file.size > 0) {
-    const uploaded = await uploadTabloImage(id, file);
+  const artworkFile = form.get("artwork") ?? form.get("image");
+  if (artworkFile instanceof File && artworkFile.size > 0) {
+    const uploaded = await uploadTabloImage(id, artworkFile, "artwork");
     if ("error" in uploaded) {
       return NextResponse.json({ error: uploaded.error }, { status: 400 });
     }
     image = uploaded.image;
+  }
+
+  const framedFile = form.get("framed");
+  if (framedFile instanceof File && framedFile.size > 0) {
+    const uploaded = await uploadTabloImage(id, framedFile, "framed");
+    if ("error" in uploaded) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
+    framedImage = uploaded.image;
   }
 
   const now = new Date().toISOString();
@@ -81,6 +91,7 @@ export async function POST(req: Request) {
     priceEur,
     status,
     image,
+    framedImage: framedImage ?? undefined,
     marketplaceUrl: marketplaceUrl || undefined,
     captionDraft: captionDraft || defaultCaptionDraft(title),
   };

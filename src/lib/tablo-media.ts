@@ -49,27 +49,38 @@ export function publicTabloImageUrl(image: TabloImage | null | undefined): strin
   return image.url;
 }
 
+function withResolvedPortalImage(image: TabloImage | null | undefined): TabloImage | null {
+  if (!image) return null;
+  return { ...image, url: portalTabloImageUrl(image) ?? image.url };
+}
+
+function withResolvedPublicImage(image: TabloImage | null | undefined): TabloImage | null {
+  if (!image) return null;
+  return { ...image, url: publicTabloImageUrl(image) ?? image.url };
+}
+
 export function withPortalTabloImages(tablos: Tablo[]): Tablo[] {
   return tablos.map((t) => ({
     ...t,
-    image: t.image
-      ? { ...t.image, url: portalTabloImageUrl(t.image) ?? t.image.url }
-      : null,
+    image: withResolvedPortalImage(t.image),
+    framedImage: withResolvedPortalImage(t.framedImage ?? null),
   }));
 }
 
 export function withPublicTabloImages(tablos: Tablo[]): Tablo[] {
   return tablos.map((t) => ({
     ...t,
-    image: t.image
-      ? { ...t.image, url: publicTabloImageUrl(t.image) ?? t.image.url }
-      : null,
+    image: withResolvedPublicImage(t.image),
+    framedImage: withResolvedPublicImage(t.framedImage ?? null),
   }));
 }
+
+export type TabloImageSlot = "artwork" | "framed";
 
 export async function uploadTabloImage(
   tabloId: string,
   file: File,
+  slot: TabloImageSlot = "artwork",
 ): Promise<{ image: TabloImage } | { error: string }> {
   const check = validateImageFile(file);
   if (!check.ok) return { error: check.error };
@@ -79,7 +90,7 @@ export async function uploadTabloImage(
   const mode = getStorageMode();
 
   if (mode === "blob") {
-    const pathname = `${TABLO_BLOB_PREFIX}${tabloId}/${filename}`;
+    const pathname = `${TABLO_BLOB_PREFIX}${tabloId}/${slot}/${filename}`;
     try {
       await writeBlob(pathname, bytes, file.type);
       return {
@@ -95,11 +106,11 @@ export async function uploadTabloImage(
   }
 
   if (mode === "filesystem") {
-    const dir = join(LOCAL_UPLOADS, tabloId);
+    const dir = join(LOCAL_UPLOADS, tabloId, slot);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     const diskPath = join(dir, filename);
     writeFileSync(diskPath, bytes);
-    const url = `/uploads/tablos/${tabloId}/${filename}`;
+    const url = `/uploads/tablos/${tabloId}/${slot}/${filename}`;
     return {
       image: {
         url,

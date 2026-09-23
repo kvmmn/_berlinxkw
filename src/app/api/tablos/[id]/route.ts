@@ -72,14 +72,29 @@ export async function PATCH(
     tablo.marketplaceUrl = marketplaceUrl || undefined;
     tablo.captionDraft = captionDraft || defaultCaptionDraft(title);
 
-    const file = form.get("image");
-    if (file instanceof File && file.size > 0) {
+    const artworkFile = form.get("artwork") ?? form.get("image");
+    if (artworkFile instanceof File && artworkFile.size > 0) {
       if (tablo.image) await deleteTabloImage(tablo.image);
-      const uploaded = await uploadTabloImage(id, file);
+      const uploaded = await uploadTabloImage(id, artworkFile, "artwork");
       if ("error" in uploaded) {
         return NextResponse.json({ error: uploaded.error }, { status: 400 });
       }
       tablo.image = uploaded.image;
+    }
+
+    const framedFile = form.get("framed");
+    if (framedFile instanceof File && framedFile.size > 0) {
+      if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
+      const uploaded = await uploadTabloImage(id, framedFile, "framed");
+      if ("error" in uploaded) {
+        return NextResponse.json({ error: uploaded.error }, { status: 400 });
+      }
+      tablo.framedImage = uploaded.image;
+    }
+
+    if (String(form.get("clearFramed") ?? "").trim() === "true") {
+      if (tablo.framedImage) await deleteTabloImage(tablo.framedImage);
+      tablo.framedImage = null;
     }
   } else {
     const body = (await req.json()) as {
@@ -147,6 +162,7 @@ export async function DELETE(
 
   const [removed] = state.tablos.splice(idx, 1);
   if (removed.image) await deleteTabloImage(removed.image);
+  if (removed.framedImage) await deleteTabloImage(removed.framedImage);
 
   const { ok, mode } = await saveState(state);
   if (!ok) {
