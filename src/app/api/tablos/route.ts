@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
 import { applyFrameFinishFieldsFromForm } from "@/lib/tablo-frame-api";
 import { FRAME_FINISHES, tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { applyFramedMultipartUploads } from "@/lib/tablo-framed-upload";
 import { uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { Tablo, TabloStatus } from "@/lib/types";
@@ -62,7 +63,6 @@ export async function POST(req: Request) {
 
   const id = `tablo-${uuidv4()}`;
   let image: Tablo["image"] = null;
-  let framedImage: Tablo["framedImage"] = null;
 
   const artworkFile = form.get("artwork") ?? form.get("image");
   if (artworkFile instanceof File && artworkFile.size > 0) {
@@ -71,15 +71,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: uploaded.error }, { status: 400 });
     }
     image = uploaded.image;
-  }
-
-  const framedFile = form.get("framed");
-  if (framedFile instanceof File && framedFile.size > 0) {
-    const uploaded = await uploadTabloImage(id, framedFile, "framed");
-    if ("error" in uploaded) {
-      return NextResponse.json({ error: uploaded.error }, { status: 400 });
-    }
-    framedImage = uploaded.image;
   }
 
   const now = new Date().toISOString();
@@ -93,7 +84,6 @@ export async function POST(req: Request) {
     priceEur,
     status,
     image,
-    framedImage: framedImage ?? undefined,
     frameFinishes: [...FRAME_FINISHES],
     defaultFrameFinish: "bronze",
     marketplaceUrl: marketplaceUrl || undefined,
@@ -105,6 +95,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: frameResult.error }, { status: 400 });
   }
   tablo.defaultFrameFinish = tabloDefaultFrameFinish(tablo);
+
+  const framedResult = await applyFramedMultipartUploads(id, tablo, form);
+  if (!framedResult.ok) {
+    return NextResponse.json({ error: framedResult.error }, { status: 400 });
+  }
 
   state.tablos.push(tablo);
   const { ok, mode } = await saveState(state);

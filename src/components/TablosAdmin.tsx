@@ -16,6 +16,10 @@ import {
   tabloDefaultFrameFinish,
   tabloFrameFinishes,
 } from "@/lib/frame-finish";
+import {
+  FRAMED_FINISH_CLEAR_FIELDS,
+  FRAMED_FINISH_UPLOAD_FIELDS,
+} from "@/lib/tablo-framed-upload-fields";
 import type { FrameFinish, Tablo, TabloStatus } from "@/lib/types";
 
 const STATUS: TabloStatus[] = ["draft", "listed", "sold"];
@@ -38,7 +42,13 @@ export function TablosAdmin({
   const [captionDraft, setCaptionDraft] = useState("");
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
   const [framedFile, setFramedFile] = useState<File | null>(null);
+  const [framedFinishFiles, setFramedFinishFiles] = useState<Partial<Record<FrameFinish, File>>>(
+    {},
+  );
   const [clearFramed, setClearFramed] = useState(false);
+  const [clearFramedFinish, setClearFramedFinish] = useState<Partial<Record<FrameFinish, boolean>>>(
+    {},
+  );
   const [frameFinishes, setFrameFinishes] = useState<FrameFinish[]>([...FRAME_FINISHES]);
   const [defaultFrameFinish, setDefaultFrameFinish] = useState<FrameFinish>("bronze");
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +75,9 @@ export function TablosAdmin({
     setCaptionDraft("");
     setArtworkFile(null);
     setFramedFile(null);
+    setFramedFinishFiles({});
     setClearFramed(false);
+    setClearFramedFinish({});
     setFrameFinishes([...FRAME_FINISHES]);
     setDefaultFrameFinish("bronze");
     if (artworkRef.current) artworkRef.current.value = "";
@@ -83,7 +95,9 @@ export function TablosAdmin({
     setCaptionDraft(t.captionDraft ?? "");
     setArtworkFile(null);
     setFramedFile(null);
+    setFramedFinishFiles({});
     setClearFramed(false);
+    setClearFramedFinish({});
     setFrameFinishes(tabloFrameFinishes(t));
     setDefaultFrameFinish(tabloDefaultFrameFinish(t));
     setError(null);
@@ -128,6 +142,13 @@ export function TablosAdmin({
     if (artworkFile) form.set("artwork", artworkFile);
     if (framedFile) form.set("framed", framedFile);
     if (clearFramed) form.set("clearFramed", "true");
+    for (const finish of FRAME_FINISHES) {
+      const file = framedFinishFiles[finish];
+      if (file) form.set(FRAMED_FINISH_UPLOAD_FIELDS[finish][0], file);
+      if (clearFramedFinish[finish]) {
+        form.set(FRAMED_FINISH_CLEAR_FIELDS[finish][0], "true");
+      }
+    }
     form.set("frameFinishes", JSON.stringify(frameFinishes));
     form.set("defaultFrameFinish", defaultFrameFinish);
 
@@ -335,6 +356,74 @@ export function TablosAdmin({
               </label>
             ) : null}
           </label>
+          <div className="bk-tablo-presentation-framed-per-finish">
+            <p className="bk-meta bk-tablo-presentation-step">
+              3b · per-finish framed mockups → <code>framedImagesByFinish</code>
+            </p>
+            <p className="bk-meta bk-frame-finish-admin-hint">
+              Optional. When set, the shop shows the matching mockup for each finish. Field names for
+              API uploads: <code>{FRAMED_FINISH_UPLOAD_FIELDS.bronze[0]}</code>, etc.
+            </p>
+            <ul className="bk-tablo-framed-finish-uploads">
+              {FRAME_FINISHES.map((finish) => {
+                const label = FRAME_FINISH_LABELS[finish];
+                const editing = editingId ? tablos.find((x) => x.id === editingId) : undefined;
+                const hasCurrent = Boolean(editing?.framedImagesByFinish?.[finish]?.url);
+                return (
+                  <li key={finish} className="bk-tablo-framed-finish-upload">
+                    <label className="bk-field">
+                      <span className="bk-meta">
+                        {label.en} · <span lang="fa">{label.fa}</span>
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f && f.size > MAX_IMAGE_BYTES) {
+                            setError("Image must be 8MB or smaller.");
+                            return;
+                          }
+                          setFramedFinishFiles((prev) => {
+                            const next = { ...prev };
+                            if (f) next[finish] = f;
+                            else delete next[finish];
+                            return next;
+                          });
+                          if (f) {
+                            setClearFramedFinish((prev) => ({ ...prev, [finish]: false }));
+                          }
+                          setError(null);
+                        }}
+                      />
+                    </label>
+                    {editingId && hasCurrent ? (
+                      <label className="bk-tablo-clear-framed">
+                        <input
+                          type="checkbox"
+                          checked={clearFramedFinish[finish] ?? false}
+                          onChange={(e) => {
+                            setClearFramedFinish((prev) => ({
+                              ...prev,
+                              [finish]: e.target.checked,
+                            }));
+                            if (e.target.checked) {
+                              setFramedFinishFiles((prev) => {
+                                const next = { ...prev };
+                                delete next[finish];
+                                return next;
+                              });
+                            }
+                          }}
+                        />
+                        <span className="bk-meta">remove {label.en} mockup</span>
+                      </label>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </fieldset>
         <div className="bk-tablos-form-actions">
           <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting || readOnly}>

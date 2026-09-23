@@ -1008,6 +1008,20 @@ textarea.bk-input[dir="auto"] {
   margin-top: 0.35rem;
 }
 
+.bk-tablo-framed-finish-uploads {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bk-tablo-framed-finish-upload {
+  padding: 0.5rem 0 0;
+  border-top: 1px dashed var(--bk-border);
+}
+
 .bk-tablo-row-actions {
   display: flex;
   flex-wrap: wrap;
