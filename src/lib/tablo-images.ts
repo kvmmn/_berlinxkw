@@ -20,12 +20,26 @@ export function tabloFramedImageForFinish(tablo: Tablo, finish?: FrameFinish): T
   return tabloFramedImage(tablo);
 }
 
-/** Artwork first, then framed for the given finish when present. */
-export function tabloGalleryImages(tablo: Tablo, finish?: FrameFinish): TabloImage[] {
-  const out: TabloImage[] = [];
-  const artwork = tabloArtworkImage(tablo);
-  if (artwork) out.push(artwork);
+/** Primary shop/hero image: framed mockup (default finish), else flat artwork. */
+export function tabloProductImage(tablo: Tablo, finish?: FrameFinish): TabloImage | null {
   const framed = tabloFramedImageForFinish(tablo, finish);
+  if (framed) return framed;
+  return tabloArtworkImage(tablo);
+}
+
+/** Detail gallery: framed mockup first, then flat artwork when both exist. */
+export function tabloDetailGalleryImages(tablo: Tablo, finish?: FrameFinish): TabloImage[] {
+  const artwork = tabloArtworkImage(tablo);
+  const framed = tabloFramedImageForFinish(tablo, finish);
+  const out: TabloImage[] = [];
   if (framed) out.push(framed);
+  if (artwork && artwork.url !== framed?.url && artwork.pathname !== framed?.pathname) {
+    out.push(artwork);
+  }
   return out;
+}
+
+/** @deprecated Prefer tabloProductImage / tabloDetailGalleryImages for public UI. */
+export function tabloGalleryImages(tablo: Tablo, finish?: FrameFinish): TabloImage[] {
+  return tabloDetailGalleryImages(tablo, finish);
 }
