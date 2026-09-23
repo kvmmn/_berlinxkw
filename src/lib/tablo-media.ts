@@ -59,11 +59,38 @@ function withResolvedPublicImage(image: TabloImage | null | undefined): TabloIma
   return { ...image, url: publicTabloImageUrl(image) ?? image.url };
 }
 
+function withResolvedPortalFramedByFinish(
+  map: Tablo["framedImagesByFinish"],
+): Tablo["framedImagesByFinish"] {
+  if (!map) return undefined;
+  const out: NonNullable<Tablo["framedImagesByFinish"]> = {};
+  for (const [key, img] of Object.entries(map)) {
+    if (!img) continue;
+    const resolved = withResolvedPortalImage(img);
+    if (resolved) out[key as keyof typeof out] = resolved;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+function withResolvedPublicFramedByFinish(
+  map: Tablo["framedImagesByFinish"],
+): Tablo["framedImagesByFinish"] {
+  if (!map) return undefined;
+  const out: NonNullable<Tablo["framedImagesByFinish"]> = {};
+  for (const [key, img] of Object.entries(map)) {
+    if (!img) continue;
+    const resolved = withResolvedPublicImage(img);
+    if (resolved) out[key as keyof typeof out] = resolved;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 export function withPortalTabloImages(tablos: Tablo[]): Tablo[] {
   return tablos.map((t) => ({
     ...t,
     image: withResolvedPortalImage(t.image),
     framedImage: withResolvedPortalImage(t.framedImage ?? null),
+    framedImagesByFinish: withResolvedPortalFramedByFinish(t.framedImagesByFinish),
   }));
 }
 
@@ -72,6 +99,7 @@ export function withPublicTabloImages(tablos: Tablo[]): Tablo[] {
     ...t,
     image: withResolvedPublicImage(t.image),
     framedImage: withResolvedPublicImage(t.framedImage ?? null),
+    framedImagesByFinish: withResolvedPublicFramedByFinish(t.framedImagesByFinish),
   }));
 }
 

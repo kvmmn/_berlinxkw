@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
+import { applyFrameFinishFieldsFromForm } from "@/lib/tablo-frame-api";
+import { FRAME_FINISHES, tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { Tablo, TabloStatus } from "@/lib/types";
@@ -92,9 +94,17 @@ export async function POST(req: Request) {
     status,
     image,
     framedImage: framedImage ?? undefined,
+    frameFinishes: [...FRAME_FINISHES],
+    defaultFrameFinish: "bronze",
     marketplaceUrl: marketplaceUrl || undefined,
     captionDraft: captionDraft || defaultCaptionDraft(title),
   };
+
+  const frameResult = applyFrameFinishFieldsFromForm(tablo, form);
+  if (!frameResult.ok) {
+    return NextResponse.json({ error: frameResult.error }, { status: 400 });
+  }
+  tablo.defaultFrameFinish = tabloDefaultFrameFinish(tablo);
 
   state.tablos.push(tablo);
   const { ok, mode } = await saveState(state);

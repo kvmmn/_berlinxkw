@@ -1,5 +1,5 @@
-import { tabloArtworkImage, tabloFramedImage, tabloGalleryImages } from "@/lib/tablo-images";
-import type { Tablo } from "@/lib/types";
+import { tabloArtworkImage, tabloFramedImageForFinish, tabloGalleryImages } from "@/lib/tablo-images";
+import type { FrameFinish, Tablo } from "@/lib/types";
 
 const SLOT_LABEL: Record<number, string> = {
   0: "artwork",
@@ -9,7 +9,7 @@ const SLOT_LABEL: Record<number, string> = {
 export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
   const gallery = tabloGalleryImages(tablo);
   const artworkUrl = tabloArtworkImage(tablo)?.url;
-  const framedUrl = tabloFramedImage(tablo)?.url;
+  const framedUrl = tabloFramedImageForFinish(tablo)?.url;
 
   if (gallery.length === 0) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
@@ -33,8 +33,15 @@ export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
   );
 }
 
-export function TabloDetailGallery({ tablo }: { tablo: Tablo }) {
-  const gallery = tabloGalleryImages(tablo);
+export function TabloDetailGallery({
+  tablo,
+  finish,
+}: {
+  tablo: Tablo;
+  finish?: FrameFinish;
+}) {
+  const gallery = tabloGalleryImages(tablo, finish);
+  const framedForFinish = tabloFramedImageForFinish(tablo, finish);
 
   if (gallery.length === 0) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
@@ -49,8 +56,10 @@ export function TabloDetailGallery({ tablo }: { tablo: Tablo }) {
           <figcaption className="bk-meta">{SLOT_LABEL[i] ?? "photo"}</figcaption>
         </figure>
       ))}
-      {tabloArtworkImage(tablo) && !tabloFramedImage(tablo) ? (
-        <p className="bk-meta bk-tablo-framed-slot">framed sample — coming soon</p>
+      {tabloArtworkImage(tablo) && !framedForFinish ? (
+        <p className="bk-meta bk-tablo-framed-slot">
+          framed sample for this finish — coming soon (same orientation as artwork)
+        </p>
       ) : null}
     </div>
   );

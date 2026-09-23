@@ -90,6 +90,9 @@ export interface Session {
 
 export type TabloStatus = "draft" | "listed" | "sold";
 
+/** Frame metal finish slug on shop tablos (`bronze` | `matte-black-brushed` | `matte-steel-brushed`). */
+export type FrameFinish = "bronze" | "matte-black-brushed" | "matte-steel-brushed";
+
 export interface TabloImage {
   url?: string;
   pathname?: string;
@@ -110,6 +113,12 @@ export interface Tablo {
   image: TabloImage | null;
   /** Finished piece framed on wall — optional second photo. */
   framedImage?: TabloImage | null;
+  /** Which frame finishes buyers can order; omit = all three. */
+  frameFinishes?: FrameFinish[];
+  /** Shop default selection; must be listed in `frameFinishes`. */
+  defaultFrameFinish?: FrameFinish;
+  /** Per-finish framed mockups; missing keys fall back to `framedImage`. */
+  framedImagesByFinish?: Partial<Record<FrameFinish, TabloImage>>;
   marketplaceUrl?: string;
   /** Instagram caption template; use {shopLink} for the public listing URL. */
   captionDraft?: string;
