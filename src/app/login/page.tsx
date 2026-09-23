@@ -37,7 +37,12 @@ function LoginForm() {
       <p className="bk-meta" style={{ color: "var(--bk-gray-70)", marginBottom: "0.5rem" }}>
         advisor portal
       </p>
-      <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-45)", marginBottom: "2rem", fontSize: "0.75rem" }}>
+      <p
+        className="bk-meta bk-persian"
+        dir="auto"
+        lang="fa"
+        style={{ color: "var(--bk-gray-45)", marginBottom: "2rem", fontSize: "0.75rem" }}
+      >
         رمز ورود را وارد کنید
       </p>
       <form onSubmit={submit} className="bk-login-form">

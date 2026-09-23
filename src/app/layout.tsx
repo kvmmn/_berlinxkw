@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { vazirmatn } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={vazirmatn.variable}>
       <body>{children}</body>
     </html>
   );

@@ -119,7 +119,9 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
               <div style={{ fontWeight: 600 }}>
                 {a.nameFa} · {a.nameEn}
               </div>
-              <div style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>{a.roleFa}</div>
+              <div dir="auto" lang="fa" style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>
+                {a.roleFa}
+              </div>
               <div style={{ fontSize: "0.8rem", color: "var(--bk-gray-70)" }}>{a.roleEn}</div>
             </div>
           ))}
