@@ -9,7 +9,7 @@ Repository layout:
 - `logo.png` — mark (neon lime orb + bear)
 - `src/` — **Advisor Portal** (founder control plane) + LangGraph agents
 
-**Typography:** Persian UI uses **Estedad** (variable woff2 via jsDelivr); Latin chrome stays on Nimbus/Helvetica tokens from the typeface kit (type kit docs may still mention Vazirmatn/Peyda).
+**Typography:** Persian UI uses **Vazirmatn** (Google Fonts via `next/font`, Arabic subset); Latin chrome stays on Nimbus/Helvetica tokens from the typeface kit (type kit docs may still mention Peyda).
 
 ## Architecture
 

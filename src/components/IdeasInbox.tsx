@@ -280,11 +280,21 @@ export function IdeasInbox({
                   {new Date(idea.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              <h2 className="bk-persian" style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>
+              <h2
+                className="bk-persian"
+                dir="auto"
+                lang="fa"
+                style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}
+              >
                 {idea.title}
               </h2>
               {idea.description ? (
-                <p className="bk-persian" style={{ margin: 0, color: "var(--bk-gray-70)", fontSize: "0.9375rem" }}>
+                <p
+                  className="bk-persian"
+                  dir="auto"
+                  lang="fa"
+                  style={{ margin: 0, color: "var(--bk-gray-70)", fontSize: "0.9375rem" }}
+                >
                   {idea.description}
                 </p>
               ) : null}
