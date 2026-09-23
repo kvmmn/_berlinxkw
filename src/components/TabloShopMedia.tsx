@@ -1,35 +1,42 @@
-import { tabloArtworkImage, tabloFramedImageForFinish, tabloGalleryImages } from "@/lib/tablo-images";
+import {
+  tabloArtworkImage,
+  tabloDetailGalleryImages,
+  tabloFramedImageForFinish,
+  tabloProductImage,
+} from "@/lib/tablo-images";
+import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
-const SLOT_LABEL: Record<number, string> = {
-  0: "artwork",
-  1: "framed sample",
+const DETAIL_SLOT_LABEL: Record<number, string> = {
+  0: "framed on wall",
+  1: "artwork",
 };
 
-export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
-  const gallery = tabloGalleryImages(tablo);
-  const artworkUrl = tabloArtworkImage(tablo)?.url;
-  const framedUrl = tabloFramedImageForFinish(tablo)?.url;
+function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
+  if (kind === "framed") return `${tablo.title} — framed tablo on wall`;
+  if (kind === "artwork") return `${tablo.title} — original artwork`;
+  const hasFramed = Boolean(tabloFramedImageForFinish(tablo));
+  return hasFramed ? `${tablo.title} — framed tablo on wall` : `${tablo.title} — tablo artwork`;
+}
 
-  if (gallery.length === 0) {
+export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
+  const product = tabloProductImage(tablo);
+  if (!product?.url) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
   }
 
-  if (artworkUrl && framedUrl) {
-    return (
-      <div className="bk-tablo-card-media-stack">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={artworkUrl} alt={`${tablo.title} — artwork`} loading="lazy" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={framedUrl} alt={`${tablo.title} — framed sample`} loading="lazy" />
-      </div>
-    );
-  }
+  const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
 
-  const single = artworkUrl ?? framedUrl;
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={single} alt={tablo.title} loading="lazy" />
+    <div className="bk-tablo-card-media-frame">
+      <TabloPicture
+        src={product.url}
+        alt={productAlt(tablo, kind)}
+        mime={product.mime}
+        sizes={tabloPictureSizes("card")}
+        layout="contain"
+      />
+    </div>
   );
 }
 
@@ -40,7 +47,7 @@ export function TabloDetailGallery({
   tablo: Tablo;
   finish?: FrameFinish;
 }) {
-  const gallery = tabloGalleryImages(tablo, finish);
+  const gallery = tabloDetailGalleryImages(tablo, finish);
   const framedForFinish = tabloFramedImageForFinish(tablo, finish);
 
   if (gallery.length === 0) {
@@ -49,13 +56,25 @@ export function TabloDetailGallery({
 
   return (
     <div className="bk-tablo-detail-gallery">
-      {gallery.map((img, i) => (
-        <figure key={img.pathname ?? img.url ?? i} className="bk-tablo-detail-figure">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img.url} alt={`${tablo.title} — ${SLOT_LABEL[i] ?? "photo"}`} />
-          <figcaption className="bk-meta">{SLOT_LABEL[i] ?? "photo"}</figcaption>
+      {gallery.map((img, i) => {
+        const src = img.url;
+        if (!src) return null;
+        return (
+        <figure key={img.pathname ?? src ?? i} className="bk-tablo-detail-figure">
+          <div className="bk-tablo-detail-figure-media">
+            <TabloPicture
+              src={src}
+              alt={`${tablo.title} — ${DETAIL_SLOT_LABEL[i] ?? "photo"}`}
+              mime={img.mime}
+              sizes={tabloPictureSizes("detail")}
+              priority={i === 0}
+              layout="contain"
+            />
+          </div>
+          <figcaption className="bk-meta">{DETAIL_SLOT_LABEL[i] ?? "photo"}</figcaption>
         </figure>
-      ))}
+        );
+      })}
       {tabloArtworkImage(tablo) && !framedForFinish ? (
         <p className="bk-meta bk-tablo-framed-slot">
           framed sample for this finish — coming soon (same orientation as artwork)
