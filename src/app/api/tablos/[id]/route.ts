@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
 import {
-  applyTabloMultipartImages,
-  deleteTabloImage,
-  withPortalTabloImages,
-} from "@/lib/tablo-media";
+  applyFrameFinishFieldsFromForm,
+  applyFrameFinishFieldsFromJson,
+} from "@/lib/tablo-frame-api";
+import { applyFramedMultipartUploads } from "@/lib/tablo-framed-upload";
+import { deleteTabloImage, uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { TabloStatus } from "@/lib/types";
 
@@ -72,9 +73,24 @@ export async function PATCH(
     tablo.marketplaceUrl = marketplaceUrl || undefined;
     tablo.captionDraft = captionDraft || defaultCaptionDraft(title);
 
-    const imagesApplied = await applyTabloMultipartImages(id, form, tablo);
-    if (!imagesApplied.ok) {
-      return NextResponse.json({ error: imagesApplied.error }, { status: 400 });
+    const artworkFile = form.get("artwork") ?? form.get("image");
+    if (artworkFile instanceof File && artworkFile.size > 0) {
+      if (tablo.image) await deleteTabloImage(tablo.image);
+      const uploaded = await uploadTabloImage(id, artworkFile, "artwork");
+      if ("error" in uploaded) {
+        return NextResponse.json({ error: uploaded.error }, { status: 400 });
+      }
+      tablo.image = uploaded.image;
+    }
+
+    const frameResult = applyFrameFinishFieldsFromForm(tablo, form);
+    if (!frameResult.ok) {
+      return NextResponse.json({ error: frameResult.error }, { status: 400 });
+    }
+
+    const framedResult = await applyFramedMultipartUploads(id, tablo, form);
+    if (!framedResult.ok) {
+      return NextResponse.json({ error: framedResult.error }, { status: 400 });
     }
   } else {
     const body = (await req.json()) as {
@@ -85,6 +101,8 @@ export async function PATCH(
       status?: TabloStatus;
       marketplaceUrl?: string;
       captionDraft?: string;
+      frameFinishes?: unknown;
+      defaultFrameFinish?: unknown;
     };
 
     if (body.title !== undefined) {
@@ -119,6 +137,11 @@ export async function PATCH(
       }
       tablo.slug = nextSlug;
     }
+
+    const frameResult = applyFrameFinishFieldsFromJson(tablo, body);
+    if (!frameResult.ok) {
+      return NextResponse.json({ error: frameResult.error }, { status: 400 });
+    }
   }
 
   tablo.updatedAt = new Date().toISOString();
@@ -143,6 +166,11 @@ export async function DELETE(
   const [removed] = state.tablos.splice(idx, 1);
   if (removed.image) await deleteTabloImage(removed.image);
   if (removed.framedImage) await deleteTabloImage(removed.framedImage);
+  if (removed.framedImagesByFinish) {
+    for (const img of Object.values(removed.framedImagesByFinish)) {
+      if (img) await deleteTabloImage(img);
+    }
+  }
 
   const { ok, mode } = await saveState(state);
   if (!ok) {

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
-import { applyTabloMultipartImages, withPortalTabloImages } from "@/lib/tablo-media";
+import { applyFrameFinishFieldsFromForm } from "@/lib/tablo-frame-api";
+import { FRAME_FINISHES, tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { applyFramedMultipartUploads } from "@/lib/tablo-framed-upload";
+import { uploadTabloImage, withPortalTabloImages } from "@/lib/tablo-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { Tablo, TabloStatus } from "@/lib/types";
 
@@ -59,6 +62,17 @@ export async function POST(req: Request) {
   const slug = uniqueSlug(baseSlug, state.tablos);
 
   const id = `tablo-${uuidv4()}`;
+  let image: Tablo["image"] = null;
+
+  const artworkFile = form.get("artwork") ?? form.get("image");
+  if (artworkFile instanceof File && artworkFile.size > 0) {
+    const uploaded = await uploadTabloImage(id, artworkFile, "artwork");
+    if ("error" in uploaded) {
+      return NextResponse.json({ error: uploaded.error }, { status: 400 });
+    }
+    image = uploaded.image;
+  }
+
   const now = new Date().toISOString();
   const tablo: Tablo = {
     id,
@@ -69,15 +83,22 @@ export async function POST(req: Request) {
     description,
     priceEur,
     status,
-    image: null,
-    framedImage: null,
+    image,
+    frameFinishes: [...FRAME_FINISHES],
+    defaultFrameFinish: "bronze",
     marketplaceUrl: marketplaceUrl || undefined,
     captionDraft: captionDraft || defaultCaptionDraft(title),
   };
 
-  const imagesApplied = await applyTabloMultipartImages(id, form, tablo);
-  if (!imagesApplied.ok) {
-    return NextResponse.json({ error: imagesApplied.error }, { status: 400 });
+  const frameResult = applyFrameFinishFieldsFromForm(tablo, form);
+  if (!frameResult.ok) {
+    return NextResponse.json({ error: frameResult.error }, { status: 400 });
+  }
+  tablo.defaultFrameFinish = tabloDefaultFrameFinish(tablo);
+
+  const framedResult = await applyFramedMultipartUploads(id, tablo, form);
+  if (!framedResult.ok) {
+    return NextResponse.json({ error: framedResult.error }, { status: 400 });
   }
 
   state.tablos.push(tablo);

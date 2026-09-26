@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { vazirmatn } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "berlin × kawe — advisor portal",
-  description: "Company Brain operating system for berlin × kawe (@berlinxkw)",
+  title: "berlin × kawe",
+  description: "Berlin-native tablos and advisor portal for berlin × kawe (@berlinxkw)",
 };
 
 export const viewport = {
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={vazirmatn.variable}>
       <body>{children}</body>
     </html>
   );

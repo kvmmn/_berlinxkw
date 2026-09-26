@@ -4,7 +4,23 @@ import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { SHOP_LINK_PLACEHOLDER, fillCaptionDraft, shopListingUrl } from "@/lib/shop-url";
 import { MAX_IMAGE_BYTES } from "@/lib/idea-limits";
-import type { Tablo, TabloStatus } from "@/lib/types";
+import {
+  FRAME_FINISHES,
+  FRAME_FINISH_LABELS,
+  FRAMED_SAMPLE_ORIENTATION_HINT,
+  FRAMED_SAMPLE_ORIENTATION_HINT_FA,
+  TABLO_FRAMED_SAMPLE_HELPER_EN,
+  TABLO_FRAMED_SAMPLE_HELPER_FA,
+  TABLO_PRESENTATION_OVERVIEW_EN,
+  TABLO_PRESENTATION_OVERVIEW_FA,
+  tabloDefaultFrameFinish,
+  tabloFrameFinishes,
+} from "@/lib/frame-finish";
+import {
+  FRAMED_FINISH_CLEAR_FIELDS,
+  FRAMED_FINISH_UPLOAD_FIELDS,
+} from "@/lib/tablo-framed-upload-fields";
+import type { FrameFinish, Tablo, TabloStatus } from "@/lib/types";
 
 const STATUS: TabloStatus[] = ["draft", "listed", "sold"];
 
@@ -26,6 +42,15 @@ export function TablosAdmin({
   const [captionDraft, setCaptionDraft] = useState("");
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
   const [framedFile, setFramedFile] = useState<File | null>(null);
+  const [framedFinishFiles, setFramedFinishFiles] = useState<Partial<Record<FrameFinish, File>>>(
+    {},
+  );
+  const [clearFramed, setClearFramed] = useState(false);
+  const [clearFramedFinish, setClearFramedFinish] = useState<Partial<Record<FrameFinish, boolean>>>(
+    {},
+  );
+  const [frameFinishes, setFrameFinishes] = useState<FrameFinish[]>([...FRAME_FINISHES]);
+  const [defaultFrameFinish, setDefaultFrameFinish] = useState<FrameFinish>("bronze");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const artworkRef = useRef<HTMLInputElement>(null);
@@ -50,6 +75,11 @@ export function TablosAdmin({
     setCaptionDraft("");
     setArtworkFile(null);
     setFramedFile(null);
+    setFramedFinishFiles({});
+    setClearFramed(false);
+    setClearFramedFinish({});
+    setFrameFinishes([...FRAME_FINISHES]);
+    setDefaultFrameFinish("bronze");
     if (artworkRef.current) artworkRef.current.value = "";
     if (framedRef.current) framedRef.current.value = "";
   };
@@ -65,7 +95,24 @@ export function TablosAdmin({
     setCaptionDraft(t.captionDraft ?? "");
     setArtworkFile(null);
     setFramedFile(null);
+    setFramedFinishFiles({});
+    setClearFramed(false);
+    setClearFramedFinish({});
+    setFrameFinishes(tabloFrameFinishes(t));
+    setDefaultFrameFinish(tabloDefaultFrameFinish(t));
     setError(null);
+  };
+
+  const toggleFrameFinish = (finish: FrameFinish, on: boolean) => {
+    setFrameFinishes((prev) => {
+      let next = on ? [...prev, finish] : prev.filter((f) => f !== finish);
+      next = FRAME_FINISHES.filter((f) => next.includes(f));
+      if (next.length === 0) return prev;
+      if (!next.includes(defaultFrameFinish)) {
+        setDefaultFrameFinish(next[0]);
+      }
+      return next;
+    });
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -94,6 +141,16 @@ export function TablosAdmin({
     );
     if (artworkFile) form.set("artwork", artworkFile);
     if (framedFile) form.set("framed", framedFile);
+    if (clearFramed) form.set("clearFramed", "true");
+    for (const finish of FRAME_FINISHES) {
+      const file = framedFinishFiles[finish];
+      if (file) form.set(FRAMED_FINISH_UPLOAD_FIELDS[finish][0], file);
+      if (clearFramedFinish[finish]) {
+        form.set(FRAMED_FINISH_CLEAR_FIELDS[finish][0], "true");
+      }
+    }
+    form.set("frameFinishes", JSON.stringify(frameFinishes));
+    form.set("defaultFrameFinish", defaultFrameFinish);
 
     const url = editingId ? `/api/tablos/${editingId}` : "/api/tablos";
     const method = editingId ? "PATCH" : "POST";
@@ -137,7 +194,8 @@ export function TablosAdmin({
       </div>
       <p className="bk-meta bk-tablos-hint">
         List originals on <code>/shop</code>. Caption drafts use{" "}
-        <code>{SHOP_LINK_PLACEHOLDER}</code> for the live listing URL.
+        <code>{SHOP_LINK_PLACEHOLDER}</code> for the live listing URL. See{" "}
+        <code>docs/tablos-shop-admin.md</code> for artwork vs framed samples and finish slugs.
       </p>
 
       <form className="bk-panel bk-tablos-form" onSubmit={submit}>
@@ -193,62 +251,180 @@ export function TablosAdmin({
             placeholder={`… ${SHOP_LINK_PLACEHOLDER}`}
           />
         </label>
-        <label className="bk-field">
-          <span className="bk-meta">artwork image (flat / original)</span>
-          <input
-            ref={artworkRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f && f.size > MAX_IMAGE_BYTES) {
-                setError("Image must be 8MB or smaller.");
-                return;
-              }
-              setArtworkFile(f ?? null);
-              setError(null);
-            }}
-          />
-        </label>
-        <label className="bk-field">
-          <span className="bk-meta">framed sample (on wall — optional)</span>
-          <input
-            ref={framedRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f && f.size > MAX_IMAGE_BYTES) {
-                setError("Image must be 8MB or smaller.");
-                return;
-              }
-              setFramedFile(f ?? null);
-              setError(null);
-            }}
-          />
-        </label>
-        {editingId ? (
-          <div className="bk-tablo-admin-previews">
-            {tablos.find((x) => x.id === editingId)?.image?.url ? (
-              <figure className="bk-tablo-admin-preview">
-                <figcaption className="bk-meta">current artwork</figcaption>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={tablos.find((x) => x.id === editingId)!.image!.url} alt="" />
-              </figure>
-            ) : (
-              <p className="bk-meta">no artwork yet</p>
-            )}
-            {tablos.find((x) => x.id === editingId)?.framedImage?.url ? (
-              <figure className="bk-tablo-admin-preview">
-                <figcaption className="bk-meta">current framed</figcaption>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={tablos.find((x) => x.id === editingId)!.framedImage!.url} alt="" />
-              </figure>
-            ) : (
-              <p className="bk-meta bk-tablo-admin-framed-slot">framed slot empty</p>
-            )}
+        <fieldset className="bk-field bk-tablo-presentation">
+          <legend className="bk-meta">shop presentation · نمایش فروشگاه</legend>
+          <p className="bk-meta bk-tablo-presentation-overview">
+            {TABLO_PRESENTATION_OVERVIEW_EN}
+            <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+              {TABLO_PRESENTATION_OVERVIEW_FA}
+            </span>
+          </p>
+          <label className="bk-field bk-tablo-presentation-artwork">
+            <span className="bk-meta">1 · artwork image (flat original → `image`)</span>
+            <input
+              ref={artworkRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size > MAX_IMAGE_BYTES) {
+                  setError("Image must be 8MB or smaller.");
+                  return;
+                }
+                setArtworkFile(f ?? null);
+                setError(null);
+              }}
+            />
+          </label>
+          <div className="bk-frame-finish-admin bk-tablo-presentation-finishes">
+            <p className="bk-meta bk-tablo-presentation-step">2 · frame finishes (buyer options → JSON)</p>
+          <p className="bk-meta bk-frame-finish-admin-hint">
+            Check which metals buyers can order. Stored as <code>frameFinishes</code> and{" "}
+            <code>defaultFrameFinish</code> — not caption text.
+          </p>
+          <div className="bk-frame-finish-admin-checks">
+            {FRAME_FINISHES.map((finish) => {
+              const label = FRAME_FINISH_LABELS[finish];
+              const checked = frameFinishes.includes(finish);
+              return (
+                <label key={finish} className="bk-frame-finish-admin-check">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    disabled={checked && frameFinishes.length === 1}
+                    onChange={(e) => toggleFrameFinish(finish, e.target.checked)}
+                  />
+                  <span>
+                    {label.en} · <span lang="fa">{label.fa}</span>
+                  </span>
+                </label>
+              );
+            })}
           </div>
-        ) : null}
+          <label className="bk-field bk-frame-finish-default">
+            <span className="bk-meta">default finish · پیش‌فرض</span>
+            <select
+              value={defaultFrameFinish}
+              onChange={(e) => setDefaultFrameFinish(e.target.value as FrameFinish)}
+            >
+              {frameFinishes.map((finish) => (
+                <option key={finish} value={finish}>
+                  {FRAME_FINISH_LABELS[finish].en} · {FRAME_FINISH_LABELS[finish].fa}
+                </option>
+              ))}
+            </select>
+          </label>
+          </div>
+          <label className="bk-field bk-tablo-presentation-framed">
+            <span className="bk-meta">3 · framed sample (on wall → `framedImage`)</span>
+            <p className="bk-meta bk-frame-finish-admin-hint">
+              {TABLO_FRAMED_SAMPLE_HELPER_EN}
+              <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+                {TABLO_FRAMED_SAMPLE_HELPER_FA}
+              </span>
+              {FRAMED_SAMPLE_ORIENTATION_HINT}
+              <span lang="fa" className="bk-frame-finish-admin-hint-fa">
+                {FRAMED_SAMPLE_ORIENTATION_HINT_FA}
+              </span>
+            </p>
+            <input
+              ref={framedRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f && f.size > MAX_IMAGE_BYTES) {
+                  setError("Image must be 8MB or smaller.");
+                  return;
+                }
+                setFramedFile(f ?? null);
+                setClearFramed(false);
+                setError(null);
+              }}
+            />
+            {editingId && tablos.find((x) => x.id === editingId)?.framedImage?.url ? (
+              <label className="bk-tablo-clear-framed">
+                <input
+                  type="checkbox"
+                  checked={clearFramed}
+                  onChange={(e) => {
+                    setClearFramed(e.target.checked);
+                    if (e.target.checked) setFramedFile(null);
+                  }}
+                />
+                <span className="bk-meta">remove current framed sample</span>
+              </label>
+            ) : null}
+          </label>
+          <div className="bk-tablo-presentation-framed-per-finish">
+            <p className="bk-meta bk-tablo-presentation-step">
+              3b · per-finish framed mockups → <code>framedImagesByFinish</code>
+            </p>
+            <p className="bk-meta bk-frame-finish-admin-hint">
+              Optional. When set, the shop shows the matching mockup for each finish. Field names for
+              API uploads: <code>{FRAMED_FINISH_UPLOAD_FIELDS.bronze[0]}</code>, etc.
+            </p>
+            <ul className="bk-tablo-framed-finish-uploads">
+              {FRAME_FINISHES.map((finish) => {
+                const label = FRAME_FINISH_LABELS[finish];
+                const editing = editingId ? tablos.find((x) => x.id === editingId) : undefined;
+                const hasCurrent = Boolean(editing?.framedImagesByFinish?.[finish]?.url);
+                return (
+                  <li key={finish} className="bk-tablo-framed-finish-upload">
+                    <label className="bk-field">
+                      <span className="bk-meta">
+                        {label.en} · <span lang="fa">{label.fa}</span>
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f && f.size > MAX_IMAGE_BYTES) {
+                            setError("Image must be 8MB or smaller.");
+                            return;
+                          }
+                          setFramedFinishFiles((prev) => {
+                            const next = { ...prev };
+                            if (f) next[finish] = f;
+                            else delete next[finish];
+                            return next;
+                          });
+                          if (f) {
+                            setClearFramedFinish((prev) => ({ ...prev, [finish]: false }));
+                          }
+                          setError(null);
+                        }}
+                      />
+                    </label>
+                    {editingId && hasCurrent ? (
+                      <label className="bk-tablo-clear-framed">
+                        <input
+                          type="checkbox"
+                          checked={clearFramedFinish[finish] ?? false}
+                          onChange={(e) => {
+                            setClearFramedFinish((prev) => ({
+                              ...prev,
+                              [finish]: e.target.checked,
+                            }));
+                            if (e.target.checked) {
+                              setFramedFinishFiles((prev) => {
+                                const next = { ...prev };
+                                delete next[finish];
+                                return next;
+                              });
+                            }
+                          }}
+                        />
+                        <span className="bk-meta">remove {label.en} mockup</span>
+                      </label>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </fieldset>
         <div className="bk-tablos-form-actions">
           <button type="submit" className="bk-btn bk-btn-primary" disabled={submitting || readOnly}>
             {submitting ? "saving…" : editingId ? "update" : "create"}
@@ -265,16 +441,24 @@ export function TablosAdmin({
         {tablos.map((t) => (
           <li key={t.id} className="bk-panel bk-tablo-row">
             <div className="bk-tablo-row-media">
-              {t.image?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={t.image.url} alt="" title="artwork" />
+              {t.image?.url || t.framedImage?.url ? (
+                <div className="bk-tablo-row-thumbs">
+                  {t.image?.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={t.image.url} alt="" title="artwork" />
+                  ) : (
+                    <div className="bk-tablo-thumb-empty bk-meta">artwork —</div>
+                  )}
+                  {t.framedImage?.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={t.framedImage.url} alt="" title="framed" />
+                  ) : (
+                    <div className="bk-tablo-thumb-empty bk-meta">framed —</div>
+                  )}
+                </div>
               ) : (
                 <div className="bk-tablo-card-placeholder bk-meta">—</div>
               )}
-              {t.framedImage?.url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={t.framedImage.url} alt="" className="bk-tablo-row-framed" title="framed" />
-              ) : null}
             </div>
             <div className="bk-tablo-row-body">
               <div className="bk-tablo-row-head">

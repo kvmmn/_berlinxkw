@@ -185,7 +185,7 @@ export function MetricsControl({
 
       {error ? <p style={{ color: "#ff6b6b" }}>{error}</p> : null}
       {status ? (
-        <p className="bk-meta bk-persian" style={{ color: "var(--bk-lime)" }}>
+        <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-95)" }}>
           {status}
         </p>
       ) : null}

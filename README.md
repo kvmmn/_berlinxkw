@@ -9,7 +9,7 @@ Repository layout:
 - `logo.png` — mark (neon lime orb + bear)
 - `src/` — **Advisor Portal** (founder control plane) + LangGraph agents
 
-**Typography:** Persian UI uses **Estedad** (variable woff2 via jsDelivr); Latin chrome stays on Nimbus/Helvetica tokens from the typeface kit (type kit docs may still mention Vazirmatn/Peyda).
+**Typography:** Persian UI uses **Vazirmatn** (Google Fonts via `next/font`, Arabic subset); Latin chrome stays on Nimbus/Helvetica tokens from the typeface kit (type kit docs may still mention Peyda).
 
 ## Architecture
 
@@ -129,6 +129,10 @@ Copy from [`.env.example`](.env.example). **Instagram metrics:** manual entry + 
 | `/portal/ideas` | **Ideas Inbox** — founder drops for agents |
 | `/portal/chat` | LangGraph streaming OS (Persian-friendly) |
 | `/portal/system` | **راهبری** — agents, **Instagram metrics** (manual + optional Meta sync), `brainMemory` |
+| `/portal/tablos` | Tablos shop admin — artwork, frame finishes, framed samples |
+| `/shop` | Public tablos storefront |
+
+Tablo artwork, orientation, and frame finish fields: [`docs/tablos-shop-admin.md`](docs/tablos-shop-admin.md).
 
 ### Chat API
 

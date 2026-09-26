@@ -113,13 +113,15 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
         <div style={{ display: "grid", gap: "0.75rem" }}>
           {data.agents.map((a) => (
             <div key={a.id} className="bk-panel bk-persian" style={{ padding: "0.75rem 1rem" }} dir="auto">
-              <div className="bk-meta" style={{ color: "var(--bk-lime)", fontSize: "0.65rem" }}>
+              <div className="bk-meta" style={{ color: "var(--bk-gray-95)", fontSize: "0.65rem" }}>
                 {a.id}
               </div>
               <div style={{ fontWeight: 600 }}>
                 {a.nameFa} · {a.nameEn}
               </div>
-              <div style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>{a.roleFa}</div>
+              <div dir="auto" lang="fa" style={{ fontSize: "0.875rem", color: "var(--bk-gray-45)" }}>
+                {a.roleFa}
+              </div>
               <div style={{ fontSize: "0.8rem", color: "var(--bk-gray-70)" }}>{a.roleEn}</div>
             </div>
           ))}
@@ -134,7 +136,7 @@ export function SystemControl({ initial }: { initial: SystemPayload }) {
         </p>
         {error ? <p style={{ color: "#ff6b6b" }}>{error}</p> : null}
         {saveStatus ? (
-          <p className="bk-meta bk-persian" style={{ color: "var(--bk-lime)" }} dir="auto">
+          <p className="bk-meta bk-persian" style={{ color: "var(--bk-gray-95)" }} dir="auto">
             {saveStatus}
           </p>
         ) : null}

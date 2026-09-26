@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
+import { BrandLockup } from "@/components/BrandLockup";
+import { BrandLogoMark } from "@/components/BrandLogoMark";
 
 const NAV = [
   { href: "/portal", label: "weekly report" },
@@ -27,9 +28,11 @@ export function PortalShell({
     <div className="bk-portal-root">
       <header className="bk-portal-header">
         <div className="bk-portal-brand">
-          <Image src="/logo.png" alt="berlin × kawe" width={36} height={36} />
-          <span className="bk-meta" style={{ fontSize: "var(--bk-size-meta)" }}>
-            berlin × kawe / advisor portal
+          <Link href="/" className="bk-portal-brand-link" aria-label="berlin × kawe home">
+            <BrandLogoMark size={36} />
+          </Link>
+          <span className="bk-meta bk-portal-brand-label">
+            <BrandLockup size="sm" /> / advisor portal
           </span>
         </div>
         <nav className="bk-portal-nav" aria-label="Portal sections">

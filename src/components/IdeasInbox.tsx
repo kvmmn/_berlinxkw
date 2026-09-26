@@ -246,7 +246,7 @@ export function IdeasInbox({
           </div>
         </form>
       ) : (
-        <p className="bk-meta" style={{ color: "var(--bk-lime)", marginBottom: "2rem" }}>
+        <p className="bk-meta" style={{ color: "var(--bk-gray-95)", marginBottom: "2rem" }}>
           Read-only mode — ideas cannot be saved until Blob storage is connected.
         </p>
       )}
@@ -268,7 +268,7 @@ export function IdeasInbox({
                   className="bk-meta"
                   style={{
                     fontSize: "0.65rem",
-                    color: "var(--bk-lime)",
+                    color: "var(--bk-gray-95)",
                     border: "1px solid var(--bk-border)",
                     padding: "0.15rem 0.4rem",
                     marginRight: "0.5rem",
@@ -280,11 +280,21 @@ export function IdeasInbox({
                   {new Date(idea.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              <h2 className="bk-persian" style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>
+              <h2
+                className="bk-persian"
+                dir="auto"
+                lang="fa"
+                style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}
+              >
                 {idea.title}
               </h2>
               {idea.description ? (
-                <p className="bk-persian" style={{ margin: 0, color: "var(--bk-gray-70)", fontSize: "0.9375rem" }}>
+                <p
+                  className="bk-persian"
+                  dir="auto"
+                  lang="fa"
+                  style={{ margin: 0, color: "var(--bk-gray-70)", fontSize: "0.9375rem" }}
+                >
                   {idea.description}
                 </p>
               ) : null}
