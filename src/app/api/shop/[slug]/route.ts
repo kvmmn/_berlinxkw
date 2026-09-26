@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { normalizeTabloFrameFields } from "@/lib/frame-finish";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -15,6 +16,6 @@ export async function GET(
   if (!raw) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  const [tablo] = withPublicTabloImages([raw]);
+  const [tablo] = withPublicTabloImages([raw]).map(normalizeTabloFrameFields);
   return NextResponse.json({ tablo });
 }
