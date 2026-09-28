@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/lib/instagram/**/*.test.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.0",
@@ -32,11 +34,13 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
     "@types/node": "^22.0.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.5.0",
+    "tsx": "^4.20.0",
     "typescript": "^5.0.0"
   }
 }
