@@ -10,6 +10,9 @@ const PUBLIC_PREFIXES = [
   "/api/shop",
 ];
 
+/** Routes that authenticate via Bearer secret inside the handler (not portal cookie). */
+const BEARER_AUTH_API_PATHS = ["/api/instagram/publish", "/api/instagram/refresh-token"];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
@@ -26,6 +29,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+  if (BEARER_AUTH_API_PATHS.some((p) => pathname === p)) {
     return NextResponse.next();
   }
   const session = request.cookies.get(AUTH_COOKIE)?.value;
