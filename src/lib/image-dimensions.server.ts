@@ -1,7 +1,7 @@
 import "server-only";
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { isBlobStorePathname, streamBlob } from "./blob-private";
+import { hasBlobToken, isBlobStorePathname, streamBlob } from "./blob-private";
 import {
   dimensionsFromBuffer,
   shopMediaPathnameFromUrl,
@@ -80,7 +80,7 @@ async function probeTabloImageDimensionsFromBytes(
     (image.pathname && isBlobStorePathname(image.pathname) ? image.pathname : null) ??
     shopMediaPathnameFromUrl(image.url);
 
-  if (pathname) {
+  if (pathname && hasBlobToken()) {
     const fromBlob = await probeBlobImageDimensions(pathname);
     if (fromBlob) return fromBlob;
   }

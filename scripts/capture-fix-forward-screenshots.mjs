@@ -3,8 +3,16 @@ import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const baseUrl = process.argv[2] || "http://127.0.0.1:3001";
+const rawBase = process.argv[2] || "http://127.0.0.1:3001";
 const outDir = process.argv[3] || "/opt/cursor/artifacts/screenshots/fix-forward";
+
+const parsed = new URL(rawBase.includes("://") ? rawBase : `http://${rawBase}`);
+const origin = `${parsed.protocol}//${parsed.host}`;
+const shareQuery = parsed.search;
+
+function pageUrl(pathname) {
+  return `${origin}${pathname}${shareQuery}`;
+}
 
 const shopWidths = [390, 768, 1440];
 const details = [
@@ -19,7 +27,7 @@ async function main() {
   for (const w of shopWidths) {
     const page = await browser.newPage();
     await page.setViewportSize({ width: w, height: w === 1440 ? 1400 : 1200 });
-    await page.goto(`${baseUrl}/shop`, { waitUntil: "networkidle", timeout: 120000 });
+    await page.goto(pageUrl("/shop"), { waitUntil: "networkidle", timeout: 120000 });
     await page.waitForTimeout(500);
     const file = join(outDir, `shop-${w}.png`);
     await page.screenshot({ path: file, fullPage: true });
@@ -31,7 +39,7 @@ async function main() {
     for (const w of d.widths) {
       const page = await browser.newPage();
       await page.setViewportSize({ width: w, height: 1200 });
-      await page.goto(`${baseUrl}/shop/${d.slug}`, { waitUntil: "networkidle", timeout: 120000 });
+      await page.goto(pageUrl(`/shop/${d.slug}`), { waitUntil: "networkidle", timeout: 120000 });
       await page.waitForTimeout(500);
       const file = join(outDir, `detail-${d.slug}-${w}.png`);
       await page.screenshot({ path: file, fullPage: true });
@@ -47,7 +55,7 @@ async function main() {
 
   const footerPage = await browser.newPage();
   await footerPage.setViewportSize({ width: 1440, height: 200 });
-  await footerPage.goto(`${baseUrl}/shop`, { waitUntil: "networkidle" });
+  await footerPage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
   await footerPage.locator("footer.bk-public-footer").screenshot({
     path: join(outDir, "footer-bear-closeup-1440.png"),
   });
@@ -55,7 +63,7 @@ async function main() {
 
   const bearPage = await browser.newPage();
   await bearPage.setViewportSize({ width: 400, height: 400 });
-  await bearPage.goto(`${baseUrl}/shop`, { waitUntil: "networkidle" });
+  await bearPage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
   await bearPage.evaluate(() => {
     const mark = document.querySelector(".bk-public-advisor-mark");
     if (mark instanceof SVGElement) {
