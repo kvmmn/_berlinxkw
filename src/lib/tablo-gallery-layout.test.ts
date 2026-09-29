@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import { planTabloGalleryLayout } from "./tablo-gallery-layout";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
 import type { Tablo } from "./types";
+import { chunkTabloGalleryRows, tabloAspectFlexGrow } from "./tablo-gallery-rows";
 
 function stubTablo(id: string): Tablo {
   return {
@@ -24,24 +25,38 @@ function item(id: string, orientation: "landscape" | "portrait"): TabloGalleryLa
   return {
     tablo: stubTablo(id),
     orientation,
-    productAspect: "4 / 3",
+    productAspect: orientation === "landscape" ? "4 / 3" : "3 / 4",
     artworkAspect: "4 / 3",
     framedSlotAspect: "4 / 3",
   };
 }
 
 describe("planTabloGalleryLayout", () => {
-  it("uses portrait-rail order L,L,P for one portrait and two landscapes", () => {
-    const plan = planTabloGalleryLayout([item("p", "portrait"), item("l1", "landscape"), item("l2", "landscape")]);
-    assert.equal(plan.mode, "portrait-rail");
+  it("orders landscapes before portraits", () => {
+    const plan = planTabloGalleryLayout([
+      item("p", "portrait"),
+      item("l1", "landscape"),
+      item("l2", "landscape"),
+    ]);
     assert.deepEqual(
       plan.items.map((x) => x.tablo.id),
       ["l1", "l2", "p"],
     );
   });
+});
 
-  it("uses default order when two portraits", () => {
-    const plan = planTabloGalleryLayout([item("p1", "portrait"), item("p2", "portrait"), item("l1", "landscape")]);
-    assert.equal(plan.mode, "default");
+describe("tablo-gallery-rows", () => {
+  it("chunks five tablos into rows of three and two", () => {
+    const five = ["l1", "l2", "l3", "l4", "p"].map((id) =>
+      item(id, id === "p" ? "portrait" : "landscape"),
+    );
+    assert.deepEqual(chunkTabloGalleryRows(five, 3).length, 2);
+    assert.equal(chunkTabloGalleryRows(five, 3)[0]!.length, 3);
+    assert.equal(chunkTabloGalleryRows(five, 3)[1]!.length, 2);
+  });
+
+  it("parses aspect flex grow as width/height", () => {
+    assert.equal(tabloAspectFlexGrow("4 / 3"), 4 / 3);
+    assert.equal(tabloAspectFlexGrow("3 / 4"), 0.75);
   });
 });

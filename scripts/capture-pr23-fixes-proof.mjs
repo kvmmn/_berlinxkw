@@ -44,25 +44,19 @@ async function main() {
   });
   await btnPage.close();
 
-  const simPage = await browser.newPage();
-  await simPage.setViewportSize({ width: 1440, height: 1600 });
-  await simPage.goto(`${base}/shop?gallerySim5=1`, { waitUntil: "networkidle" });
-  await simPage.screenshot({ path: join(outDir, "proof-shop-sim5-1440.png"), fullPage: true });
-  await simPage.close();
-
   const measure = [];
-  for (const url of [`${base}/shop`, `${base}/`, `${base}/shop?gallerySim5=1`]) {
+  for (const url of [`${base}/shop`, `${base}/`]) {
     for (const w of [360, 390, 768, 1440]) {
       const page = await browser.newPage();
       await page.setViewportSize({ width: w, height: 1400 });
       await page.goto(url, { waitUntil: "networkidle" });
       await page.waitForTimeout(300);
       const m = await page.evaluate(() => {
-        const grid = document.querySelector(".bk-tablo-grid");
+        const grid = document.querySelector(".bk-tablo-justified-gallery");
         if (!grid) return null;
         const gap = Number.parseFloat(getComputedStyle(grid).gap) || 0;
         let maxDead = 0;
-        for (const li of grid.querySelectorAll(":scope > li")) {
+        for (const li of grid.querySelectorAll(":scope > .bk-tablo-justified-cell")) {
           const frame = li.querySelector(".bk-aspect-frame");
           const img = li.querySelector(".bk-tablo-picture, img");
           if (!frame || !img) continue;

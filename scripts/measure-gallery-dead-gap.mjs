@@ -11,7 +11,7 @@ const widths = [360, 390, 768, 1440].map(Number);
 
 async function measureGrid(page) {
   return page.evaluate(() => {
-    const grid = document.querySelector(".bk-tablo-grid");
+    const grid = document.querySelector(".bk-tablo-justified-gallery");
     if (!grid) return { error: "no grid" };
     const gap = Number.parseFloat(getComputedStyle(grid).gap) || 0;
     let maxDead = 0;

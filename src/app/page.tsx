@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
-import { TabloGalleryGrid } from "@/components/TabloGalleryGrid";
-import { TabloGalleryTile } from "@/components/TabloGalleryTile";
+import { TabloJustifiedGallery } from "@/components/TabloJustifiedGallery";
+import { TabloShopGridTile } from "@/components/TabloShopGridTile";
 import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
@@ -55,33 +55,19 @@ export default async function Home() {
                 all works
               </Link>
             </div>
-            <TabloGalleryGrid
-              mode={layout.mode}
-              railLandscapeAspect={layout.railLandscapeAspect}
-              className={
-                layout.mode === "portrait-rail"
-                  ? "bk-tablo-grid bk-landing-gallery bk-tablo-grid--portrait-rail"
-                  : "bk-tablo-grid bk-landing-gallery"
-              }
-            >
-              {layout.items.map(({ tablo, orientation, productAspect }, index) => (
-                <li
-                  key={tablo.id}
-                  className={
-                    tablo.id === layout.portraitTabloId
-                      ? "bk-landing-gallery-cell bk-tablo-grid-portrait-span"
-                      : "bk-landing-gallery-cell"
-                  }
-                >
-                  <TabloGalleryTile
-                    tablo={tablo}
-                    orientation={orientation}
-                    productAspect={productAspect}
-                    priority={index === 0}
-                  />
-                </li>
-              ))}
-            </TabloGalleryGrid>
+            <TabloJustifiedGallery
+              items={layout.items}
+              className="bk-landing-gallery"
+              renderTile={(item, index) => (
+                <TabloShopGridTile
+                  tablo={item.tablo}
+                  orientation={item.orientation}
+                  productAspect={item.productAspect}
+                  showBuy={false}
+                  priority={index === 0}
+                />
+              )}
+            />
           </section>
         ) : null}
       </div>

@@ -1,45 +1,53 @@
 #!/usr/bin/env node
-/**
- * Opens shop with ?simulateFiveTablos=1 (dev-only query handled in page if present)
- * For measurement, duplicates layout via local storage override — use measure script on
- * a page that renders five items. This script injects five tiles via evaluate for gap proof.
- */
+/** Local-only five-tablo layout proof via scripts/fixtures/gallery-five-tablos.html (not deployed). */
 import { chromium } from "playwright";
+import { readFile } from "node:fs/promises";
 import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const base = process.argv[2] || "http://127.0.0.1:3001";
-const outDir = process.argv[3] || "/opt/cursor/artifacts/screenshots/fix-forward/after";
+const outDir = process.argv[2] || "/opt/cursor/artifacts/screenshots/fix-forward/after";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const fixturePath = join(__dirname, "fixtures/gallery-five-tablos.html");
 
 async function measureDeadGap(page) {
   return page.evaluate(() => {
-    const grid = document.querySelector(".bk-tablo-grid");
+    const grid = document.querySelector(".bk-tablo-justified-gallery");
     if (!grid) return null;
     const gap = Number.parseFloat(getComputedStyle(grid).gap) || 0;
+    const gr = grid.getBoundingClientRect();
     let maxDead = 0;
-    for (const li of grid.querySelectorAll(":scope > li")) {
+    let maxRight = 0;
+    for (const li of grid.querySelectorAll(":scope > .bk-tablo-justified-cell")) {
+      maxRight = Math.max(maxRight, li.getBoundingClientRect().right);
       const frame = li.querySelector(".bk-aspect-frame");
-      const img = li.querySelector(".bk-tablo-picture, img");
+      const img = li.querySelector("img");
       if (!frame || !img) continue;
       const fr = frame.getBoundingClientRect();
       const ir = img.getBoundingClientRect();
-      maxDead = Math.max(maxDead, Math.max(0, fr.bottom - ir.bottom), Math.max(0, ir.top - fr.top));
+      maxDead = Math.max(
+        maxDead,
+        Math.max(0, fr.bottom - ir.bottom),
+        Math.max(0, ir.top - fr.top),
+        Math.max(0, fr.right - ir.right, ir.left - fr.left),
+      );
     }
-    return { gap, maxDead };
+    return { gap, maxDead, trailingDead: Math.max(0, gr.right - maxRight) };
   });
 }
 
 async function main() {
   await mkdir(outDir, { recursive: true });
+  const html = await readFile(fixturePath, "utf8");
   const browser = await chromium.launch();
-  for (const w of [768, 1440]) {
+  for (const w of [768, 1024, 1440]) {
     const page = await browser.newPage();
     await page.setViewportSize({ width: w, height: 1400 });
-    await page.goto(`${base}/shop?gallerySim5=1`, { waitUntil: "networkidle", timeout: 120000 });
-    await page.waitForTimeout(500);
+    await page.setContent(html, { waitUntil: "load" });
+    await page.waitForTimeout(100);
     const m = await measureDeadGap(page);
     console.log(w, m);
-    await page.screenshot({ path: join(outDir, `shop-sim5-${w}.png`), fullPage: true });
+    await page.screenshot({ path: join(outDir, `gallery-five-fixture-${w}.png`), fullPage: true });
     await page.close();
   }
   await browser.close();

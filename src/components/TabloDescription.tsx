@@ -1,6 +1,6 @@
 /** Renders stored copy with flowing wraps; middots bind to the preceding phrase. */
 export function normalizeDescriptionSegment(segment: string): string {
-  return segment.replace(/\+\s*€/g, "+\u00a0€");
+  return segment.replace(/\+\s*€/g, "+\u2060€");
 }
 
 export function TabloDescription({ text }: { text: string }) {

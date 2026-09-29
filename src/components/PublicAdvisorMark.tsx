@@ -10,6 +10,7 @@ export function PublicAdvisorMark({ className = "" }: { className?: string }) {
   return (
     <svg
       viewBox={ADVISOR_BEAR_VIEWBOX}
+      preserveAspectRatio="xMaxYMid meet"
       className={`bk-public-advisor-mark ${className}`.trim()}
       aria-hidden
       focusable="false"
