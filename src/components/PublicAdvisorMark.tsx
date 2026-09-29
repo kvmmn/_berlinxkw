@@ -5,7 +5,7 @@ import {
 } from "@/lib/advisor-bear-path";
 
 /**
- * Flat Berlin bear from logo.png trace (portal mark), ink only — no orb or lime.
+ * Monochrome portal mark (`public/logo.png`) — ink only, no glow or background.
  */
 export function PublicAdvisorMark({ className = "" }: { className?: string }) {
   return (
@@ -18,7 +18,7 @@ export function PublicAdvisorMark({ className = "" }: { className?: string }) {
       <g
         transform={`translate(0,${ADVISOR_BEAR_TRACE_HEIGHT}) scale(0.1,-0.1)`}
         fill="currentColor"
-        fillRule="nonzero"
+        fillRule="evenodd"
       >
         {ADVISOR_BEAR_PATHS.map((d, i) => (
           <path key={i} d={d} />
