@@ -102,8 +102,14 @@ async function measureFooter(page) {
   const link = page.locator(".bk-public-footer-advisor").first();
   const noteBox = await note.boundingBox();
   const linkBox = await link.boundingBox();
+  const noteInkRgb = await note.evaluate((node) => {
+    const cs = getComputedStyle(node);
+    const m = cs.color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (!m) return [107, 107, 102];
+    return [Number(m[1]), Number(m[2]), Number(m[3])];
+  });
   const noteShot = await note.screenshot();
-  const noteInk = scanInkBounds(noteShot, noteBox, [107, 107, 102], 45);
+  const noteInk = scanInkBounds(noteShot, noteBox, noteInkRgb, 45);
 
   const mark = link.locator(".bk-public-advisor-mark");
   const markBox = await mark.boundingBox();
@@ -181,24 +187,27 @@ async function measureFinishFaGap(page) {
 }
 
 async function measureTailPortraitFit(page) {
-  const portrait = page
-    .locator(".bk-tablo-justified-row--tail .bk-tablo-justified-cell")
-    .last()
-    .locator(".bk-tablo-tile-media")
-    .first();
-  const count = await portrait.count();
-  if (count === 0) return { skipped: true };
-  await portrait.scrollIntoViewIfNeeded();
-  const slot = await portrait.boundingBox();
-  const img = portrait.locator("img").first();
+  const cell = page.locator(".bk-tablo-justified-row--tail .bk-tablo-justified-cell").last();
+  if ((await cell.count()) === 0) return { skipped: true, reason: "no tail row" };
+  const media = cell.locator(".bk-tablo-tile-media").first();
+  await media.scrollIntoViewIfNeeded();
+  const slot = await media.boundingBox();
+  const img = media.locator("img").first();
+  if ((await img.count()) === 0) return { skipped: true, reason: "no img" };
   const imgBox = await img.boundingBox();
+  const shot = await img.screenshot();
+  const ink = scanInkBounds(shot, imgBox, [40, 40, 38], 80);
   if (!slot || !imgBox) return { error: "no box" };
+  const slotRight = slot.x + slot.width;
+  const inkRight = ink.inkRight ?? imgBox.x + imgBox.width;
+  const inkLeft = ink.inkLeft ?? imgBox.x;
   return {
     slotWidth: slot.width,
     imgWidth: imgBox.width,
     imgWiderThanSlotPx: imgBox.width - slot.width,
-    imgOverflowLeftPx: slot.x - imgBox.x,
-    imgOverflowRightPx: imgBox.x + imgBox.width - (slot.x + slot.width),
+    inkWiderThanSlotPx: inkRight - inkLeft - slot.width,
+    inkOverflowRightPx: inkRight - slotRight,
+    inkOverflowLeftPx: slot.x - inkLeft,
   };
 }
 

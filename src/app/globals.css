@@ -850,16 +850,17 @@ textarea.bk-input[dir="auto"] {
 .bk-public-footer-advisor {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-shrink: 0;
   box-sizing: border-box;
-  width: 44px;
+  width: auto;
+  min-width: 44px;
   height: 44px;
   margin: 0;
   margin-inline-start: auto;
   margin-inline-end: 0;
   /* Asymmetric padding: hover chip extends left; mark ink stays on shell content edge. */
-  padding: 8px 0 8px 8px;
+  padding: 8px 0 8px 12px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -883,7 +884,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translate(-3px, -4.25px);
+  transform: translate(3px, -2.5px);
 }
 
 
@@ -1121,7 +1122,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 8px;
+    padding: 10px 1rem 9px;
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
@@ -1161,15 +1162,11 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 8px;
+    padding: 10px 1rem 9px;
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1100px) {
-  .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 7px;
-  }
-
   .bk-public-root .bk-btn.bk-tablo-buy {
     padding: 11px 1rem 7px;
   }
