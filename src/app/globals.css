@@ -566,27 +566,16 @@ textarea.bk-input[dir="auto"] {
 .bk-public-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.72rem;
   color: inherit;
+  line-height: 1;
 }
 
-.bk-public-brand--hero {
-  gap: 0.85rem;
+.bk-public-brand--hero .bk-lockup {
+  letter-spacing: -0.02em;
 }
 
-.bk-logo-mark-flat {
-  flex-shrink: 0;
-  display: block;
-  transform: translateY(0.06em);
-  background-color: currentColor;
-  -webkit-mask-image: url("/brand/logo-mark-flat.svg");
-  mask-image: url("/brand/logo-mark-flat.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+.bk-public-brand--header .bk-lockup {
+  letter-spacing: -0.015em;
 }
 
 .bk-landing .bk-lockup-times,
@@ -1398,8 +1387,8 @@ textarea.bk-input[dir="auto"] {
 
 .bk-landing-nav-link:hover,
 .bk-landing-nav-link:focus-visible {
-  color: var(--bk-white);
-  text-shadow: 0 0 12px var(--bk-lime-glow);
+  color: var(--bk-public-ink);
+  text-shadow: none;
 }
 
 .bk-landing-main {
@@ -1453,8 +1442,8 @@ textarea.bk-input[dir="auto"] {
 
 .bk-landing-gallery-all:hover,
 .bk-landing-gallery-all:focus-visible {
-  color: var(--bk-white);
-  text-shadow: 0 0 10px var(--bk-lime-glow);
+  color: var(--bk-public-accent);
+  text-shadow: none;
 }
 
 .bk-landing-gallery {
@@ -1563,6 +1552,7 @@ textarea.bk-input[dir="auto"] {
   line-height: 1;
   display: flex;
   justify-content: center;
+  padding: clamp(0.25rem, 1.5vw, 0.75rem) 0;
 }
 
 .bk-landing-tagline {
