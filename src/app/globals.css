@@ -883,13 +883,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translateY(-1px);
-}
-
-@media (min-width: 721px) {
-  .bk-public-advisor-mark {
-    transform: translateY(-2px);
-  }
+  transform: translateY(-1.5px);
 }
 
 
@@ -1131,7 +1125,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 8px;
+    padding: 11px 1rem 9px;
   }
 }
 
