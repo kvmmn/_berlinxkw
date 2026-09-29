@@ -28,9 +28,13 @@ export function TabloCard({
   orientation?: TabloOrientation;
   productAspect: string;
 }) {
-  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
+    trustServer: true,
+  });
   const product = tabloProductImage(tablo);
-  const productAspect = useTabloImageAspect(initialProductAspect, product?.url);
+  const productAspect = useTabloImageAspect(initialProductAspect, product?.url, {
+    trustServer: true,
+  });
   const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
   const external = tabloBuyExternal(tablo);
 

@@ -28,9 +28,13 @@ export function TabloShopDetailBuy({
   artworkAspect: string;
 }) {
   const [finish, setFinish] = useState<FrameFinish>(() => coerceFrameFinish(tablo, undefined));
-  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
+    trustServer: true,
+  });
   const framedSlotAspect = initialFramedAspect;
-  const artworkAspect = useTabloImageAspect(initialArtworkAspect, tabloArtworkImage(tablo)?.url);
+  const artworkAspect = useTabloImageAspect(initialArtworkAspect, tabloArtworkImage(tablo)?.url, {
+    trustServer: true,
+  });
   const buyHref = useMemo(() => tabloBuyUrl(tablo, finish), [tablo, finish]);
   const external = tabloBuyExternal(tablo);
   const dir = orientationCopy(orientation);

@@ -5,6 +5,8 @@ export type TabloGalleryLayoutPlan = {
   /** Portrait spans a side rail beside stacked landscapes (no row dead gap). */
   mode: "default" | "portrait-rail";
   portraitTabloId: string | null;
+  /** First rail landscape product aspect (width/height) for height sync. */
+  railLandscapeAspect: string | null;
 };
 
 /**
@@ -25,6 +27,7 @@ export function planTabloGalleryLayout<T extends TabloGalleryLayoutItem>(
       items: ordered,
       mode: "portrait-rail",
       portraitTabloId: portrait.tablo.id,
+      railLandscapeAspect: landscapes[0]!.productAspect,
     };
   }
 
@@ -32,5 +35,6 @@ export function planTabloGalleryLayout<T extends TabloGalleryLayoutItem>(
     items: orderTablosForGalleryGrid(items),
     mode: "default",
     portraitTabloId: null,
+    railLandscapeAspect: null,
   };
 }

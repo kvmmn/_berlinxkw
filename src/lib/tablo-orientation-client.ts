@@ -7,7 +7,9 @@ import { orientationFromDimensions, type TabloOrientation } from "./tablo-frame-
 export function useTabloOrientation(
   initial: TabloOrientation,
   probeSrc: string | undefined,
+  options?: { trustServer?: boolean },
 ): TabloOrientation {
+  const trustServer = options?.trustServer ?? false;
   const [orientation, setOrientation] = useState<TabloOrientation>(initial);
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export function useTabloOrientation(
   }, [initial]);
 
   useEffect(() => {
-    if (!probeSrc) return;
+    if (trustServer || !probeSrc) return;
     let cancelled = false;
     const img = new window.Image();
     img.onload = () => {
@@ -27,7 +29,7 @@ export function useTabloOrientation(
       cancelled = true;
       img.onload = null;
     };
-  }, [probeSrc]);
+  }, [probeSrc, trustServer]);
 
   return orientation;
 }

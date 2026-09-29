@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
+import { TabloGalleryGrid } from "@/components/TabloGalleryGrid";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
 import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
@@ -54,7 +55,9 @@ export default async function Home() {
                 all works
               </Link>
             </div>
-            <ul
+            <TabloGalleryGrid
+              mode={layout.mode}
+              railLandscapeAspect={layout.railLandscapeAspect}
               className={
                 layout.mode === "portrait-rail"
                   ? "bk-tablo-grid bk-landing-gallery bk-tablo-grid--portrait-rail"
@@ -78,7 +81,7 @@ export default async function Home() {
                   />
                 </li>
               ))}
-            </ul>
+            </TabloGalleryGrid>
           </section>
         ) : null}
       </div>
