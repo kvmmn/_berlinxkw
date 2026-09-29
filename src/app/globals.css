@@ -815,14 +815,33 @@ textarea.bk-input[dir="auto"] {
   color: var(--bk-muted-dim);
 }
 
-.bk-public-footer-link {
-  color: var(--bk-muted);
+.bk-public-footer-advisor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -0.35rem 0;
+  color: var(--bk-public-ink);
+  border-radius: 4px;
+  text-decoration: none;
 }
 
-.bk-public-root .bk-public-footer-link:hover,
-.bk-public-root .bk-public-footer-link:focus-visible {
-  color: var(--bk-public-ink);
-  text-shadow: none;
+.bk-public-root .bk-public-footer-advisor:hover {
+  color: var(--bk-public-accent);
+}
+
+.bk-public-root .bk-public-footer-advisor:focus-visible {
+  outline: 2px solid var(--bk-public-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.bk-public-advisor-mark {
+  width: 1.375rem;
+  height: 1.375rem;
+  display: block;
 }
 
 

@@ -10,9 +10,6 @@ export function PublicSiteHeader() {
           <Link href="/shop" className="bk-public-nav-link">
             shop
           </Link>
-          <Link href="/login" className="bk-public-nav-link">
-            advisor
-          </Link>
         </nav>
       </div>
     </header>
