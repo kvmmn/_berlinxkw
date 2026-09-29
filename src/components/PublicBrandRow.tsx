@@ -3,8 +3,8 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { BrandLogoMarkFlat } from "@/components/BrandLogoMarkFlat";
 
 const MARK_SIZE = {
-  header: 34,
-  hero: 46,
+  header: 36,
+  hero: 48,
 } as const;
 
 export function PublicBrandRow({
