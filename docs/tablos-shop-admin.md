@@ -2,6 +2,10 @@
 
 Portal: **`/portal/tablos`**. Public listings: **`/shop`**.
 
+## Standard frame (shop)
+
+Every listed tablo ships in one frame size: **50×70 cm**. Portrait artwork uses a portrait frame (50×70); landscape artwork uses a landscape frame (70×50). Buyers choose **frame finish only** — brass (`bronze`), matte black (`matte-black-brushed`), or brushed steel (`matte-steel-brushed`).
+
 ## Artwork vs framed sample
 
 | Field | Role |
@@ -21,7 +25,7 @@ Each tablo stores:
 
 Allowed slugs only:
 
-- `bronze` (برنز)
+- `bronze` — brass finish (برنز)
 - `matte-black-brushed`
 - `matte-steel-brushed`
 

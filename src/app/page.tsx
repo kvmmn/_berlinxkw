@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
 import { BrandLogoMark } from "@/components/BrandLogoMark";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
+import { tablosWithOrientation } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -15,6 +16,7 @@ export default async function Home() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
+  const listed = await tablosWithOrientation(tablos);
 
   return (
     <div className="bk-landing">
@@ -43,7 +45,9 @@ export default async function Home() {
           <h1 id="landing-title" className="bk-display bk-landing-title">
             <BrandLockup size="lg" />
           </h1>
-          <p className="bk-meta bk-landing-tagline">berlin-native tablos · archival mono</p>
+          <p className="bk-meta bk-landing-tagline">
+            framed berlin photography · 50×70 cm · brass · matte black · brushed steel
+          </p>
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
               view shop
@@ -59,7 +63,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {tablos.length > 0 ? (
+        {listed.length > 0 ? (
           <section className="bk-landing-gallery-section" aria-labelledby="landing-tablos-heading">
             <div className="bk-landing-gallery-head">
               <h2 id="landing-tablos-heading" className="bk-meta bk-landing-gallery-label">
@@ -70,9 +74,9 @@ export default async function Home() {
               </Link>
             </div>
             <ul className="bk-landing-gallery">
-              {tablos.map((tablo, index) => (
+              {listed.map(({ tablo, orientation }, index) => (
                 <li key={tablo.id}>
-                  <TabloGalleryTile tablo={tablo} priority={index === 0} />
+                  <TabloGalleryTile tablo={tablo} orientation={orientation} priority={index === 0} />
                 </li>
               ))}
             </ul>

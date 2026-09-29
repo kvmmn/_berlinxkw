@@ -1,5 +1,6 @@
 import { ShopShell } from "@/components/ShopShell";
 import { TabloCard } from "@/components/TabloCard";
+import { tablosWithOrientation } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -13,16 +14,17 @@ export default async function ShopPage() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
+  const listed = await tablosWithOrientation(tablos);
 
   return (
     <ShopShell meta="original tablos · listed works">
-      {tablos.length === 0 ? (
+      {listed.length === 0 ? (
         <p className="bk-shop-empty bk-meta">No listed tablos yet — check back soon.</p>
       ) : (
         <ul className="bk-tablo-grid">
-          {tablos.map((tablo) => (
+          {listed.map(({ tablo, orientation }) => (
             <li key={tablo.id}>
-              <TabloCard tablo={tablo} />
+              <TabloCard tablo={tablo} orientation={orientation} />
             </li>
           ))}
         </ul>

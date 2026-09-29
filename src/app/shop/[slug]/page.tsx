@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloShopDetailBuy } from "@/components/TabloShopDetailBuy";
 import { normalizeTabloFrameFields } from "@/lib/frame-finish";
+import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -30,6 +31,7 @@ export default async function TabloDetailPage({
   const [tabloRaw] = withPublicTabloImages([raw]);
   const tablo = normalizeTabloFrameFields(tabloRaw);
   const priceLabel = formatEur(tablo.priceEur);
+  const orientation = await tabloArtworkOrientation(tablo);
   return (
     <ShopShell meta={tablo.slug}>
       <div className="bk-tablo-detail">
@@ -37,7 +39,7 @@ export default async function TabloDetailPage({
           ← all tablos
         </Link>
         <div className="bk-tablo-detail-grid">
-          <TabloShopDetailBuy tablo={tablo} priceLabel={priceLabel} />
+          <TabloShopDetailBuy tablo={tablo} priceLabel={priceLabel} orientation={orientation} />
         </div>
       </div>
     </ShopShell>

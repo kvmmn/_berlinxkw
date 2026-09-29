@@ -1,6 +1,6 @@
 "use client";
 
-import { FRAME_FINISH_LABELS, tabloFrameFinishes } from "@/lib/frame-finish";
+import { FRAME_FINISHES, FRAME_FINISH_LABELS, tabloFrameFinishes } from "@/lib/frame-finish";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 export function TabloFrameFinishPicker({
@@ -8,13 +8,16 @@ export function TabloFrameFinishPicker({
   value,
   onChange,
   idPrefix = "finish",
+  mode = "admin",
 }: {
   tablo: Tablo;
   value: FrameFinish;
   onChange: (finish: FrameFinish) => void;
   idPrefix?: string;
+  /** Public shop always offers all three standard finishes. */
+  mode?: "shop" | "admin";
 }) {
-  const options = tabloFrameFinishes(tablo);
+  const options = mode === "shop" ? [...FRAME_FINISHES] : tabloFrameFinishes(tablo);
   if (options.length <= 1) return null;
 
   return (
