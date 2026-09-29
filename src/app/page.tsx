@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { BrandLockup } from "@/components/BrandLockup";
-import { BrandLogoMark } from "@/components/BrandLogoMark";
+import { PublicBrandRow } from "@/components/PublicBrandRow";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
 import { tablosWithOrientation } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
@@ -41,9 +40,8 @@ export default async function Home() {
       </header>
       <main id="main-content" className="bk-landing-main">
         <section className="bk-landing-hero" aria-labelledby="landing-title">
-          <BrandLogoMark size={96} priority variant="svg" />
           <h1 id="landing-title" className="bk-display bk-landing-title">
-            <BrandLockup size="lg" />
+            <PublicBrandRow variant="hero" />
           </h1>
           <p className="bk-meta bk-landing-tagline">
             framed berlin photography · 50×70 cm · brass · matte black · brushed steel

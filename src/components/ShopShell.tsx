@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { BrandLockup } from "@/components/BrandLockup";
-import { BrandLogoMark } from "@/components/BrandLogoMark";
+import { PublicBrandRow } from "@/components/PublicBrandRow";
 
 export function ShopShell({
   children,
@@ -15,10 +14,7 @@ export function ShopShell({
         Skip to content
       </a>
       <header className="bk-shop-header">
-        <Link href="/" className="bk-shop-brand" aria-label="berlin × kawe home">
-          <BrandLogoMark size={40} variant="svg" />
-          <BrandLockup size="md" />
-        </Link>
+        <PublicBrandRow variant="header" href="/" />
         <div className="bk-shop-header-end">
           {meta ? <p className="bk-meta bk-shop-meta">{meta}</p> : null}
           <nav aria-label="Shop" className="bk-shop-nav">

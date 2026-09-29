@@ -549,6 +549,58 @@ textarea.bk-input[dir="auto"] {
   color: var(--bk-public-accent);
 }
 
+.bk-public-brand-link {
+  display: inline-flex;
+  color: var(--bk-public-accent);
+  text-decoration: none;
+}
+
+.bk-public-brand-link:hover,
+.bk-public-brand-link:focus-visible {
+  color: var(--bk-public-accent);
+  text-shadow: none;
+}
+
+.bk-public-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.72rem;
+  color: inherit;
+}
+
+.bk-public-brand--hero {
+  gap: 0.85rem;
+}
+
+.bk-logo-mark-flat {
+  flex-shrink: 0;
+  display: block;
+  transform: translateY(0.05em);
+}
+
+.bk-landing .bk-lockup-times,
+.bk-shop-root .bk-lockup-times {
+  color: currentColor;
+}
+
+.bk-landing a:hover,
+.bk-shop-root a:hover {
+  text-shadow: none;
+}
+
+.bk-landing .bk-tablo-gallery-media:focus-visible,
+.bk-shop-root .bk-tablo-card-media:focus-visible {
+  outline: 2px solid var(--bk-public-accent);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.bk-landing .bk-tablo-gallery-title:hover,
+.bk-landing .bk-tablo-gallery-caption a:focus-visible .bk-tablo-gallery-title {
+  text-shadow: none;
+  color: var(--bk-public-accent);
+}
+
 .bk-landing .bk-btn,
 .bk-shop-root .bk-btn {
   border-color: var(--bk-public-border);
@@ -1462,8 +1514,11 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-landing-title {
-  margin: 0.5rem 0 0;
-  font-size: var(--bk-size-display);
+  margin: 0;
+  font-size: inherit;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .bk-landing-tagline {
