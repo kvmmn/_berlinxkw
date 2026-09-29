@@ -4,11 +4,7 @@ import {
   tabloProductImage,
 } from "@/lib/tablo-images";
 import { FRAME_FINISH_LABELS } from "@/lib/frame-finish";
-import {
-  frameDimensionsForOrientation,
-  type TabloOrientation,
-} from "@/lib/tablo-frame-spec";
-import { TabloOrientedMediaFrame } from "@/components/TabloOrientedMediaFrame";
+import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -45,10 +41,10 @@ function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrame
 
 export function TabloCardMedia({
   tablo,
-  orientation = "portrait",
+  aspectRatio,
 }: {
   tablo: Tablo;
-  orientation?: TabloOrientation;
+  aspectRatio: string;
 }) {
   const product = tabloProductImage(tablo);
   if (!product?.url) {
@@ -58,7 +54,7 @@ export function TabloCardMedia({
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
 
   return (
-    <TabloOrientedMediaFrame orientation={orientation} className="bk-tablo-card-media-frame">
+    <TabloAspectFrame aspectRatio={aspectRatio} className="bk-tablo-card-media-frame">
       <TabloPicture
         src={product.url}
         alt={productAlt(tablo, kind)}
@@ -66,22 +62,23 @@ export function TabloCardMedia({
         sizes={tabloPictureSizes("card")}
         layout="contain"
       />
-    </TabloOrientedMediaFrame>
+    </TabloAspectFrame>
   );
 }
 
 export function TabloDetailGallery({
   tablo,
   finish,
-  orientation,
+  framedSlotAspect,
+  artworkAspect,
 }: {
   tablo: Tablo;
   finish?: FrameFinish;
-  orientation: TabloOrientation;
+  framedSlotAspect: string;
+  artworkAspect: string;
 }) {
   const artwork = tabloArtworkImage(tablo);
   const framed = tabloFramedImageForFinish(tablo, finish);
-  const { aspectRatio } = frameDimensionsForOrientation(orientation);
   const finishLabel = finish ? FRAME_FINISH_LABELS[finish] : null;
 
   if (!artwork?.url && !framed?.url) {
@@ -98,26 +95,20 @@ export function TabloDetailGallery({
             mime={framed.mime}
             sizes={tabloPictureSizes("detail")}
             priority
-            aspectRatio={aspectRatio}
+            aspectRatio={framedSlotAspect}
           />
         ) : (
           <div
             className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
-            style={{ aspectRatio }}
+            style={{ aspectRatio: framedSlotAspect }}
           >
             <p className="bk-meta bk-tablo-framed-slot">
               Framed mockup for {finishLabel?.en ?? "this finish"} — coming soon
             </p>
           </div>
         )}
-        <figcaption className="bk-meta">
+        <figcaption className="bk-meta bk-tablo-detail-caption">
           framed · {finishLabel?.en ?? "finish"}
-          {finishLabel ? (
-            <>
-              {" "}
-              · <span lang="fa">{finishLabel.fa}</span>
-            </>
-          ) : null}
         </figcaption>
       </figure>
 
@@ -128,9 +119,9 @@ export function TabloDetailGallery({
             alt={`${tablo.title} — original artwork`}
             mime={artwork.mime}
             sizes={tabloPictureSizes("detail")}
-            aspectRatio={aspectRatio}
+            aspectRatio={artworkAspect}
           />
-          <figcaption className="bk-meta">artwork · اثر</figcaption>
+          <figcaption className="bk-meta bk-tablo-detail-caption">artwork</figcaption>
         </figure>
       ) : null}
     </div>

@@ -5,6 +5,7 @@ import { TabloDetailGallery } from "@/components/TabloShopMedia";
 import { TabloFrameFinishPicker } from "@/components/TabloFrameFinishPicker";
 import { coerceFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage } from "@/lib/tablo-images";
+import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, orientationCopy, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import {
@@ -19,13 +20,19 @@ export function TabloShopDetailBuy({
   tablo,
   priceLabel,
   orientation: initialOrientation,
+  framedSlotAspect: initialFramedAspect,
+  artworkAspect: initialArtworkAspect,
 }: {
   tablo: Tablo;
   priceLabel: string;
   orientation: TabloOrientation;
+  framedSlotAspect: string;
+  artworkAspect: string;
 }) {
   const [finish, setFinish] = useState<FrameFinish>(() => coerceFrameFinish(tablo, undefined));
   const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
+  const framedSlotAspect = initialFramedAspect;
+  const artworkAspect = useTabloImageAspect(initialArtworkAspect, tabloArtworkImage(tablo)?.url);
   const buyHref = useMemo(() => tabloBuyUrl(tablo, finish), [tablo, finish]);
   const external = tabloBuyExternal(tablo);
   const dir = orientationCopy(orientation);
@@ -33,7 +40,12 @@ export function TabloShopDetailBuy({
   return (
     <>
       <div className="bk-tablo-detail-media">
-        <TabloDetailGallery tablo={tablo} finish={finish} orientation={orientation} />
+        <TabloDetailGallery
+          tablo={tablo}
+          finish={finish}
+          framedSlotAspect={framedSlotAspect}
+          artworkAspect={artworkAspect}
+        />
       </div>
       <div className="bk-tablo-detail-copy">
         <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>

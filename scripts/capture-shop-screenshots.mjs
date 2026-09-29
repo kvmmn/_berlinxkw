@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { chromium, devices } from "playwright";
+import { chromium } from "playwright";
 import { mkdir } from "fs/promises";
 import { join } from "path";
 
@@ -22,7 +22,7 @@ async function main() {
   await mkdir(outDir, { recursive: true });
   const browser = await chromium.launch();
 
-  const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const desktopPage = await desktop.newPage();
   for (const route of routes) {
     const file = join(outDir, `${route.name}-desktop.png`);
@@ -31,8 +31,7 @@ async function main() {
   }
   await desktop.close();
 
-  const iphone = devices["iPhone 13"];
-  const mobile = await browser.newContext({ ...iphone });
+  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const mobilePage = await mobile.newPage();
   for (const route of routes) {
     const file = join(outDir, `${route.name}-mobile.png`);

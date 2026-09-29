@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PublicBrandRow } from "@/components/PublicBrandRow";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
-import { tablosWithOrientation } from "@/lib/tablo-shop-list";
+import { tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -15,7 +15,7 @@ export default async function Home() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
-  const listed = await tablosWithOrientation(tablos);
+  const listed = await tablosWithLayout(tablos);
 
   return (
     <div className="bk-landing">
@@ -44,7 +44,7 @@ export default async function Home() {
             <PublicBrandRow variant="hero" />
           </h1>
           <p className="bk-meta bk-landing-tagline">
-            framed berlin photography · 50×70 cm · brass · matte black · brushed steel
+            50×70&nbsp;cm frame · portrait or landscape · brass, matte black or brushed steel
           </p>
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
@@ -72,9 +72,14 @@ export default async function Home() {
               </Link>
             </div>
             <ul className="bk-landing-gallery">
-              {listed.map(({ tablo, orientation }, index) => (
+              {listed.map(({ tablo, orientation, productAspect }, index) => (
                 <li key={tablo.id}>
-                  <TabloGalleryTile tablo={tablo} orientation={orientation} priority={index === 0} />
+                  <TabloGalleryTile
+                    tablo={tablo}
+                    orientation={orientation}
+                    productAspect={productAspect}
+                    priority={index === 0}
+                  />
                 </li>
               ))}
             </ul>

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
-import { tabloArtworkImage } from "@/lib/tablo-images";
+import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
+import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
@@ -20,11 +21,15 @@ function formatEur(price: number): string {
 export function TabloCard({
   tablo,
   orientation: initialOrientation = "portrait",
+  productAspect: initialProductAspect,
 }: {
   tablo: Tablo;
   orientation?: TabloOrientation;
+  productAspect: string;
 }) {
   const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
+  const product = tabloProductImage(tablo);
+  const productAspect = useTabloImageAspect(initialProductAspect, product?.url);
   const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
   const external = tabloBuyExternal(tablo);
 
@@ -35,7 +40,7 @@ export function TabloCard({
         className="bk-tablo-card-media"
         aria-label={`View ${tablo.title}`}
       >
-        <TabloCardMedia tablo={tablo} orientation={orientation} />
+        <TabloCardMedia tablo={tablo} aspectRatio={productAspect} />
       </Link>
       <div className="bk-tablo-card-body">
         <Link href={`/shop/${tablo.slug}`}>

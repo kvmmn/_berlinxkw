@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { TabloOrientedMediaFrame } from "@/components/TabloOrientedMediaFrame";
+import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
+import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import type { Tablo } from "@/lib/types";
@@ -21,13 +22,16 @@ export function TabloGalleryTile({
   tablo,
   priority = false,
   orientation: initialOrientation = "portrait",
+  productAspect: initialProductAspect,
 }: {
   tablo: Tablo;
   priority?: boolean;
   orientation?: TabloOrientation;
+  productAspect: string;
 }) {
   const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
   const product = tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
+  const productAspect = useTabloImageAspect(initialProductAspect, product?.url);
   const framed = tabloFramedImageForFinish(tablo);
   const alt = framed
     ? `${tablo.title} — framed tablo on wall`
@@ -35,7 +39,7 @@ export function TabloGalleryTile({
 
   return (
     <article className="bk-tablo-gallery-item">
-      <TabloOrientedMediaFrame orientation={orientation} className="bk-tablo-gallery-media">
+      <TabloAspectFrame aspectRatio={productAspect} className="bk-tablo-gallery-media">
         <Link href={`/shop/${tablo.slug}`} className="bk-tablo-gallery-media-link">
           {product?.url ? (
             <TabloPicture
@@ -50,7 +54,7 @@ export function TabloGalleryTile({
             <span className="bk-tablo-gallery-placeholder bk-meta">no image</span>
           )}
         </Link>
-      </TabloOrientedMediaFrame>
+      </TabloAspectFrame>
       <div className="bk-tablo-gallery-caption">
         <Link href={`/shop/${tablo.slug}`}>
           <h2 className="bk-tablo-gallery-title">{tablo.title}</h2>
