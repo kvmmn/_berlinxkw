@@ -19,3 +19,5 @@ Thumbs.db
 # Debug
 npm-debug.log*
 *.tsbuildinfo
+scripts/.logo-*
+scripts/__pycache__/

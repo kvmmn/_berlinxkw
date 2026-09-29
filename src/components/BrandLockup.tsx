@@ -8,7 +8,7 @@ export function BrandLockup({
 }: {
   href?: string;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "header";
 }) {
   const inner = (
     <span className={`bk-lockup bk-lockup--${size} ${className}`.trim()}>

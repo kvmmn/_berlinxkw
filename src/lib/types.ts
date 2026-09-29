@@ -98,6 +98,9 @@ export interface TabloImage {
   pathname?: string;
   mime?: string;
   size?: number;
+  /** Optional intrinsic pixels (orientation / layout). */
+  width?: number;
+  height?: number;
 }
 
 export interface Tablo {

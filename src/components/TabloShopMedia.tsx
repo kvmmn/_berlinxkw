@@ -1,16 +1,12 @@
 import {
   tabloArtworkImage,
-  tabloDetailGalleryImages,
   tabloFramedImageForFinish,
   tabloProductImage,
 } from "@/lib/tablo-images";
+import { FRAME_FINISH_LABELS } from "@/lib/frame-finish";
+import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
-
-const DETAIL_SLOT_LABEL: Record<number, string> = {
-  0: "framed on wall",
-  1: "artwork",
-};
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
   if (kind === "framed") return `${tablo.title} — framed tablo on wall`;
@@ -19,7 +15,37 @@ function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): strin
   return hasFramed ? `${tablo.title} — framed tablo on wall` : `${tablo.title} — tablo artwork`;
 }
 
-export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
+type MediaFrameProps = {
+  src: string;
+  alt: string;
+  mime?: string;
+  sizes: string;
+  priority?: boolean;
+  aspectRatio: string;
+};
+
+function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrameProps) {
+  return (
+    <div className="bk-tablo-detail-figure-media" style={{ aspectRatio }}>
+      <TabloPicture
+        src={src}
+        alt={alt}
+        mime={mime}
+        sizes={sizes}
+        priority={priority}
+        layout="contain"
+      />
+    </div>
+  );
+}
+
+export function TabloCardMedia({
+  tablo,
+  aspectRatio,
+}: {
+  tablo: Tablo;
+  aspectRatio: string;
+}) {
   const product = tabloProductImage(tablo);
   if (!product?.url) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
@@ -28,57 +54,75 @@ export function TabloCardMedia({ tablo }: { tablo: Tablo }) {
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
 
   return (
-    <div className="bk-tablo-card-media-frame">
+    <TabloAspectFrame aspectRatio={aspectRatio} className="bk-tablo-tile-media">
       <TabloPicture
         src={product.url}
         alt={productAlt(tablo, kind)}
         mime={product.mime}
         sizes={tabloPictureSizes("card")}
-        layout="contain"
+        layout="cover"
       />
-    </div>
+    </TabloAspectFrame>
   );
 }
 
 export function TabloDetailGallery({
   tablo,
   finish,
+  framedSlotAspect,
+  artworkAspect,
 }: {
   tablo: Tablo;
   finish?: FrameFinish;
+  framedSlotAspect: string;
+  artworkAspect: string;
 }) {
-  const gallery = tabloDetailGalleryImages(tablo, finish);
-  const framedForFinish = tabloFramedImageForFinish(tablo, finish);
+  const artwork = tabloArtworkImage(tablo);
+  const framed = tabloFramedImageForFinish(tablo, finish);
+  const finishLabel = finish ? FRAME_FINISH_LABELS[finish] : null;
 
-  if (gallery.length === 0) {
+  if (!artwork?.url && !framed?.url) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
   }
 
   return (
     <div className="bk-tablo-detail-gallery">
-      {gallery.map((img, i) => {
-        const src = img.url;
-        if (!src) return null;
-        return (
-        <figure key={img.pathname ?? src ?? i} className="bk-tablo-detail-figure">
-          <div className="bk-tablo-detail-figure-media">
-            <TabloPicture
-              src={src}
-              alt={`${tablo.title} — ${DETAIL_SLOT_LABEL[i] ?? "photo"}`}
-              mime={img.mime}
-              sizes={tabloPictureSizes("detail")}
-              priority={i === 0}
-              layout="contain"
-            />
+      <figure className="bk-tablo-detail-figure">
+        {framed?.url ? (
+          <MediaFrame
+            src={framed.url}
+            alt={`${tablo.title} — framed tablo on wall`}
+            mime={framed.mime}
+            sizes={tabloPictureSizes("detail")}
+            priority
+            aspectRatio={framedSlotAspect}
+          />
+        ) : (
+          <div
+            className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
+            style={{ aspectRatio: framedSlotAspect }}
+          >
+            <p className="bk-meta bk-tablo-framed-slot">
+              Framed mockup for {finishLabel?.en ?? "this finish"} — coming soon
+            </p>
           </div>
-          <figcaption className="bk-meta">{DETAIL_SLOT_LABEL[i] ?? "photo"}</figcaption>
+        )}
+        <figcaption className="bk-meta bk-tablo-detail-caption">
+          framed · {finishLabel?.en ?? "finish"}
+        </figcaption>
+      </figure>
+
+      {artwork?.url ? (
+        <figure className="bk-tablo-detail-figure">
+          <MediaFrame
+            src={artwork.url}
+            alt={`${tablo.title} — original artwork`}
+            mime={artwork.mime}
+            sizes={tabloPictureSizes("detail")}
+            aspectRatio={artworkAspect}
+          />
+          <figcaption className="bk-meta bk-tablo-detail-caption">artwork</figcaption>
         </figure>
-        );
-      })}
-      {tabloArtworkImage(tablo) && !framedForFinish ? (
-        <p className="bk-meta bk-tablo-framed-slot">
-          framed sample for this finish — coming soon (same orientation as artwork)
-        </p>
       ) : null}
     </div>
   );

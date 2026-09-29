@@ -1,7 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
-import { tabloDefaultFrameFinish, tabloFrameFinishesGridMeta } from "@/lib/frame-finish";
-import { tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
+import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
+import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
+import { useTabloOrientation } from "@/lib/tablo-orientation-client";
+import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -15,40 +22,48 @@ function formatEur(price: number): string {
 export function TabloGalleryTile({
   tablo,
   priority = false,
+  orientation: initialOrientation = "portrait",
+  productAspect: initialProductAspect,
 }: {
   tablo: Tablo;
   priority?: boolean;
+  orientation?: TabloOrientation;
+  productAspect: string;
 }) {
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
   const product = tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
+  const productAspect = useTabloImageAspect(initialProductAspect, product?.url);
   const framed = tabloFramedImageForFinish(tablo);
   const alt = framed
     ? `${tablo.title} — framed tablo on wall`
     : `${tablo.title} — original artwork`;
 
   return (
-    <article className="bk-tablo-gallery-item">
-      <Link href={`/shop/${tablo.slug}`} className="bk-tablo-gallery-media">
-        {product?.url ? (
-          <TabloPicture
-            src={product.url}
-            alt={alt}
-            mime={product.mime}
-            sizes={tabloPictureSizes("landing")}
-            priority={priority}
-            layout="contain"
-          />
-        ) : (
-          <span className="bk-tablo-gallery-placeholder bk-meta">no image</span>
-        )}
-      </Link>
-      <div className="bk-tablo-gallery-caption">
-        <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-gallery-title">{tablo.title}</h2>
+    <article className="bk-tablo-tile">
+      <TabloAspectFrame aspectRatio={productAspect} className="bk-tablo-tile-media">
+        <Link href={`/shop/${tablo.slug}`} className="bk-tablo-tile-media-link">
+          {product?.url ? (
+            <TabloPicture
+              src={product.url}
+              alt={alt}
+              mime={product.mime}
+              sizes={tabloPictureSizes("landing")}
+              priority={priority}
+              layout="cover"
+            />
+          ) : (
+            <span className="bk-tablo-gallery-placeholder bk-meta">no image</span>
+          )}
         </Link>
-        <p className="bk-meta bk-tablo-gallery-meta">
-          <span>{formatEur(tablo.priceEur)}</span>
+      </TabloAspectFrame>
+      <div className="bk-tablo-tile-caption">
+        <Link href={`/shop/${tablo.slug}`}>
+          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+        </Link>
+        <p className="bk-meta bk-tablo-tile-meta">
+          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>
-          <span>frame {tabloFrameFinishesGridMeta(tablo)}</span>
+          <span>{frameSizeLabel(orientation)}</span>
         </p>
       </div>
     </article>
