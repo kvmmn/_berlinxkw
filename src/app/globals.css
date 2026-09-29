@@ -858,8 +858,8 @@ textarea.bk-input[dir="auto"] {
   margin: 0;
   margin-inline-start: auto;
   /* Chip padding sits outside content edge so the mark stays ink-aligned at rest. */
-  margin-inline-end: -8px;
-  padding: 6px 8px 6px 6px;
+  margin-inline-end: -10px;
+  padding: 6px 10px 6px 6px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -884,6 +884,12 @@ textarea.bk-input[dir="auto"] {
   display: block;
   flex-shrink: 0;
   transform: translateY(-1px);
+}
+
+@media (min-width: 721px) {
+  .bk-public-advisor-mark {
+    transform: translateY(-2px);
+  }
 }
 
 
