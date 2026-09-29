@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { LandingTagline } from "@/components/LandingTagline";
 import { PublicBrandRow } from "@/components/PublicBrandRow";
+import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
@@ -18,34 +20,13 @@ export default async function Home() {
   const listed = await tablosWithLayout(tablos);
 
   return (
-    <div className="bk-landing">
-      <a href="#main-content" className="bk-skip-link">
-        Skip to content
-      </a>
-      <header className="bk-landing-header bk-meta">
-        <nav aria-label="Primary">
-          <ul className="bk-landing-nav">
-            <li>
-              <Link href="/shop" className="bk-landing-nav-link">
-                shop
-              </Link>
-            </li>
-            <li>
-              <Link href="/login" className="bk-landing-nav-link">
-                advisor
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <main id="main-content" className="bk-landing-main">
+    <PublicSiteShell footerNote="original works · berlin">
+      <div className="bk-landing-page">
         <section className="bk-landing-hero" aria-labelledby="landing-title">
           <h1 id="landing-title" className="bk-display bk-landing-title">
             <PublicBrandRow variant="hero" />
           </h1>
-          <p className="bk-meta bk-landing-tagline">
-            50×70&nbsp;cm frame · portrait or landscape · brass, matte black or brushed steel
-          </p>
+          <LandingTagline />
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
               view shop
@@ -85,10 +66,7 @@ export default async function Home() {
             </ul>
           </section>
         ) : null}
-      </main>
-      <footer className="bk-landing-footer bk-meta">
-        <span>original works · berlin</span>
-      </footer>
-    </div>
+      </div>
+    </PublicSiteShell>
   );
 }

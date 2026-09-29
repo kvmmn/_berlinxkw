@@ -8,7 +8,7 @@ export function PublicBrandRow({
   variant?: "header" | "hero";
   href?: string;
 }) {
-  const lockupSize = variant === "hero" ? "lg" : "md";
+  const lockupSize = variant === "hero" ? "lg" : "header";
 
   const row = (
     <span className={`bk-public-brand bk-public-brand--${variant}`}>

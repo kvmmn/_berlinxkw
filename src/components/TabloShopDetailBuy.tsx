@@ -54,7 +54,7 @@ export function TabloShopDetailBuy({
         <p className="bk-tablo-detail-frame-spec">
           <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>
           <span className="bk-meta bk-tablo-detail-frame-dir">
-            {dir.en} · <span lang="fa">{dir.fa}</span>
+            {dir.en} · <span className="bk-text-fa" lang="fa">{dir.fa}</span>
           </span>
         </p>
         {tablo.description ? <p className="bk-tablo-detail-desc">{tablo.description}</p> : null}

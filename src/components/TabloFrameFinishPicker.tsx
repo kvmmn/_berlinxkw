@@ -22,7 +22,9 @@ export function TabloFrameFinishPicker({
 
   return (
     <fieldset className="bk-frame-finish-fieldset">
-      <legend className="bk-meta">frame finish · جنس قاب</legend>
+      <legend className="bk-meta">
+        frame finish · <span lang="fa">جنس قاب</span>
+      </legend>
       <div className="bk-frame-finish-options" role="radiogroup" aria-label="Frame finish">
         {options.map((finish) => {
           const label = FRAME_FINISH_LABELS[finish];
