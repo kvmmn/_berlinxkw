@@ -18,7 +18,7 @@ export function PublicAdvisorMark({ className = "" }: { className?: string }) {
       <g
         transform={`translate(0,${ADVISOR_BEAR_TRACE_HEIGHT}) scale(0.1,-0.1)`}
         fill="currentColor"
-        fillRule="evenodd"
+        fillRule="nonzero"
       >
         {ADVISOR_BEAR_PATHS.map((d, i) => (
           <path key={i} d={d} />
