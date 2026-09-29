@@ -857,8 +857,8 @@ textarea.bk-input[dir="auto"] {
   height: 44px;
   margin: 0;
   margin-inline-start: auto;
-  margin-inline-end: -1px;
-  padding: 6px 1px 6px 6px;
+  margin-inline-end: -1.5px;
+  padding: 6px 0 6px 6px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -882,7 +882,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translate(0px, -3.25px);
+  transform: translate(0.5px, -3.5px);
 }
 
 
@@ -1104,7 +1104,7 @@ textarea.bk-input[dir="auto"] {
 
 @media (max-width: 360px) {
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 9px 1rem 10px;
+    padding: 8px 1rem 10px;
   }
 }
 
@@ -1176,7 +1176,7 @@ textarea.bk-input[dir="auto"] {
 
 @media (min-width: 1024px) and (max-width: 1100px) {
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 8px;
+    padding: 9px 1rem 9px;
   }
 
   .bk-public-root .bk-btn.bk-tablo-buy {
