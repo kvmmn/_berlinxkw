@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicAdvisorMark } from "@/components/PublicAdvisorMark";
 import { PublicSiteHeader } from "@/components/PublicSiteHeader";
 
 export function PublicSiteShell({
@@ -21,8 +22,8 @@ export function PublicSiteShell({
         <div className="bk-public-shell">
           <div className="bk-public-footer-bar bk-meta">
             <span>{footerNote}</span>
-            <Link href="/login" className="bk-public-footer-link">
-              advisor
+            <Link href="/login" className="bk-public-footer-advisor" aria-label="Advisor">
+              <PublicAdvisorMark />
             </Link>
           </div>
         </div>

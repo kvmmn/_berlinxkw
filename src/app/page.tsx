@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
-import { tablosWithLayout } from "@/lib/tablo-shop-list";
+import { orderTablosForGalleryGrid, tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -20,7 +20,7 @@ export default async function Home() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
-  const listed = await tablosWithLayout(tablos);
+  const listed = orderTablosForGalleryGrid(await tablosWithLayout(tablos));
 
   return (
     <PublicSiteShell footerNote="original works · berlin">

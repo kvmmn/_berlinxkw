@@ -21,7 +21,11 @@ export function TabloFrameFinishPicker({
   if (options.length <= 1) return null;
 
   return (
-    <fieldset className="bk-frame-finish-fieldset">
+    <fieldset
+      className={
+        mode === "shop" ? "bk-frame-finish-fieldset bk-frame-finish-fieldset--shop" : "bk-frame-finish-fieldset"
+      }
+    >
       <legend className="bk-meta">
         frame finish · <span lang="fa">جنس قاب</span>
       </legend>

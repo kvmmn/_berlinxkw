@@ -27,6 +27,8 @@ export async function tablosWithLayout(tablos: Tablo[]): Promise<TabloWithLayout
   );
 }
 
+export { orderTablosForGalleryGrid } from "./tablo-gallery-order";
+
 /** @deprecated Use tablosWithLayout */
 export async function tablosWithOrientation(tablos: Tablo[]) {
   return tablosWithLayout(tablos);

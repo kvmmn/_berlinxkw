@@ -49,10 +49,13 @@ export function TabloShopDetailBuy({
         <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
         <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>
         <p className="bk-tablo-detail-price">{priceLabel}</p>
-        <p className="bk-tablo-detail-frame-spec">
+        <p className="bk-meta bk-tablo-detail-frame-spec">
           <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>
-          <span className="bk-meta bk-tablo-detail-frame-dir">
-            {dir.en} · <span className="bk-text-fa" lang="fa">{dir.fa}</span>
+          <span aria-hidden="true"> · </span>
+          <span className="bk-tablo-detail-frame-dir">{dir.en}</span>
+          <span aria-hidden="true"> · </span>
+          <span className="bk-text-fa bk-tablo-detail-frame-dir-fa" lang="fa">
+            {dir.fa}
           </span>
         </p>
         {tablo.description ? <TabloDescription text={tablo.description} /> : null}

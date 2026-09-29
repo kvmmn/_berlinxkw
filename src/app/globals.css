@@ -606,6 +606,9 @@ textarea.bk-input[dir="auto"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  padding-top: calc(0.65rem + 2px);
+  padding-bottom: calc(0.65rem - 2px);
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
@@ -682,8 +685,15 @@ textarea.bk-input[dir="auto"] {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: clamp(1rem, 3vw, 1.5rem);
+  gap: clamp(0.65rem, 2.5vw, 1.5rem);
   flex: 0 0 auto;
+}
+
+@media (max-width: 420px) {
+  .bk-public-nav-link {
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+  }
 }
 
 .bk-public-nav-link {
@@ -812,14 +822,33 @@ textarea.bk-input[dir="auto"] {
   color: var(--bk-muted-dim);
 }
 
-.bk-public-footer-link {
-  color: var(--bk-muted);
+.bk-public-footer-advisor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -0.35rem 0;
+  color: var(--bk-public-ink);
+  border-radius: 4px;
+  text-decoration: none;
 }
 
-.bk-public-root .bk-public-footer-link:hover,
-.bk-public-root .bk-public-footer-link:focus-visible {
-  color: var(--bk-public-ink);
-  text-shadow: none;
+.bk-public-root .bk-public-footer-advisor:hover {
+  color: var(--bk-public-accent);
+}
+
+.bk-public-root .bk-public-footer-advisor:focus-visible {
+  outline: 2px solid var(--bk-public-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.bk-public-advisor-mark {
+  width: 1.375rem;
+  height: 1.375rem;
+  display: block;
 }
 
 
@@ -884,7 +913,7 @@ textarea.bk-input[dir="auto"] {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: var(--bk-public-surface);
+  background: var(--bk-public-bg);
 }
 
 .bk-aspect-frame {
@@ -1000,8 +1029,6 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-detail-figure {
   margin: 0;
-  border: 1px solid var(--bk-public-border);
-  background: var(--bk-public-surface);
 }
 
 .bk-tablo-detail-figure-empty {
@@ -1012,18 +1039,13 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-detail-figure figcaption,
 .bk-tablo-detail-caption {
-  padding: 0.55rem 0.85rem;
-  border-top: 1px solid var(--bk-public-border);
+  margin: 0.5rem 0 0;
+  padding: 0;
+  border: none;
   text-transform: lowercase;
   letter-spacing: 0.04em;
   font-size: 0.75rem;
-  height: 2.5rem;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.35;
 }
 
 .bk-tablo-framed-slot {
@@ -1065,13 +1087,12 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-detail-frame-spec {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1rem;
   margin: 0 0 1.25rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--bk-public-border);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
 }
 
 .bk-tablo-detail-frame-size {
@@ -1108,12 +1129,13 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-buy-lg {
   font-size: 1rem;
-  padding: 0.85rem 1.75rem;
+  padding: calc(0.85rem + 2px) 1.75rem calc(0.85rem - 2px);
   width: fit-content;
   max-width: 100%;
   align-self: flex-start;
   text-align: center;
   justify-content: center;
+  line-height: 1;
 }
 
 .bk-tablo-detail-cta {
@@ -1152,10 +1174,24 @@ textarea.bk-input[dir="auto"] {
   background: var(--bk-public-surface);
 }
 
+.bk-public-root .bk-frame-finish-fieldset--shop {
+  border: none;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  background: transparent;
+}
+
 .bk-frame-finish-fieldset legend {
   padding: 0 0.35rem;
   text-transform: lowercase;
   letter-spacing: 0.05em;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop legend {
+  padding: 0;
+  margin: 0 0 0.65rem;
+  float: none;
+  width: 100%;
 }
 
 .bk-frame-finish-options {
@@ -1163,6 +1199,11 @@ textarea.bk-input[dir="auto"] {
   flex-direction: column;
   gap: 0.65rem;
   margin-top: 0.65rem;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-options {
+  margin-top: 0;
+  min-height: 7.5rem;
 }
 
 .bk-frame-finish-option {
@@ -1180,8 +1221,19 @@ textarea.bk-input[dir="auto"] {
   flex-shrink: 0;
   border: 2px solid var(--bk-public-muted);
   border-radius: 50%;
-  background: var(--bk-public-surface);
+  background: var(--bk-public-bg);
   cursor: pointer;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option {
+  min-height: 2.35rem;
+  padding: 0.15rem 0;
+  border-radius: 2px;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option:has(input:checked) {
+  font-weight: 500;
+  color: var(--bk-public-ink);
 }
 
 .bk-public-root .bk-frame-finish-option input[type="radio"]:checked {
