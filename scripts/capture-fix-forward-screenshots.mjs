@@ -93,15 +93,7 @@ async function main() {
   const link = foot4.locator(".bk-public-footer-advisor").first();
   const lbox = await link.boundingBox();
   if (lbox) {
-    await foot4.screenshot({
-      path: join(outDir, "footer-bear-4x.png"),
-      clip: {
-        x: Math.max(0, lbox.x - lbox.width),
-        y: Math.max(0, lbox.y - lbox.height * 0.5),
-        width: lbox.width * 2,
-        height: lbox.height * 2,
-      },
-    });
+    await link.screenshot({ path: join(outDir, "footer-bear-4x.png"), scale: "css" });
     console.log("wrote footer 4x");
   }
   await foot4.close();
