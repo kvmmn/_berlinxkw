@@ -35,33 +35,34 @@ export function TabloCard({
   const external = tabloBuyExternal(tablo);
 
   return (
-    <article className="bk-tablo-card">
+    <article className="bk-tablo-tile">
       <Link
         href={`/shop/${tablo.slug}`}
-        className="bk-tablo-card-media"
+        className="bk-tablo-tile-media-link"
         aria-label={`View ${tablo.title}`}
       >
         <TabloCardMedia tablo={tablo} aspectRatio={productAspect} />
       </Link>
-      <div className="bk-tablo-card-body">
+      <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-card-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
         </Link>
-        <div className="bk-tablo-card-foot">
-          <p className="bk-meta bk-tablo-card-price">{formatEur(tablo.priceEur)}</p>
-          <p className="bk-meta bk-tablo-card-frame">{frameSizeLabel(orientation)}</p>
-          {tablo.status === "sold" ? (
-            <span className="bk-meta bk-tablo-sold">sold</span>
-          ) : (
-            <a
-              href={buyHref}
-              className="bk-btn bk-btn-primary bk-tablo-buy"
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            >
-              {tabloBuyLabel(tablo)}
-            </a>
-          )}
-        </div>
+        <p className="bk-meta bk-tablo-tile-meta">
+          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
+          <span aria-hidden="true"> · </span>
+          <span>{frameSizeLabel(orientation)}</span>
+        </p>
+        {tablo.status === "sold" ? (
+          <span className="bk-meta bk-tablo-sold">sold</span>
+        ) : (
+          <a
+            href={buyHref}
+            className="bk-btn bk-btn-primary bk-tablo-buy"
+            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            {tabloBuyLabel(tablo)}
+          </a>
+        )}
       </div>
     </article>
   );

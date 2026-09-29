@@ -39,9 +39,9 @@ export function TabloGalleryTile({
     : `${tablo.title} — original artwork`;
 
   return (
-    <article className="bk-tablo-gallery-item">
-      <TabloAspectFrame aspectRatio={productAspect} className="bk-tablo-gallery-media">
-        <Link href={`/shop/${tablo.slug}`} className="bk-tablo-gallery-media-link">
+    <article className="bk-tablo-tile">
+      <TabloAspectFrame aspectRatio={productAspect} className="bk-tablo-tile-media">
+        <Link href={`/shop/${tablo.slug}`} className="bk-tablo-tile-media-link">
           {product?.url ? (
             <TabloPicture
               src={product.url}
@@ -56,12 +56,12 @@ export function TabloGalleryTile({
           )}
         </Link>
       </TabloAspectFrame>
-      <div className="bk-tablo-gallery-caption">
+      <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-gallery-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
         </Link>
-        <p className="bk-meta bk-tablo-gallery-meta">
-          <span>{formatEur(tablo.priceEur)}</span>
+        <p className="bk-meta bk-tablo-tile-meta">
+          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>
           <span>{frameSizeLabel(orientation)}</span>
         </p>
