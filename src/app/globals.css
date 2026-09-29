@@ -850,7 +850,7 @@ textarea.bk-input[dir="auto"] {
 .bk-public-footer-advisor {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   flex-shrink: 0;
   box-sizing: border-box;
   width: 44px;
@@ -858,7 +858,7 @@ textarea.bk-input[dir="auto"] {
   margin: 0;
   margin-inline-start: auto;
   margin-inline-end: -1px;
-  padding: 8px 0 8px 0;
+  padding: 6px 1px 6px 6px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -882,7 +882,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translate(2px, -3.25px);
+  transform: translate(0px, -3.25px);
 }
 
 
@@ -1104,7 +1104,7 @@ textarea.bk-input[dir="auto"] {
 
 @media (max-width: 360px) {
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 9px;
+    padding: 9px 1rem 10px;
   }
 }
 
