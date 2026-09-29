@@ -3,7 +3,7 @@ import {
   tabloFramedImageForFinish,
   tabloProductImage,
 } from "@/lib/tablo-images";
-import { FRAME_FINISH_LABELS } from "@/lib/frame-finish";
+import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -70,51 +70,58 @@ export function TabloCardMedia({
   );
 }
 
-export function TabloDetailGallery({
+/** SSR: all finish variants in the DOM; visibility toggled via `data-finish` on the detail root. */
+export function TabloDetailGalleryAllFinishes({
   tablo,
-  finish,
   framedSlotAspect,
   artworkAspect,
 }: {
   tablo: Tablo;
-  finish?: FrameFinish;
   framedSlotAspect: string;
   artworkAspect: string;
 }) {
   const artwork = tabloArtworkImage(tablo);
-  const framed = tabloFramedImageForFinish(tablo, finish);
-  const finishLabel = finish ? FRAME_FINISH_LABELS[finish] : null;
+  const hasAnyFramed = FRAME_FINISHES.some((finish) => tabloFramedImageForFinish(tablo, finish)?.url);
 
-  if (!artwork?.url && !framed?.url) {
+  if (!artwork?.url && !hasAnyFramed) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
   }
 
   return (
     <div className="bk-tablo-detail-gallery">
-      <figure className="bk-tablo-detail-figure">
-        {framed?.url ? (
-          <MediaFrame
-            src={framed.url}
-            alt={`${tablo.title} — framed tablo on wall`}
-            mime={framed.mime}
-            sizes={tabloPictureSizes("detail")}
-            priority
-            aspectRatio={framedSlotAspect}
-          />
-        ) : (
-          <div
-            className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
-            style={{ aspectRatio: framedSlotAspect }}
+      {FRAME_FINISHES.map((finish) => {
+        const framed = tabloFramedImageForFinish(tablo, finish);
+        const finishLabel = FRAME_FINISH_LABELS[finish];
+        return (
+          <figure
+            key={finish}
+            className={`bk-tablo-detail-figure bk-tablo-detail-figure-finish bk-tablo-detail-finish-${finish}`}
           >
-            <p className="bk-meta bk-tablo-framed-slot">
-              Framed mockup for {finishLabel?.en ?? "this finish"} — coming soon
-            </p>
-          </div>
-        )}
-        <figcaption className="bk-meta bk-tablo-detail-caption">
-          framed · {finishLabel?.en ?? "finish"}
-        </figcaption>
-      </figure>
+            {framed?.url ? (
+              <MediaFrame
+                src={framed.url}
+                alt={`${tablo.title} — framed tablo on wall`}
+                mime={framed.mime}
+                sizes={tabloPictureSizes("detail")}
+                priority={finish === FRAME_FINISHES[0]}
+                aspectRatio={framedSlotAspect}
+              />
+            ) : (
+              <div
+                className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
+                style={{ aspectRatio: framedSlotAspect }}
+              >
+                <p className="bk-meta bk-tablo-framed-slot">
+                  Framed mockup for {finishLabel.en} — coming soon
+                </p>
+              </div>
+            )}
+            <figcaption className="bk-meta bk-tablo-detail-caption">
+              framed · {finishLabel.en}
+            </figcaption>
+          </figure>
+        );
+      })}
 
       {artwork?.url ? (
         <figure className="bk-tablo-detail-figure">

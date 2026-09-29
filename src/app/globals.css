@@ -611,6 +611,7 @@ textarea.bk-input[dir="auto"] {
   min-height: 2.75rem;
   padding: 10px 1rem 7px;
   line-height: 1;
+  white-space: nowrap;
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
@@ -628,6 +629,7 @@ textarea.bk-input[dir="auto"] {
   background: var(--bk-public-accent);
   border-color: var(--bk-public-accent);
   color: var(--bk-public-bg);
+  padding: 11px 1rem 6px;
 }
 
 .bk-public-root .bk-btn-primary:hover {
@@ -653,7 +655,7 @@ textarea.bk-input[dir="auto"] {
   height: 3rem;
   min-height: 3rem;
   line-height: 1;
-  padding: 11px 1.75rem 7px;
+  padding: 12px 1.75rem 7px;
 }
 
 .bk-public-root {
@@ -846,20 +848,18 @@ textarea.bk-input[dir="auto"] {
   align-items: center;
   justify-content: flex-end;
   flex-shrink: 0;
+  box-sizing: content-box;
+  width: 2.5rem;
+  height: 2.5rem;
   min-width: 44px;
   min-height: 44px;
   margin: 0;
   margin-inline-start: auto;
-  padding-inline-end: 0;
+  padding: 0;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.bk-public-root .bk-public-footer-advisor:hover,
-.bk-public-root .bk-public-footer-advisor:focus-visible {
-  justify-content: center;
 }
 
 .bk-public-root .bk-public-footer-advisor:hover {
@@ -879,13 +879,6 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translateX(3.5px);
-  transition: transform 0.15s ease;
-}
-
-.bk-public-footer-advisor:hover .bk-public-advisor-mark,
-.bk-public-footer-advisor:focus-visible .bk-public-advisor-mark {
-  transform: none;
 }
 
 
@@ -895,6 +888,7 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-justified-gallery {
+  container-type: inline-size;
   --bk-tablo-gap: clamp(2rem, 4vw, 2.75rem);
   --bk-tablo-row-target-h: 280px;
   display: flex;
@@ -918,7 +912,7 @@ textarea.bk-input[dir="auto"] {
   width: 100%;
 }
 
-@media (min-width: 481px) {
+@media (min-width: 721px) {
   .bk-tablo-justified-row {
     flex-direction: row;
     align-items: stretch;
@@ -937,16 +931,26 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-justified-row--tail {
   justify-content: flex-start;
+  --bk-row-h: calc(
+    (100cqw - (var(--bk-ref-cells) - 1) * var(--bk-tablo-gap)) / var(--bk-ref-aspect-sum)
+  );
 }
 
 .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
   box-sizing: border-box;
   flex: 0 0 auto;
-  width: calc(var(--tile-aspect-grow) * var(--bk-tablo-row-target-h));
+  width: calc(var(--tile-aspect-grow) * var(--bk-row-h));
   max-width: 100%;
 }
 
-@media (max-width: 480px) {
+.bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media,
+.bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-aspect-frame {
+  width: 100%;
+  height: var(--bk-row-h);
+  aspect-ratio: unset;
+}
+
+@media (max-width: 720px) {
   .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
     width: 100%;
   }
@@ -956,6 +960,32 @@ textarea.bk-input[dir="auto"] {
   aspect-ratio: var(--tile-aspect-ratio);
   width: 100%;
   height: auto;
+}
+
+.bk-tablo-justified-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@media (min-width: 721px) {
+  .bk-tablo-justified-cell .bk-tablo-tile {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    flex: 1;
+    min-height: 100%;
+    gap: 0.75rem;
+  }
+
+  .bk-tablo-justified-cell .bk-tablo-tile-caption {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .bk-tablo-justified-cell .bk-tablo-buy {
+    margin-top: auto;
+  }
 }
 
 .bk-tablo-tile {
@@ -1060,6 +1090,7 @@ textarea.bk-input[dir="auto"] {
   max-width: 100%;
   text-align: center;
   justify-content: center;
+  white-space: nowrap;
 }
 
 .bk-tablo-sold {
@@ -1100,6 +1131,16 @@ textarea.bk-input[dir="auto"] {
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.bk-tablo-detail-root .bk-tablo-detail-figure-finish {
+  display: none;
+}
+
+.bk-tablo-detail-root[data-finish="bronze"] .bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-root[data-finish="matte-black-brushed"] .bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-root[data-finish="matte-steel-brushed"] .bk-tablo-detail-finish-matte-steel-brushed {
+  display: block;
 }
 
 .bk-tablo-detail-figure {
@@ -1301,7 +1342,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.65rem;
   min-height: 2.35rem;
   padding: 0.15rem 0;
@@ -1309,12 +1350,12 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option input[type="radio"] {
-  margin-top: 0.2rem;
+  margin: 0;
   flex-shrink: 0;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-swatch {
-  margin-top: 0.15rem;
+  margin: 0;
   flex-shrink: 0;
 }
 

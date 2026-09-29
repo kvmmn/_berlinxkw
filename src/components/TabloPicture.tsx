@@ -57,6 +57,25 @@ export function TabloPicture({
     );
   }
 
+  /** Native `<img>` on shop/landing grids avoids next/image fill hydration mismatches. */
+  const useNativeRaster =
+    sizes === SIZE_PRESETS.card || sizes === SIZE_PRESETS.landing;
+
+  if (useNativeRaster) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        data-fit={layout}
+        sizes={sizes}
+      />
+    );
+  }
+
   return (
     <Image
       src={src}

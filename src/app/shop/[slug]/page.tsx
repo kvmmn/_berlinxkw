@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
+import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { TabloShopDetailShell } from "@/components/TabloShopDetailShell";
 import { normalizeTabloFrameFields, tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
@@ -53,8 +54,13 @@ export default async function TabloDetailPage({
           <TabloShopDetailShell
             tablo={tablo}
             initialFinish={initialFinish}
-            framedSlotAspect={framedSlotAspect}
-            artworkAspect={artworkAspect}
+            gallery={
+              <TabloDetailGalleryAllFinishes
+                tablo={tablo}
+                framedSlotAspect={framedSlotAspect}
+                artworkAspect={artworkAspect}
+              />
+            }
           >
             <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
             <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>

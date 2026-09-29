@@ -1,27 +1,24 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { TabloDetailGallery } from "@/components/TabloShopMedia";
 import { TabloFrameFinishPicker } from "@/components/TabloFrameFinishPicker";
 import { TabloBuyFinishNote } from "@/components/TabloBuyFinishNote";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 /**
- * Client shell for finish-dependent gallery + buy CTA. Static copy is passed as SSR children
- * so title/description markup matches the server HTML (avoids hydration drift).
+ * Client shell for finish picker + buy CTA. Gallery and static copy are SSR siblings/children
+ * so first-paint HTML matches (avoids hydration drift from finish-dependent media).
  */
 export function TabloShopDetailShell({
   tablo,
   initialFinish,
-  framedSlotAspect,
-  artworkAspect,
+  gallery,
   children,
 }: {
   tablo: Tablo;
   initialFinish: FrameFinish;
-  framedSlotAspect: string;
-  artworkAspect: string;
+  gallery: ReactNode;
   children: ReactNode;
 }) {
   const [finish, setFinish] = useState<FrameFinish>(initialFinish);
@@ -30,13 +27,8 @@ export function TabloShopDetailShell({
 
   return (
     <>
-      <div className="bk-tablo-detail-media">
-        <TabloDetailGallery
-          tablo={tablo}
-          finish={finish}
-          framedSlotAspect={framedSlotAspect}
-          artworkAspect={artworkAspect}
-        />
+      <div className="bk-tablo-detail-media bk-tablo-detail-root" data-finish={finish}>
+        {gallery}
       </div>
       <div className="bk-tablo-detail-copy">
         {children}

@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from "playwright";
-import { mkdir, readFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
 const rawBase = process.argv[2] || "http://127.0.0.1:3000";
 const outDir = process.argv[3] || "/opt/cursor/artifacts/screenshots/fix-forward";
 
@@ -33,17 +30,18 @@ async function main() {
     await page.close();
   }
 
-  for (const name of ["gallery-four-tablos", "gallery-five-tablos"]) {
-    const html = await readFile(join(__dirname, "fixtures", `${name}.html`), "utf8");
-    const page = await browser.newPage();
-    await page.setViewportSize({ width: 1440, height: 1400 });
-    await page.setContent(html, { waitUntil: "load" });
-    await page.waitForTimeout(150);
-    const file = join(outDir, `${name}-1440.png`);
-    await page.screenshot({ path: file, fullPage: true });
-    console.log("wrote", file);
-    await page.close();
-  }
+  const fixturePage = await browser.newPage();
+  await fixturePage.setViewportSize({ width: 1440, height: 2400 });
+  await fixturePage.goto(pageUrl("/shop/gallery-fixture"), { waitUntil: "networkidle", timeout: 120000 });
+  await fixturePage.waitForTimeout(400);
+  await fixturePage.locator("#fixture-four").screenshot({
+    path: join(outDir, "gallery-four-tablos-1440.png"),
+  });
+  await fixturePage.locator("#fixture-five").screenshot({
+    path: join(outDir, "gallery-five-tablos-1440.png"),
+  });
+  console.log("wrote gallery fixtures from /shop/gallery-fixture");
+  await fixturePage.close();
 
   const btnPage = await browser.newPage();
   await btnPage.setViewportSize({ width: 900, height: 800 });

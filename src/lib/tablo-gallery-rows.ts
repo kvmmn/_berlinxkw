@@ -36,13 +36,38 @@ export const GALLERY_TARGET_ROW_HEIGHT_DESKTOP = 360;
 
 export type JustifiedGalleryRowPlan = {
   items: TabloGalleryLayoutItem[];
-  /** `full` rows stretch to gallery width; `tail` is last row left-aligned at target height. */
+  /** `full` rows stretch to gallery width; `tail` is last row left-aligned at reference row height. */
   layout: "full" | "tail";
+  /** Pixel height shared with the preceding full row (tail rows only). */
+  rowHeightPx?: number;
 };
+
+/** Height of a justified row when it fills `referenceWidth` at summed aspect weights. */
+export function computeJustifiedRowHeightPx(
+  aspectSum: number,
+  itemCount: number,
+  referenceWidth: number = GALLERY_PACK_REFERENCE_WIDTH,
+  gap: number = GALLERY_PACK_GAP,
+): number {
+  if (itemCount <= 0 || aspectSum <= 0) return GALLERY_TARGET_ROW_HEIGHT_DESKTOP;
+  const gaps = Math.max(0, itemCount - 1) * gap;
+  return (referenceWidth - gaps) / aspectSum;
+}
+
+function balanceSingleTileTail(packed: TabloGalleryLayoutItem[][]): void {
+  if (packed.length < 2) return;
+  const last = packed[packed.length - 1]!;
+  if (last.length !== 1) return;
+  const prev = packed[packed.length - 2]!;
+  if (prev.length >= 2) {
+    last.unshift(prev.pop()!);
+  }
+}
 
 /**
  * Greedy row packing for justified gallery (SSR). ≤3 tablos always share one full row.
  * Larger sets pack to ~360px row height; the final row is tail-aligned (not stretched).
+ * Never leaves a lone tile in the tail — rebalances from the previous row (e.g. 4 → 2+2).
  */
 export function planJustifiedGalleryRows(
   items: TabloGalleryLayoutItem[],
@@ -71,7 +96,6 @@ export function planJustifiedGalleryRows(
     current.push(item);
     aspectSum += aspect;
 
-    // Full rows stretch to gallery width; pack by summed aspect at target height only.
     if (current.length >= 3 && aspectSum >= maxAspectPerRow) {
       packed.push(current);
       current = [];
@@ -80,8 +104,23 @@ export function planJustifiedGalleryRows(
   }
   if (current.length > 0) packed.push(current);
 
-  return packed.map((rowItems, index) => ({
-    items: rowItems,
-    layout: index === packed.length - 1 && packed.length > 1 ? "tail" : "full",
-  }));
+  balanceSingleTileTail(packed);
+
+  let referenceRowHeight: number | undefined;
+
+  return packed.map((rowItems, index) => {
+    const isLast = index === packed.length - 1;
+    const layout = isLast && packed.length > 1 ? "tail" : "full";
+    const sum = rowAspectSum(rowItems);
+
+    if (layout === "full") {
+      referenceRowHeight = computeJustifiedRowHeightPx(sum, rowItems.length, referenceWidth, gap);
+    }
+
+    return {
+      items: rowItems,
+      layout,
+      rowHeightPx: layout === "tail" ? referenceRowHeight : undefined,
+    };
+  });
 }

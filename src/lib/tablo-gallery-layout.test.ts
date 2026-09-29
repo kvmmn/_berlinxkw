@@ -82,5 +82,20 @@ describe("tablo-gallery-rows", () => {
     assert.equal(rows.length, 2);
     assert.equal(rows[0]!.layout, "full");
     assert.equal(rows[1]!.layout, "tail");
+    assert.equal(rows[0]!.items.length, 3);
+    assert.equal(rows[1]!.items.length, 2);
+    assert.ok(rows[1]!.rowHeightPx != null && rows[1]!.rowHeightPx > 0);
+  });
+
+  it("rebalances four tablos into two rows of two (portrait last)", () => {
+    const four = ["l1", "l2", "l3", "p"].map((id) =>
+      item(id, id === "p" ? "portrait" : "landscape"),
+    );
+    const rows = planJustifiedGalleryRows(four);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0]!.items.length, 2);
+    assert.equal(rows[1]!.items.length, 2);
+    assert.equal(rows[1]!.layout, "tail");
+    assert.equal(rows[1]!.items[1]!.tablo.id, "p");
   });
 });
