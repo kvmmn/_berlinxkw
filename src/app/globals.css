@@ -850,10 +850,10 @@ textarea.bk-input[dir="auto"] {
 .bk-public-footer-advisor {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-shrink: 0;
   box-sizing: border-box;
-  width: 49px;
+  width: 46px;
   height: 44px;
   margin: 0;
   margin-inline-start: auto;
@@ -882,7 +882,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translate(0px, -3.25px);
+  transform: translate(1px, -3.25px);
 }
 
 
