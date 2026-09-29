@@ -9,6 +9,10 @@ import { loadState } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  themeColor: "#f3f3ef",
+};
+
 export default async function Home() {
   const { state } = await loadState();
   const tablos = withPublicTabloImages(
