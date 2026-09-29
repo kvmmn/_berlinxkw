@@ -850,7 +850,7 @@ textarea.bk-input[dir="auto"] {
 .bk-public-footer-advisor {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-shrink: 0;
   box-sizing: border-box;
   width: 44px;
@@ -858,8 +858,8 @@ textarea.bk-input[dir="auto"] {
   margin: 0;
   margin-inline-start: auto;
   margin-inline-end: 0;
-  /* Asymmetric padding: hover chip extends left; mark ink stays on shell content edge. */
-  padding: 8px 0 8px 8px;
+  /* Hit target; hover chip extends left of mark ink center. */
+  padding: 8px 0 8px 0;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -883,7 +883,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translate(2px, -2.75px);
+  transform: translate(0.5px, -2.75px);
 }
 
 
@@ -1103,6 +1103,12 @@ textarea.bk-input[dir="auto"] {
   object-position: center;
 }
 
+@media (max-width: 360px) {
+  .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
+    padding: 11px 1rem 7px;
+  }
+}
+
 @media (max-width: 480px) {
   .bk-public-root .bk-btn {
     padding: 11px 1rem 6px;
@@ -1121,7 +1127,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 9px 1rem 8px;
+    padding: 10px 1rem 8px;
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
