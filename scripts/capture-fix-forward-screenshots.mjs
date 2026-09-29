@@ -2,6 +2,9 @@
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const logoFileUrl = pathToFileURL(join(process.cwd(), "public/logo.png")).href;
 
 const rawBase = process.argv[2] || "http://127.0.0.1:3001";
 const outDir = process.argv[3] || "/opt/cursor/artifacts/screenshots/fix-forward";
@@ -53,27 +56,44 @@ async function main() {
     }
   }
 
-  const footerPage = await browser.newPage();
-  await footerPage.setViewportSize({ width: 1440, height: 200 });
-  await footerPage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
-  await footerPage.locator("footer.bk-public-footer").screenshot({
-    path: join(outDir, "footer-bear-closeup-1440.png"),
-  });
-  console.log("wrote footer closeup");
+  for (const w of [390, 1440]) {
+    const footerPage = await browser.newPage();
+    await footerPage.setViewportSize({ width: w, height: 220 });
+    await footerPage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
+    await footerPage.locator("footer.bk-public-footer").screenshot({
+      path: join(outDir, `footer-bear-closeup-${w}.png`),
+    });
+    console.log("wrote footer closeup", w);
+    await footerPage.close();
+  }
 
-  const bearPage = await browser.newPage();
-  await bearPage.setViewportSize({ width: 400, height: 400 });
-  await bearPage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
-  await bearPage.evaluate(() => {
-    const mark = document.querySelector(".bk-public-advisor-mark");
-    if (mark instanceof SVGElement) {
-      mark.style.width = "300px";
-      mark.style.height = "300px";
-    }
+  const comparePage = await browser.newPage();
+  await comparePage.goto(pageUrl("/shop"), { waitUntil: "networkidle" });
+  const markSvg = await comparePage.evaluate(() => {
+    const el = document.querySelector(".bk-public-advisor-mark");
+    return el?.outerHTML ?? "";
   });
-  const bear = bearPage.locator(".bk-public-advisor-mark");
-  await bear.screenshot({ path: join(outDir, "footer-bear-300px.png") });
-  console.log("wrote footer bear enlarged");
+  await comparePage.setViewportSize({ width: 720, height: 320 });
+  await comparePage.setContent(`<!DOCTYPE html>
+<html><head><style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #f5f5f3; }
+  .row { display: flex; align-items: center; justify-content: center; gap: 2rem; padding: 2rem; }
+  figcaption { text-align: center; font-size: 12px; color: #666; margin-top: 0.5rem; }
+  figure { margin: 0; }
+  img, svg { width: 160px; height: 160px; object-fit: contain; display: block; }
+  .mark svg { width: 160px; height: 160px; }
+</style></head><body>
+  <div class="row">
+    <figure><img src="${logoFileUrl}" alt="logo.png"/><figcaption>public/logo.png</figcaption></figure>
+    <figure class="mark">${markSvg}<figcaption>footer mark (rendered)</figcaption></figure>
+  </div>
+</body></html>`);
+  await comparePage.screenshot({
+    path: join(outDir, "proof-logo-vs-footer-mark.png"),
+    fullPage: true,
+  });
+  console.log("wrote proof-logo-vs-footer-mark");
+  await comparePage.close();
 
   await browser.close();
 }

@@ -830,7 +830,7 @@ textarea.bk-input[dir="auto"] {
   flex-shrink: 0;
   min-width: 44px;
   min-height: 44px;
-  margin: -0.35rem 0;
+  margin: -0.125rem 0;
   color: var(--bk-public-ink);
   border-radius: 4px;
   text-decoration: none;
@@ -850,8 +850,8 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-public-advisor-mark {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: block;
 }
 

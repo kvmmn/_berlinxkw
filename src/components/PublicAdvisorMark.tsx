@@ -1,11 +1,10 @@
 import {
-  ADVISOR_BEAR_PATHS,
-  ADVISOR_BEAR_TRACE_HEIGHT,
+  ADVISOR_BEAR_PATH_D,
   ADVISOR_BEAR_VIEWBOX,
 } from "@/lib/advisor-bear-path";
 
 /**
- * Monochrome portal mark (`public/logo.png`) — ink only, no glow or background.
+ * Monochrome portal mark (`public/logo.png`) — candidate B bear + orb outline.
  */
 export function PublicAdvisorMark({ className = "" }: { className?: string }) {
   return (
@@ -15,15 +14,7 @@ export function PublicAdvisorMark({ className = "" }: { className?: string }) {
       aria-hidden
       focusable="false"
     >
-      <g
-        transform={`translate(0,${ADVISOR_BEAR_TRACE_HEIGHT}) scale(0.1,-0.1)`}
-        fill="currentColor"
-        fillRule="evenodd"
-      >
-        {ADVISOR_BEAR_PATHS.map((d, i) => (
-          <path key={i} d={d} />
-        ))}
-      </g>
+      <path fill="currentColor" d={ADVISOR_BEAR_PATH_D} />
     </svg>
   );
 }
