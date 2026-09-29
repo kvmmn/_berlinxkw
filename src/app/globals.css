@@ -857,9 +857,9 @@ textarea.bk-input[dir="auto"] {
   height: 44px;
   margin: 0;
   margin-inline-start: auto;
-  /* Chip padding sits outside content edge so the mark stays ink-aligned at rest. */
-  margin-inline-end: -2px;
-  padding: 6px 2px 6px 6px;
+  margin-inline-end: 0;
+  /* Asymmetric padding: hover chip extends left; mark ink stays on shell content edge. */
+  padding: 8px 0 8px 8px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -883,7 +883,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translateY(-1px);
+  transform: translate(-3px, -4.25px);
 }
 
 
@@ -951,11 +951,25 @@ textarea.bk-input[dir="auto"] {
     max-width: 100%;
   }
 
+  .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
+    overflow: hidden;
+  }
+
   .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media,
   .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-aspect-frame {
     width: 100%;
+    max-width: 100%;
     height: var(--bk-row-h);
+    max-height: var(--bk-row-h);
     aspect-ratio: unset;
+    box-sizing: border-box;
+  }
+
+  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media > span,
+  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-picture,
+  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media img {
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 
@@ -1107,7 +1121,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 7px;
+    padding: 10px 1rem 8px;
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
@@ -1125,7 +1139,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 13px 1rem 5px;
+    padding: 13px 1rem 6px;
   }
 }
 
@@ -1139,15 +1153,25 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-root .bk-btn.bk-tablo-buy {
-    padding: 11px 1rem 6px;
+    padding: 11px 1rem 7px;
   }
 
   .bk-public-root .bk-btn.bk-tablo-buy-lg {
-    padding: 12px 1.75rem 7px;
+    padding: 12px 1.75rem 8px;
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
+    padding: 10px 1rem 8px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1100px) {
+  .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
     padding: 10px 1rem 7px;
+  }
+
+  .bk-public-root .bk-btn.bk-tablo-buy {
+    padding: 11px 1rem 7px;
   }
 }
 
@@ -1474,13 +1498,12 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
   position: relative;
-  top: 0.06em;
+  top: 0.015em;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {
   display: inline;
   margin: 0;
-  margin-inline-start: 0.75rem;
   padding: 0;
   font-size: 0.875rem;
   color: var(--bk-public-muted);

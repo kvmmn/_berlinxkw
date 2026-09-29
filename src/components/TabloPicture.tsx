@@ -9,10 +9,10 @@ function isSvgSrc(src: string, mime?: string): boolean {
 export type TabloPictureLayout = "contain" | "cover";
 
 const SIZE_PRESETS = {
-  /** Homepage gallery — one or two columns */
-  landing: "(max-width: 640px) 100vw, (max-width: 960px) 50vw, 480px",
-  /** Shop grid cards */
-  card: "(max-width: 640px) 100vw, (max-width: 960px) 50vw, 340px",
+  /** Homepage / shop justified rows — match ~34vw desktop tile width at 1440 */
+  landing: "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, 34vw",
+  /** Shop grid cards (same row layout as landing gallery) */
+  card: "(max-width: 720px) 100vw, (max-width: 1024px) 50vw, 34vw",
   /** Product detail column */
   detail: "(max-width: 768px) 100vw, min(540px, 50vw)",
 } as const;
