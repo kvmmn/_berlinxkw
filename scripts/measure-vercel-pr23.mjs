@@ -9,6 +9,13 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const base = (process.argv[2] || "http://127.0.0.1:3001").replace(/\/$/, "");
+const vercelShare = process.env.VERCEL_SHARE?.trim();
+function pageUrl(path) {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  if (!vercelShare) return `${base}${p}`;
+  const sep = p.includes("?") ? "&" : "?";
+  return `${base}${p}${sep}_vercel_share=${encodeURIComponent(vercelShare)}`;
+}
 const widths = [360, 390, 768, 1024, 1200, 1440];
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -165,7 +172,7 @@ async function main() {
     for (const w of widths) {
       const page = await browser.newPage();
       await page.setViewportSize({ width: w, height: w >= 1200 ? 1600 : 1200 });
-      await page.goto(`${base}${path}`, { waitUntil: "networkidle", timeout: 120000 });
+      await page.goto(pageUrl(path), { waitUntil: "networkidle", timeout: 120000 });
       await page.waitForTimeout(350);
       const m = await measureGallery(page);
       let heightJump = null;
@@ -179,7 +186,7 @@ async function main() {
 
   const finishPage = await browser.newPage();
   await finishPage.setViewportSize({ width: 900, height: 1200 });
-  await finishPage.goto(`${base}/shop/berlin-clouds-01`, { waitUntil: "networkidle", timeout: 120000 });
+  await finishPage.goto(pageUrl("/shop/berlin-clouds-01"), { waitUntil: "networkidle", timeout: 120000 });
   report.finish = await measureFinishFaStarts(finishPage);
   report.plusEur = await measurePlusEur(finishPage);
   report.buttons.detailBuy = await measureButtonInk(finishPage, ".bk-tablo-buy-lg");
@@ -187,20 +194,20 @@ async function main() {
 
   const shopBtnPage = await browser.newPage();
   await shopBtnPage.setViewportSize({ width: 900, height: 800 });
-  await shopBtnPage.goto(`${base}/shop`, { waitUntil: "networkidle", timeout: 120000 });
+  await shopBtnPage.goto(pageUrl("/shop"), { waitUntil: "networkidle", timeout: 120000 });
   report.buttons.shopBuy = await measureButtonInk(shopBtnPage, ".bk-tablo-buy");
   await shopBtnPage.close();
 
   const homePage = await browser.newPage();
   await homePage.setViewportSize({ width: 900, height: 800 });
-  await homePage.goto(`${base}/`, { waitUntil: "networkidle", timeout: 120000 });
+  await homePage.goto(pageUrl("/"), { waitUntil: "networkidle", timeout: 120000 });
   report.buttons.viewShop = await measureButtonInk(homePage, ".bk-landing-actions .bk-btn-primary");
   report.buttons.instagram = await measureButtonInk(homePage, ".bk-landing-actions .bk-btn:not(.bk-btn-primary)");
   await homePage.close();
 
   const footPage = await browser.newPage();
   await footPage.setViewportSize({ width: 1440, height: 400 });
-  await footPage.goto(`${base}/shop`, { waitUntil: "networkidle", timeout: 120000 });
+  await footPage.goto(pageUrl("/shop"), { waitUntil: "networkidle", timeout: 120000 });
   report.footer = await measureFooterMark(footPage);
   await footPage.close();
 
