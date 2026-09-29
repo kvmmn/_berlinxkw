@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PublicBrandRow } from "@/components/PublicBrandRow";
+import { PUBLIC_INSTAGRAM_URL } from "@/lib/public-social";
 
 export function PublicSiteHeader() {
   return (
@@ -10,6 +11,15 @@ export function PublicSiteHeader() {
           <Link href="/shop" className="bk-public-nav-link">
             shop
           </Link>
+          <a
+            href={PUBLIC_INSTAGRAM_URL}
+            className="bk-public-nav-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram @berlinxkw"
+          >
+            Instagram
+          </a>
         </nav>
       </div>
     </header>

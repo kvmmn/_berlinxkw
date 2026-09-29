@@ -685,8 +685,15 @@ textarea.bk-input[dir="auto"] {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: clamp(1rem, 3vw, 1.5rem);
+  gap: clamp(0.65rem, 2.5vw, 1.5rem);
   flex: 0 0 auto;
+}
+
+@media (max-width: 420px) {
+  .bk-public-nav-link {
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+  }
 }
 
 .bk-public-nav-link {
