@@ -606,9 +606,10 @@ textarea.bk-input[dir="auto"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
-  padding-top: calc(0.65rem + 2px);
-  padding-bottom: calc(0.65rem - 2px);
+  box-sizing: border-box;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  line-height: 1.15;
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
@@ -689,13 +690,6 @@ textarea.bk-input[dir="auto"] {
   flex: 0 0 auto;
 }
 
-@media (max-width: 420px) {
-  .bk-public-nav-link {
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
-  }
-}
-
 .bk-public-nav-link {
   display: inline-flex;
   align-items: center;
@@ -706,6 +700,13 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: 0.06em;
   font-size: 0.875rem;
   font-family: var(--bk-font-mono);
+}
+
+@media (max-width: 420px) {
+  .bk-public-nav-link {
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+  }
 }
 
 .bk-public-root .bk-public-nav-link:hover,
@@ -833,10 +834,13 @@ textarea.bk-input[dir="auto"] {
   color: var(--bk-public-ink);
   border-radius: 4px;
   text-decoration: none;
+  opacity: 0.88;
+  transition: opacity 0.15s ease;
 }
 
 .bk-public-root .bk-public-footer-advisor:hover {
-  color: var(--bk-public-accent);
+  color: var(--bk-public-ink);
+  opacity: 1;
 }
 
 .bk-public-root .bk-public-footer-advisor:focus-visible {
@@ -846,8 +850,8 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-public-advisor-mark {
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.25rem;
+  height: 1.25rem;
   display: block;
 }
 
@@ -881,6 +885,61 @@ textarea.bk-input[dir="auto"] {
 @media (min-width: 1200px) {
   .bk-tablo-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* One portrait + N landscapes: portrait spans two rows beside stacked landscapes. */
+@media (min-width: 1200px) {
+  .bk-tablo-grid--portrait-rail > li:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .bk-tablo-grid--portrait-rail > li.bk-tablo-grid-portrait-span {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(4) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(5) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(6) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1199px) {
+  .bk-tablo-grid--portrait-rail > li:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .bk-tablo-grid--portrait-rail > li.bk-tablo-grid-portrait-span {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(5) {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .bk-tablo-grid--portrait-rail > li:nth-child(6) {
+    grid-column: 1;
+    grid-row: 5;
   }
 }
 
@@ -1093,17 +1152,15 @@ textarea.bk-input[dir="auto"] {
   text-transform: lowercase;
   letter-spacing: 0.04em;
   line-height: 1.45;
-}
-
-.bk-tablo-detail-frame-size {
+  font-size: clamp(0.875rem, 2vw, 1.0625rem);
   font-family: var(--bk-font-mono);
-  font-size: 0.9375rem;
-  letter-spacing: 0.03em;
 }
 
-.bk-tablo-detail-frame-dir {
-  text-transform: lowercase;
-  letter-spacing: 0.04em;
+.bk-tablo-detail-frame-size,
+.bk-tablo-detail-frame-dir,
+.bk-tablo-detail-frame-dir-fa {
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 .bk-text-fa,
@@ -1129,13 +1186,14 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-buy-lg {
   font-size: 1rem;
-  padding: calc(0.85rem + 2px) 1.75rem calc(0.85rem - 2px);
+  min-height: 3rem;
+  padding: 0 1.75rem;
   width: fit-content;
   max-width: 100%;
   align-self: flex-start;
   text-align: center;
   justify-content: center;
-  line-height: 1;
+  line-height: 1.15;
 }
 
 .bk-tablo-detail-cta {
@@ -1263,17 +1321,22 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-frame-finish-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.15rem;
   font-size: 0.9rem;
+  line-height: 1.35;
+  min-width: 0;
 }
 
 .bk-frame-finish-label-fa {
   font-size: 0.875rem;
   color: var(--bk-public-muted);
   font-family: var(--bk-font-persian);
-  line-height: 1.45;
+  line-height: 1.5;
+  min-height: 1.3125rem;
+  text-align: start;
+  unicode-bidi: plaintext;
 }
 
 .bk-tablo-presentation {

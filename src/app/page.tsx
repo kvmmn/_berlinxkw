@@ -2,7 +2,8 @@ import Link from "next/link";
 import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
-import { orderTablosForGalleryGrid, tablosWithLayout } from "@/lib/tablo-shop-list";
+import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
+import { tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -20,7 +21,7 @@ export default async function Home() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
-  const listed = orderTablosForGalleryGrid(await tablosWithLayout(tablos));
+  const layout = planTabloGalleryLayout(await tablosWithLayout(tablos));
 
   return (
     <PublicSiteShell footerNote="original works · berlin">
@@ -43,7 +44,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {listed.length > 0 ? (
+        {layout.items.length > 0 ? (
           <section className="bk-landing-gallery-section" aria-labelledby="landing-tablos-heading">
             <div className="bk-landing-gallery-head">
               <h2 id="landing-tablos-heading" className="bk-meta bk-landing-gallery-label">
@@ -53,9 +54,22 @@ export default async function Home() {
                 all works
               </Link>
             </div>
-            <ul className="bk-tablo-grid bk-landing-gallery">
-              {listed.map(({ tablo, orientation, productAspect }, index) => (
-                <li key={tablo.id} className="bk-landing-gallery-cell">
+            <ul
+              className={
+                layout.mode === "portrait-rail"
+                  ? "bk-tablo-grid bk-landing-gallery bk-tablo-grid--portrait-rail"
+                  : "bk-tablo-grid bk-landing-gallery"
+              }
+            >
+              {layout.items.map(({ tablo, orientation, productAspect }, index) => (
+                <li
+                  key={tablo.id}
+                  className={
+                    tablo.id === layout.portraitTabloId
+                      ? "bk-landing-gallery-cell bk-tablo-grid-portrait-span"
+                      : "bk-landing-gallery-cell"
+                  }
+                >
                   <TabloGalleryTile
                     tablo={tablo}
                     orientation={orientation}
