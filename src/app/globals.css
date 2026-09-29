@@ -858,8 +858,8 @@ textarea.bk-input[dir="auto"] {
   margin: 0;
   margin-inline-start: auto;
   /* Chip padding sits outside content edge so the mark stays ink-aligned at rest. */
-  margin-inline-end: -12px;
-  padding: 7px 12px 7px 6px;
+  margin-inline-end: -14px;
+  padding: 7px 14px 7px 6px;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
@@ -883,7 +883,7 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translateY(-3px);
+  transform: translateY(-5px);
 }
 
 
@@ -1103,7 +1103,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-root .bk-btn.bk-tablo-buy-lg {
-    padding: 14px 1.75rem 8px;
+    padding: 14px 1.75rem 9px;
   }
 
   .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
@@ -1125,7 +1125,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 10px 1rem 7px;
+    padding: 11px 1rem 8px;
   }
 }
 
