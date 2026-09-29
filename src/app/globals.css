@@ -1125,7 +1125,7 @@ textarea.bk-input[dir="auto"] {
   }
 
   .bk-public-not-found .bk-landing-actions .bk-btn:not(.bk-btn-primary) {
-    padding: 15px 1rem 3px;
+    padding: 11px 1rem 11px;
   }
 }
 
