@@ -41,7 +41,7 @@ export default async function Home() {
       </header>
       <main id="main-content" className="bk-landing-main">
         <section className="bk-landing-hero" aria-labelledby="landing-title">
-          <BrandLogoMark size={96} priority variant="png" />
+          <BrandLogoMark size={96} priority variant="svg" />
           <h1 id="landing-title" className="bk-display bk-landing-title">
             <BrandLockup size="lg" />
           </h1>

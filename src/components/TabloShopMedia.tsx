@@ -8,6 +8,7 @@ import {
   frameDimensionsForOrientation,
   type TabloOrientation,
 } from "@/lib/tablo-frame-spec";
+import { TabloOrientedMediaFrame } from "@/components/TabloOrientedMediaFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -55,10 +56,9 @@ export function TabloCardMedia({
   }
 
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
-  const { aspectRatio } = frameDimensionsForOrientation(orientation);
 
   return (
-    <div className="bk-tablo-card-media-frame" style={{ aspectRatio }}>
+    <TabloOrientedMediaFrame orientation={orientation} className="bk-tablo-card-media-frame">
       <TabloPicture
         src={product.url}
         alt={productAlt(tablo, kind)}
@@ -66,7 +66,7 @@ export function TabloCardMedia({
         sizes={tabloPictureSizes("card")}
         layout="contain"
       />
-    </div>
+    </TabloOrientedMediaFrame>
   );
 }
 
@@ -101,7 +101,10 @@ export function TabloDetailGallery({
             aspectRatio={aspectRatio}
           />
         ) : (
-          <div className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty" style={{ aspectRatio }}>
+          <div
+            className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
+            style={{ aspectRatio }}
+          >
             <p className="bk-meta bk-tablo-framed-slot">
               Framed mockup for {finishLabel?.en ?? "this finish"} — coming soon
             </p>

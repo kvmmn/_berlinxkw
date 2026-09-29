@@ -1,91 +1,132 @@
 import "server-only";
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { jpegDimensionsFromBuffer } from "./instagram/jpeg-dimensions";
+import { isBlobStorePathname, streamBlob } from "./blob-private";
+import {
+  dimensionsFromBuffer,
+  shopMediaPathnameFromUrl,
+  type ImageDimensions,
+} from "./image-dimensions";
+import type { TabloImage } from "./types";
 
-function dimensionsFromSvg(buf: Buffer): { width: number; height: number } | null {
-  const text = buf.toString("utf8", 0, Math.min(buf.length, 8192));
-  const viewBox = text.match(/viewBox=["']([\d.\s-]+)["']/i);
-  if (viewBox) {
-    const parts = viewBox[1].trim().split(/\s+/).map(Number);
-    if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
-      return { width: parts[2], height: parts[3] };
+const HEADER_BYTES = 65536;
+
+async function readStreamPrefix(
+  stream: ReadableStream<Uint8Array>,
+  maxBytes: number,
+): Promise<Buffer> {
+  const reader = stream.getReader();
+  const chunks: Buffer[] = [];
+  let total = 0;
+  try {
+    while (total < maxBytes) {
+      const { done, value } = await reader.read();
+      if (done || !value?.length) break;
+      chunks.push(Buffer.from(value));
+      total += value.length;
     }
+  } finally {
+    await reader.cancel().catch(() => undefined);
   }
-  const wh = text.match(/\bwidth=["']([\d.]+)["'][^>]*\bheight=["']([\d.]+)["']/i);
-  if (wh) {
-    const width = Number(wh[1]);
-    const height = Number(wh[2]);
-    if (width > 0 && height > 0) return { width, height };
-  }
-  return null;
+  return Buffer.concat(chunks);
 }
 
-function dimensionsFromBuffer(
-  buf: Buffer,
-  mime?: string | null,
-): { width: number; height: number } | null {
-  const type = mime?.toLowerCase() ?? "";
-  if (type.includes("svg") || buf.slice(0, 256).toString("utf8").includes("<svg")) {
-    return dimensionsFromSvg(buf);
-  }
-  if (type.includes("jpeg") || type.includes("jpg") || (buf[0] === 0xff && buf[1] === 0xd8)) {
-    return jpegDimensionsFromBuffer(buf);
-  }
-  return null;
+async function probeBlobImageDimensions(pathname: string): Promise<ImageDimensions | null> {
+  if (!isBlobStorePathname(pathname)) return null;
+  const blob = await streamBlob(pathname);
+  if (!blob) return null;
+  const buf = await readStreamPrefix(blob.stream, HEADER_BYTES);
+  return dimensionsFromBuffer(buf, blob.contentType);
 }
 
 function localPublicPath(url: string): string | null {
-  if (url.startsWith("/shop/") || url.startsWith("/uploads/")) {
-    return join(process.cwd(), "public", url);
+  const pathOnly = url.split("?")[0] ?? url;
+  if (pathOnly.startsWith("/shop/") || pathOnly.startsWith("/uploads/")) {
+    return join(process.cwd(), "public", pathOnly);
   }
   return null;
 }
 
-/** Best-effort intrinsic size for shop layout (artwork orientation). Server only. */
-export async function probeImageDimensions(
-  url: string | undefined,
+function publicSiteOrigin(): string | null {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  return "https://berlinxkw.vercel.app";
+}
+
+/** Fetch image header bytes via the public custom domain (never `VERCEL_URL`). */
+async function probeViaPublicOrigin(
+  url: string,
   mime?: string,
-): Promise<{ width: number; height: number } | null> {
+): Promise<ImageDimensions | null> {
+  if (!url.startsWith("/")) return null;
+  const origin = publicSiteOrigin();
+  try {
+    const res = await fetch(`${origin}${url}`, {
+      headers: { Range: `bytes=0-${HEADER_BYTES - 1}` },
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok && res.status !== 206) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    return dimensionsFromBuffer(buf, res.headers.get("content-type") ?? mime);
+  } catch {
+    return null;
+  }
+}
+
+/** Best-effort intrinsic size for a tablo image record. Prefer private Blob SDK reads. */
+export async function probeTabloImageDimensions(
+  image: TabloImage | null | undefined,
+): Promise<ImageDimensions | null> {
+  if (!image) return null;
+  if (image.width && image.height && image.width > 0 && image.height > 0) {
+    return { width: image.width, height: image.height };
+  }
+
+  const pathname =
+    (image.pathname && isBlobStorePathname(image.pathname) ? image.pathname : null) ??
+    shopMediaPathnameFromUrl(image.url);
+
+  if (pathname) {
+    const fromBlob = await probeBlobImageDimensions(pathname);
+    if (fromBlob) return fromBlob;
+  }
+
+  const url = image.url;
   if (!url) return null;
 
-  const local = localPublicPath(url.split("?")[0] ?? url);
+  const local = localPublicPath(url);
   if (local) {
     try {
       const buf = await readFile(local);
-      return dimensionsFromBuffer(buf, mime);
+      return dimensionsFromBuffer(buf, image.mime);
     } catch {
-      return null;
+      /* fall through */
     }
   }
 
   if (url.startsWith("/api/shop/media")) {
-    const origin =
-      process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://127.0.0.1:3000");
-    try {
-      const res = await fetch(`${origin}${url}`, {
-        headers: { Range: "bytes=0-65535" },
-        next: { revalidate: 3600 },
-      });
-      if (!res.ok) return null;
-      const buf = Buffer.from(await res.arrayBuffer());
-      return dimensionsFromBuffer(buf, res.headers.get("content-type") ?? mime);
-    } catch {
-      return null;
-    }
+    return probeViaPublicOrigin(url, image.mime);
   }
 
   if (url.startsWith("http")) {
     try {
-      const res = await fetch(url, { headers: { Range: "bytes=0-65535" } });
-      if (!res.ok) return null;
+      const res = await fetch(url, { headers: { Range: `bytes=0-${HEADER_BYTES - 1}` } });
+      if (!res.ok && res.status !== 206) return null;
       const buf = Buffer.from(await res.arrayBuffer());
-      return dimensionsFromBuffer(buf, res.headers.get("content-type") ?? mime);
+      return dimensionsFromBuffer(buf, res.headers.get("content-type") ?? image.mime);
     } catch {
       return null;
     }
   }
 
   return null;
+}
+
+/** @deprecated Use probeTabloImageDimensions for tablo artwork. */
+export async function probeImageDimensions(
+  url: string | undefined,
+  mime?: string,
+): Promise<ImageDimensions | null> {
+  if (!url) return null;
+  return probeTabloImageDimensions({ url, mime });
 }

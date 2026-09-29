@@ -33,10 +33,10 @@ export function tabloBuyExternal(tablo: Tablo): boolean {
 export function tabloBuyFinishNote(tablo: Tablo, finish: FrameFinish, external: boolean): string {
   const label = FRAME_FINISH_LABELS[finish];
   if (external) {
-    return `Choose frame finish when ordering if the marketplace does not read the link — ${label.en} (${label.fa}).`;
+    return `If the shop link omits finish, choose ${label.en} at checkout.`;
   }
   if (tablo.marketplaceUrl?.trim()) {
-    return `Frame finish is included in the buy link when supported — otherwise mention ${label.en} when you order.`;
+    return `Finish is in the link when supported — else note ${label.en}.`;
   }
-  return `DM @berlinxkw on Instagram to purchase — include frame finish: ${label.en} · ${label.fa}.`;
+  return `DM @berlinxkw — finish: ${label.en} (${label.fa}).`;
 }

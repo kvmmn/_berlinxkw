@@ -948,6 +948,7 @@ textarea.bk-input[dir="auto"] {
   text-transform: none;
   letter-spacing: 0;
   font-size: 0.8125rem;
+  min-height: 2.75rem;
 }
 
 .bk-tablo-buy-finish {
@@ -1414,6 +1415,14 @@ textarea.bk-input[dir="auto"] {
   overflow: hidden;
 }
 
+.bk-tablo-gallery-media-link {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
 .bk-tablo-gallery-media:focus-visible {
   outline: 1px solid var(--bk-lime);
   outline-offset: 3px;
@@ -1480,6 +1489,16 @@ textarea.bk-input[dir="auto"] {
   border-top: 1px solid var(--bk-border);
   color: var(--bk-muted-dim);
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .bk-landing .bk-meta,
+  .bk-shop-root .bk-meta,
+  .bk-tablo-detail-figure figcaption,
+  .bk-tablo-buy-note,
+  .bk-frame-finish-fieldset legend {
+    font-size: 0.875rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

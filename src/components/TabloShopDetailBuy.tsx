@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { TabloDetailGallery } from "@/components/TabloShopMedia";
 import { TabloFrameFinishPicker } from "@/components/TabloFrameFinishPicker";
 import { coerceFrameFinish } from "@/lib/frame-finish";
+import { tabloArtworkImage } from "@/lib/tablo-images";
+import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, orientationCopy, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import {
   tabloBuyExternal,
@@ -16,13 +18,14 @@ import type { FrameFinish, Tablo } from "@/lib/types";
 export function TabloShopDetailBuy({
   tablo,
   priceLabel,
-  orientation,
+  orientation: initialOrientation,
 }: {
   tablo: Tablo;
   priceLabel: string;
   orientation: TabloOrientation;
 }) {
   const [finish, setFinish] = useState<FrameFinish>(() => coerceFrameFinish(tablo, undefined));
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
   const buyHref = useMemo(() => tabloBuyUrl(tablo, finish), [tablo, finish]);
   const external = tabloBuyExternal(tablo);
   const dir = orientationCopy(orientation);
@@ -58,7 +61,9 @@ export function TabloShopDetailBuy({
           >
             {tabloBuyLabel(tablo)}
           </a>
-          <p className="bk-meta bk-tablo-buy-note">{tabloBuyFinishNote(tablo, finish, external)}</p>
+          <p className="bk-meta bk-tablo-buy-note" aria-live="polite">
+            {tabloBuyFinishNote(tablo, finish, external)}
+          </p>
         </div>
       </div>
     </>

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/lib/instagram/**/*.test.ts"
+    "test": "tsx --test src/lib/instagram/**/*.test.ts src/lib/tablo-frame-spec.test.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.0",

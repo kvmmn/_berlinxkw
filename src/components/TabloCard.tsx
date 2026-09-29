@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { tabloArtworkImage } from "@/lib/tablo-images";
+import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import type { Tablo } from "@/lib/types";
@@ -15,11 +19,12 @@ function formatEur(price: number): string {
 
 export function TabloCard({
   tablo,
-  orientation = "portrait",
+  orientation: initialOrientation = "portrait",
 }: {
   tablo: Tablo;
   orientation?: TabloOrientation;
 }) {
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
   const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
   const external = tabloBuyExternal(tablo);
 

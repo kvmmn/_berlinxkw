@@ -16,7 +16,7 @@ export function ShopShell({
       </a>
       <header className="bk-shop-header">
         <Link href="/" className="bk-shop-brand" aria-label="berlin × kawe home">
-          <BrandLogoMark size={40} />
+          <BrandLogoMark size={40} variant="svg" />
           <BrandLockup size="md" />
         </Link>
         <div className="bk-shop-header-end">
