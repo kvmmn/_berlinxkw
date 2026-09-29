@@ -28,46 +28,65 @@ async function measureGallery(page) {
     let maxDead = 0;
     let minVisiblePct = 100;
     const cells = [];
-    const lis = [...grid.querySelectorAll(":scope > .bk-tablo-justified-cell")];
+    const rows = [];
+    const rowEls = [...grid.querySelectorAll(":scope > .bk-tablo-justified-row")];
+    const lis =
+      rowEls.length > 0
+        ? rowEls.flatMap((row) => [...row.querySelectorAll(".bk-tablo-justified-cell")])
+        : [...grid.querySelectorAll(".bk-tablo-justified-cell")];
     let maxRight = 0;
-    for (const li of lis) {
-      const frame = li.querySelector(".bk-aspect-frame");
-      const img = li.querySelector(".bk-tablo-picture, img");
-      if (!frame) continue;
-      const fr = frame.getBoundingClientRect();
-      const ir = img?.getBoundingClientRect();
-      maxRight = Math.max(maxRight, li.getBoundingClientRect().right);
-      const deadBelow = ir ? Math.max(0, fr.bottom - ir.bottom) : 0;
-      const deadAbove = ir ? Math.max(0, ir.top - fr.top) : 0;
-      const deadSide =
-        ir && fr.width > 0
-          ? Math.max(0, fr.right - ir.right, ir.left - fr.left)
-          : 0;
-      const dead = Math.max(deadBelow, deadAbove, deadSide);
-      maxDead = Math.max(maxDead, dead);
-      let visiblePct = 100;
-      if (ir && img) {
-        const nw = img.naturalWidth || ir.width;
-        const nh = img.naturalHeight || ir.height;
-        if (nw && nh) {
-          const scale = Math.min(ir.width / nw, ir.height / nh);
-          const shownW = nw * scale;
-          const shownH = nh * scale;
-          visiblePct = Math.min(100, (shownW / ir.width) * 100, (shownH / ir.height) * 100);
+    for (const rowEl of rowEls.length ? rowEls : [grid]) {
+      const rowCells = rowEl === grid ? lis : [...rowEl.querySelectorAll(".bk-tablo-justified-cell")];
+      const heights = [];
+      let rowMaxRight = 0;
+      for (const li of rowCells) {
+        const frame = li.querySelector(".bk-aspect-frame, .bk-tablo-tile-media");
+        const img = li.querySelector(".bk-tablo-picture, img");
+        if (!frame) continue;
+        const fr = frame.getBoundingClientRect();
+        const ir = img?.getBoundingClientRect();
+        heights.push(fr.height);
+        rowMaxRight = Math.max(rowMaxRight, li.getBoundingClientRect().right);
+        maxRight = Math.max(maxRight, li.getBoundingClientRect().right);
+        const deadBelow = ir ? Math.max(0, fr.bottom - ir.bottom) : 0;
+        const deadAbove = ir ? Math.max(0, ir.top - fr.top) : 0;
+        const deadSide =
+          ir && fr.width > 0
+            ? Math.max(0, fr.right - ir.right, ir.left - fr.left)
+            : 0;
+        const dead = Math.max(deadBelow, deadAbove, deadSide);
+        maxDead = Math.max(maxDead, dead);
+        let visiblePct = 100;
+        if (ir && img) {
+          const nw = img.naturalWidth || ir.width;
+          const nh = img.naturalHeight || ir.height;
+          if (nw && nh) {
+            const scale = Math.min(ir.width / nw, ir.height / nh);
+            const shownW = nw * scale;
+            const shownH = nh * scale;
+            visiblePct = Math.min(100, (shownW / ir.width) * 100, (shownH / ir.height) * 100);
+          }
         }
+        minVisiblePct = Math.min(minVisiblePct, visiblePct);
+        cells.push({
+          dead,
+          frameW: fr.width,
+          frameH: fr.height,
+          imgW: ir?.width ?? 0,
+          imgH: ir?.height ?? 0,
+          visiblePct,
+        });
       }
-      minVisiblePct = Math.min(minVisiblePct, visiblePct);
-      cells.push({
-        dead,
-        frameW: fr.width,
-        frameH: fr.height,
-        imgW: ir?.width ?? 0,
-        imgH: ir?.height ?? 0,
-        visiblePct,
-      });
+      if (heights.length) {
+        const minH = Math.min(...heights);
+        const maxH = Math.max(...heights);
+        const rowTrailing = Math.max(0, gr.right - rowMaxRight);
+        maxDead = Math.max(maxDead, rowTrailing);
+        rows.push({ heightSpread: maxH - minH, rowTrailing, count: rowCells.length });
+      }
     }
     const trailingDead = Math.max(0, gr.right - maxRight);
-    return { gap, maxDead, trailingDead, minVisiblePct, cellCount: cells.length, cells };
+    return { gap, maxDead, trailingDead, minVisiblePct, cellCount: cells.length, cells, rows };
   });
 }
 
@@ -116,14 +135,21 @@ async function measureButtonInk(page, selector) {
 
 async function measureFinishFaStarts(page) {
   return page.evaluate(() => {
-    const labels = [
-      ...document.querySelectorAll(
-        ".bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa",
-      ),
+    const options = [
+      ...document.querySelectorAll(".bk-frame-finish-fieldset--shop .bk-frame-finish-option"),
     ];
-    const starts = labels.map((el) => el.getBoundingClientRect().left);
-    const spread = starts.length ? Math.max(...starts) - Math.min(...starts) : 0;
-    return { starts, spread };
+    const pairs = options.map((opt) => {
+      const en = opt.querySelector(".bk-frame-finish-label > span:first-child");
+      const fa = opt.querySelector(".bk-frame-finish-label-fa");
+      if (!en || !fa) return null;
+      const enR = en.getBoundingClientRect();
+      const faR = fa.getBoundingClientRect();
+      return { gapPx: faR.left - enR.right, faLeft: faR.left };
+    }).filter(Boolean);
+    const faStarts = pairs.map((p) => p.faLeft);
+    const spread = faStarts.length ? Math.max(...faStarts) - Math.min(...faStarts) : 0;
+    const maxGap = pairs.length ? Math.max(...pairs.map((p) => p.gapPx)) : 0;
+    return { pairs, spread, maxGapFromEnglish: maxGap };
   });
 }
 

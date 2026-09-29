@@ -609,11 +609,13 @@ textarea.bk-input[dir="auto"] {
   box-sizing: border-box;
   height: 2.75rem;
   min-height: 2.75rem;
-  padding: 0 1rem;
+  padding: 10px 1rem 7px;
   line-height: 1;
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }
 
 .bk-public-root .bk-btn:hover {
@@ -643,14 +645,15 @@ textarea.bk-input[dir="auto"] {
 .bk-public-root .bk-btn.bk-tablo-buy {
   height: 2.75rem;
   min-height: 2.75rem;
-  padding-inline: 1rem;
+  padding: 11px 1rem 6px;
 }
 
 .bk-public-root .bk-btn.bk-tablo-buy-lg {
   font-size: 1rem;
   height: 3rem;
   min-height: 3rem;
-  padding-inline: 1.75rem;
+  line-height: 1;
+  padding: 11px 1.75rem 7px;
 }
 
 .bk-public-root {
@@ -841,16 +844,22 @@ textarea.bk-input[dir="auto"] {
 .bk-public-footer-advisor {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-shrink: 0;
   min-width: 44px;
   min-height: 44px;
   margin: 0;
   margin-inline-start: auto;
+  padding-inline-end: 0;
   color: #141412;
   border-radius: 4px;
   text-decoration: none;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bk-public-root .bk-public-footer-advisor:hover,
+.bk-public-root .bk-public-footer-advisor:focus-visible {
+  justify-content: center;
 }
 
 .bk-public-root .bk-public-footer-advisor:hover {
@@ -870,7 +879,13 @@ textarea.bk-input[dir="auto"] {
   height: 2.5rem;
   display: block;
   flex-shrink: 0;
-  transform: translateY(-2px);
+  transform: translateX(3.5px);
+  transition: transform 0.15s ease;
+}
+
+.bk-public-footer-advisor:hover .bk-public-advisor-mark,
+.bk-public-footer-advisor:focus-visible .bk-public-advisor-mark {
+  transform: none;
 }
 
 
@@ -881,51 +896,59 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-justified-gallery {
   --bk-tablo-gap: clamp(2rem, 4vw, 2.75rem);
-  --bk-tablo-cols: 1;
+  --bk-tablo-row-target-h: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bk-tablo-gap);
+}
+
+@media (min-width: 1025px) {
+  .bk-tablo-justified-gallery {
+    --bk-tablo-row-target-h: 360px;
+  }
+}
+
+.bk-tablo-justified-row {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--bk-tablo-gap);
-  align-items: flex-start;
-  align-content: flex-start;
+  width: 100%;
 }
 
 @media (min-width: 481px) {
-  .bk-tablo-justified-gallery {
-    --bk-tablo-cols: 2;
+  .bk-tablo-justified-row {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .bk-tablo-justified-row--tail {
+    align-items: flex-start;
   }
 }
 
-@media (min-width: 1025px) {
-  .bk-tablo-justified-gallery {
-    --bk-tablo-cols: 3;
-  }
-}
-
-.bk-tablo-justified-cell {
+.bk-tablo-justified-row--full .bk-tablo-justified-cell {
   box-sizing: border-box;
   flex: var(--tile-aspect-grow) 1 0;
-  min-width: calc(
-    (100% - (var(--bk-tablo-cols) - 1) * var(--bk-tablo-gap)) / var(--bk-tablo-cols)
-  );
+  min-width: 0;
+}
+
+.bk-tablo-justified-row--tail {
+  justify-content: flex-start;
+}
+
+.bk-tablo-justified-row--tail .bk-tablo-justified-cell {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: calc(var(--tile-aspect-grow) * var(--bk-tablo-row-target-h));
   max-width: 100%;
 }
 
-@media (min-width: 1025px) {
-  .bk-tablo-justified-cell:last-child:nth-child(3n + 1) {
-    flex-grow: 0;
-    flex-basis: calc((100% - 2 * var(--bk-tablo-gap)) / 3);
-    max-width: calc((100% - 2 * var(--bk-tablo-gap)) / 3);
-  }
-}
-
-@media (min-width: 481px) and (max-width: 1024px) {
-  .bk-tablo-justified-cell:last-child:nth-child(2n + 1) {
-    flex-grow: 0;
-    flex-basis: calc((100% - var(--bk-tablo-gap)) / 2);
-    max-width: calc((100% - var(--bk-tablo-gap)) / 2);
+@media (max-width: 480px) {
+  .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
+    width: 100%;
   }
 }
 
@@ -1277,47 +1300,40 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option {
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  column-gap: 0.65rem;
-  row-gap: 0.2rem;
-  align-items: start;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
   min-height: 2.35rem;
   padding: 0.15rem 0;
   border-radius: 2px;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option input[type="radio"] {
-  grid-column: 1;
-  grid-row: 1 / span 2;
   margin-top: 0.2rem;
+  flex-shrink: 0;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-swatch {
-  grid-column: 2;
-  grid-row: 1 / span 2;
   margin-top: 0.15rem;
+  flex-shrink: 0;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label {
-  display: contents;
-}
-
-.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
-  grid-column: 3;
-  grid-row: 1;
+  display: inline;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {
-  grid-column: 3;
-  grid-row: 2;
-  display: block;
-  width: 100%;
+  display: inline;
   margin: 0;
+  margin-inline-start: 0.75rem;
   padding: 0;
-  text-align: start;
-  justify-self: start;
+  font-size: 0.875rem;
+  color: var(--bk-public-muted);
+  white-space: nowrap;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-option:has(input:checked) {
