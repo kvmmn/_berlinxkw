@@ -4,7 +4,6 @@ import {
   tabloProductImage,
 } from "@/lib/tablo-images";
 import { FRAME_FINISH_LABELS } from "@/lib/frame-finish";
-import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -42,9 +41,13 @@ function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrame
 export function TabloCardMedia({
   tablo,
   aspectRatio,
+  fit = "cover",
+  priority = false,
 }: {
   tablo: Tablo;
   aspectRatio: string;
+  fit?: "contain" | "cover";
+  priority?: boolean;
 }) {
   const product = tabloProductImage(tablo);
   if (!product?.url) {
@@ -54,15 +57,16 @@ export function TabloCardMedia({
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
 
   return (
-    <TabloAspectFrame aspectRatio={aspectRatio} className="bk-tablo-tile-media">
+    <div className="bk-aspect-frame bk-tablo-tile-media" style={{ aspectRatio }}>
       <TabloPicture
         src={product.url}
         alt={productAlt(tablo, kind)}
         mime={product.mime}
         sizes={tabloPictureSizes("card")}
-        layout="cover"
+        layout={fit}
+        priority={priority}
       />
-    </TabloAspectFrame>
+    </div>
   );
 }
 

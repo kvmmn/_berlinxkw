@@ -1,7 +1,7 @@
 import "server-only";
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { isBlobStorePathname, streamBlob } from "./blob-private";
+import { hasBlobToken, isBlobStorePathname, streamBlob } from "./blob-private";
 import {
   dimensionsFromBuffer,
   shopMediaPathnameFromUrl,
@@ -73,20 +73,14 @@ async function probeViaPublicOrigin(
   }
 }
 
-/** Best-effort intrinsic size for a tablo image record. Prefer private Blob SDK reads. */
-export async function probeTabloImageDimensions(
-  image: TabloImage | null | undefined,
+async function probeTabloImageDimensionsFromBytes(
+  image: TabloImage,
 ): Promise<ImageDimensions | null> {
-  if (!image) return null;
-  if (image.width && image.height && image.width > 0 && image.height > 0) {
-    return { width: image.width, height: image.height };
-  }
-
   const pathname =
     (image.pathname && isBlobStorePathname(image.pathname) ? image.pathname : null) ??
     shopMediaPathnameFromUrl(image.url);
 
-  if (pathname) {
+  if (pathname && hasBlobToken()) {
     const fromBlob = await probeBlobImageDimensions(pathname);
     if (fromBlob) return fromBlob;
   }
@@ -117,6 +111,22 @@ export async function probeTabloImageDimensions(
     } catch {
       return null;
     }
+  }
+
+  return null;
+}
+
+/** Best-effort intrinsic size for a tablo image record. Prefer bytes (EXIF-aware) over stored fields. */
+export async function probeTabloImageDimensions(
+  image: TabloImage | null | undefined,
+): Promise<ImageDimensions | null> {
+  if (!image) return null;
+
+  const fromBytes = await probeTabloImageDimensionsFromBytes(image);
+  if (fromBytes) return fromBytes;
+
+  if (image.width && image.height && image.width > 0 && image.height > 0) {
+    return { width: image.width, height: image.height };
   }
 
   return null;

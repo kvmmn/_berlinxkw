@@ -1,6 +1,8 @@
 import { ShopShell } from "@/components/ShopShell";
-import { TabloCard } from "@/components/TabloCard";
-import { orderTablosForGalleryGrid, tablosWithLayout } from "@/lib/tablo-shop-list";
+import { TabloJustifiedGallery } from "@/components/TabloJustifiedGallery";
+import { TabloShopGridTile } from "@/components/TabloShopGridTile";
+import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
+import { tablosWithLayout } from "@/lib/tablo-shop-list";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -14,21 +16,24 @@ export default async function ShopPage() {
       .filter((t) => t.status === "listed")
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
   );
-  const listed = orderTablosForGalleryGrid(await tablosWithLayout(tablos));
+  const layout = planTabloGalleryLayout(await tablosWithLayout(tablos));
 
   return (
     <ShopShell>
       <p className="bk-meta bk-shop-intro">original tablos · listed works</p>
-      {listed.length === 0 ? (
+      {layout.items.length === 0 ? (
         <p className="bk-shop-empty bk-meta">No listed tablos yet — check back soon.</p>
       ) : (
-        <ul className="bk-tablo-grid">
-          {listed.map(({ tablo, orientation, productAspect }) => (
-            <li key={tablo.id}>
-              <TabloCard tablo={tablo} orientation={orientation} productAspect={productAspect} />
-            </li>
-          ))}
-        </ul>
+        <TabloJustifiedGallery
+          items={layout.items}
+          renderTile={(item) => (
+            <TabloShopGridTile
+              tablo={item.tablo}
+              orientation={item.orientation}
+              productAspect={item.productAspect}
+            />
+          )}
+        />
       )}
     </ShopShell>
   );

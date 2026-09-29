@@ -30,9 +30,13 @@ export function TabloGalleryTile({
   orientation?: TabloOrientation;
   productAspect: string;
 }) {
-  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url);
+  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
+    trustServer: true,
+  });
   const product = tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
-  const productAspect = useTabloImageAspect(initialProductAspect, product?.url);
+  const productAspect = useTabloImageAspect(initialProductAspect, product?.url, {
+    trustServer: true,
+  });
   const framed = tabloFramedImageForFinish(tablo);
   const alt = framed
     ? `${tablo.title} — framed tablo on wall`

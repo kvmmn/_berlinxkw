@@ -1,13 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
-import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
-import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
-import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
-import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
+import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
@@ -19,22 +14,20 @@ function formatEur(price: number): string {
   }).format(price);
 }
 
-export function TabloCard({
+/** SSR gallery / shop grid tile — no client probes (stable hydration). */
+export function TabloShopGridTile({
   tablo,
-  orientation: initialOrientation = "portrait",
-  productAspect: initialProductAspect,
+  orientation,
+  productAspect,
+  showBuy = true,
+  priority = false,
 }: {
   tablo: Tablo;
-  orientation?: TabloOrientation;
+  orientation: TabloOrientation;
   productAspect: string;
+  showBuy?: boolean;
+  priority?: boolean;
 }) {
-  const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
-    trustServer: true,
-  });
-  const product = tabloProductImage(tablo);
-  const productAspect = useTabloImageAspect(initialProductAspect, product?.url, {
-    trustServer: true,
-  });
   const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
   const external = tabloBuyExternal(tablo);
 
@@ -45,7 +38,12 @@ export function TabloCard({
         className="bk-tablo-tile-media-link"
         aria-label={`View ${tablo.title}`}
       >
-        <TabloCardMedia tablo={tablo} aspectRatio={productAspect} />
+        <TabloCardMedia
+          tablo={tablo}
+          aspectRatio={productAspect}
+          fit="contain"
+          priority={priority}
+        />
       </Link>
       <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
@@ -56,17 +54,18 @@ export function TabloCard({
           <span aria-hidden="true"> · </span>
           <span>{frameSizeLabel(orientation)}</span>
         </p>
-        {tablo.status === "sold" ? (
-          <span className="bk-meta bk-tablo-sold">sold</span>
-        ) : (
-          <a
-            href={buyHref}
-            className="bk-btn bk-btn-primary bk-tablo-buy"
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          >
-            {tabloBuyLabel(tablo)}
-          </a>
-        )}
+        {showBuy &&
+          (tablo.status === "sold" ? (
+            <span className="bk-meta bk-tablo-sold">sold</span>
+          ) : (
+            <a
+              href={buyHref}
+              className="bk-btn bk-btn-primary bk-tablo-buy"
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              {tabloBuyLabel(tablo)}
+            </a>
+          ))}
       </div>
     </article>
   );

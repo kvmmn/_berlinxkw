@@ -6,7 +6,9 @@ import { aspectRatioFromDimensions } from "./tablo-aspect";
 export function useTabloImageAspect(
   initialAspect: string,
   probeSrc: string | undefined,
+  options?: { trustServer?: boolean },
 ): string {
+  const trustServer = options?.trustServer ?? false;
   const [aspect, setAspect] = useState(initialAspect);
 
   useEffect(() => {
@@ -14,7 +16,7 @@ export function useTabloImageAspect(
   }, [initialAspect]);
 
   useEffect(() => {
-    if (!probeSrc) return;
+    if (trustServer || !probeSrc) return;
     let cancelled = false;
     const img = new window.Image();
     img.onload = () => {
@@ -26,7 +28,7 @@ export function useTabloImageAspect(
       cancelled = true;
       img.onload = null;
     };
-  }, [probeSrc]);
+  }, [probeSrc, trustServer]);
 
   return aspect;
 }
