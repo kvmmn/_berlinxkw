@@ -14,7 +14,7 @@ export function TabloDescription({ text }: { text: string }) {
       {segments.map((segment, index) => (
         <span key={index} className="bk-desc-chunk">
           {segment}
-          {index < segments.length - 1 ? "\u00a0·" : ""}
+          {index < segments.length - 1 ? "\u00a0· " : ""}
         </span>
       ))}
     </p>

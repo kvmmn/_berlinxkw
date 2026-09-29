@@ -1,5 +1,10 @@
+import type { Viewport } from "next";
 import Link from "next/link";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
+
+export const viewport: Viewport = {
+  themeColor: "#f3f3ef",
+};
 
 export default function NotFound() {
   return (

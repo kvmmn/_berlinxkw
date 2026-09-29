@@ -8,6 +8,7 @@ import { tabloArtworkImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, orientationCopy, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
 import { TabloBuyFinishNote } from "@/components/TabloBuyFinishNote";
 import { TabloDescription } from "@/components/TabloDescription";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
@@ -46,7 +47,7 @@ export function TabloShopDetailBuy({
       </div>
       <div className="bk-tablo-detail-copy">
         <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
-        <h1 className="bk-tablo-detail-title">{tablo.title}</h1>
+        <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>
         <p className="bk-tablo-detail-price">{priceLabel}</p>
         <p className="bk-tablo-detail-frame-spec">
           <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>

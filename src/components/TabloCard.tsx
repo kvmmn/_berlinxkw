@@ -8,6 +8,7 @@ import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
+import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -44,21 +45,23 @@ export function TabloCard({
       </Link>
       <div className="bk-tablo-card-body">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-card-title">{tablo.title}</h2>
+          <h2 className="bk-tablo-card-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
         </Link>
-        <p className="bk-meta bk-tablo-card-price">{formatEur(tablo.priceEur)}</p>
-        <p className="bk-meta bk-tablo-card-frame">{frameSizeLabel(orientation)}</p>
-        {tablo.status === "sold" ? (
-          <span className="bk-meta bk-tablo-sold">sold</span>
-        ) : (
-          <a
-            href={buyHref}
-            className="bk-btn bk-btn-primary bk-tablo-buy"
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-          >
-            {tabloBuyLabel(tablo)}
-          </a>
-        )}
+        <div className="bk-tablo-card-foot">
+          <p className="bk-meta bk-tablo-card-price">{formatEur(tablo.priceEur)}</p>
+          <p className="bk-meta bk-tablo-card-frame">{frameSizeLabel(orientation)}</p>
+          {tablo.status === "sold" ? (
+            <span className="bk-meta bk-tablo-sold">sold</span>
+          ) : (
+            <a
+              href={buyHref}
+              className="bk-btn bk-btn-primary bk-tablo-buy"
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              {tabloBuyLabel(tablo)}
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );

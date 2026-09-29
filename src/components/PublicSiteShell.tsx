@@ -17,11 +17,13 @@ export function PublicSiteShell({
       <main id="main-content" className="bk-public-main">
         {children}
       </main>
-      <footer className="bk-public-footer bk-meta">
-        <span>{footerNote}</span>
-        <Link href="/login" className="bk-public-footer-link">
-          advisor
-        </Link>
+      <footer className="bk-public-footer">
+        <div className="bk-public-footer-inner bk-meta">
+          <span>{footerNote}</span>
+          <Link href="/login" className="bk-public-footer-link">
+            advisor
+          </Link>
+        </div>
       </footer>
     </div>
   );

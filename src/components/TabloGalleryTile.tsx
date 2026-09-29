@@ -8,6 +8,7 @@ import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from 
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -57,7 +58,7 @@ export function TabloGalleryTile({
       </TabloAspectFrame>
       <div className="bk-tablo-gallery-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-gallery-title">{tablo.title}</h2>
+          <h2 className="bk-tablo-gallery-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
         </Link>
         <p className="bk-meta bk-tablo-gallery-meta">
           <span>{formatEur(tablo.priceEur)}</span>

@@ -9,7 +9,7 @@ import { loadState } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const viewport = {
   themeColor: "#f3f3ef",
 };
 
