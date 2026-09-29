@@ -54,16 +54,13 @@ export function TabloCardMedia({
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
 
   return (
-    <TabloAspectFrame
-      aspectRatio={aspectRatio}
-      className="bk-tablo-card-media-frame bk-tablo-card-media-frame--uniform"
-    >
+    <TabloAspectFrame aspectRatio={aspectRatio} className="bk-tablo-card-media-frame">
       <TabloPicture
         src={product.url}
         alt={productAlt(tablo, kind)}
         mime={product.mime}
         sizes={tabloPictureSizes("card")}
-        layout="contain"
+        layout="cover"
       />
     </TabloAspectFrame>
   );

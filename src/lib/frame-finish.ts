@@ -15,7 +15,7 @@ export function isFrameFinish(value: string): value is FrameFinish {
 export type FrameFinishLabel = { en: string; fa: string; swatch: string };
 
 export const FRAME_FINISH_LABELS: Record<FrameFinish, FrameFinishLabel> = {
-  bronze: { en: "Brass", fa: "برنز", swatch: "linear-gradient(135deg, #8a6b3d, #c9a962)" },
+  bronze: { en: "Brass", fa: "برنجی", swatch: "linear-gradient(135deg, #8a6b3d, #c9a962)" },
   "matte-black-brushed": {
     en: "Matte black",
     fa: "مشکی مات",

@@ -10,7 +10,11 @@ export function TabloAspectFrame({
   children: React.ReactNode;
 }) {
   return (
-    <div className={className} style={{ aspectRatio }} data-aspect={aspectRatio}>
+    <div
+      className={`bk-aspect-frame ${className ?? ""}`.trim()}
+      style={{ aspectRatio }}
+      data-aspect={aspectRatio}
+    >
       {children}
     </div>
   );

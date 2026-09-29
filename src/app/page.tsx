@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { LandingTagline } from "@/components/LandingTagline";
-import { PublicBrandRow } from "@/components/PublicBrandRow";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloGalleryTile } from "@/components/TabloGalleryTile";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
@@ -22,11 +21,9 @@ export default async function Home() {
   return (
     <PublicSiteShell footerNote="original works · berlin">
       <div className="bk-landing-page">
-        <section className="bk-landing-hero" aria-labelledby="landing-title">
-          <h1 id="landing-title" className="bk-display bk-landing-title">
-            <PublicBrandRow variant="hero" />
-          </h1>
-          <LandingTagline />
+        <section className="bk-landing-hero" aria-labelledby="landing-tagline">
+          <h1 className="bk-sr-only">berlin × kawe</h1>
+          <LandingTagline id="landing-tagline" className="bk-landing-hero-lead" />
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
               view shop
@@ -52,9 +49,9 @@ export default async function Home() {
                 all works
               </Link>
             </div>
-            <ul className="bk-landing-gallery">
+            <ul className="bk-tablo-grid bk-landing-gallery">
               {listed.map(({ tablo, orientation, productAspect }, index) => (
-                <li key={tablo.id}>
+                <li key={tablo.id} className="bk-landing-gallery-cell">
                   <TabloGalleryTile
                     tablo={tablo}
                     orientation={orientation}

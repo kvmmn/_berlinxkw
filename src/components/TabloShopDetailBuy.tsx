@@ -8,12 +8,9 @@ import { tabloArtworkImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, orientationCopy, type TabloOrientation } from "@/lib/tablo-frame-spec";
-import {
-  tabloBuyExternal,
-  tabloBuyFinishNote,
-  tabloBuyLabel,
-  tabloBuyUrl,
-} from "@/lib/shop-buy";
+import { TabloBuyFinishNote } from "@/components/TabloBuyFinishNote";
+import { TabloDescription } from "@/components/TabloDescription";
+import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 export function TabloShopDetailBuy({
@@ -57,7 +54,7 @@ export function TabloShopDetailBuy({
             {dir.en} · <span className="bk-text-fa" lang="fa">{dir.fa}</span>
           </span>
         </p>
-        {tablo.description ? <p className="bk-tablo-detail-desc">{tablo.description}</p> : null}
+        {tablo.description ? <TabloDescription text={tablo.description} /> : null}
         <TabloFrameFinishPicker
           tablo={tablo}
           value={finish}
@@ -73,9 +70,7 @@ export function TabloShopDetailBuy({
           >
             {tabloBuyLabel(tablo)}
           </a>
-          <p className="bk-meta bk-tablo-buy-note" aria-live="polite">
-            {tabloBuyFinishNote(tablo, finish, external)}
-          </p>
+          <TabloBuyFinishNote tablo={tablo} finish={finish} external={external} />
         </div>
       </div>
     </>

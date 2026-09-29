@@ -9,7 +9,6 @@ const outDir = process.argv[3] || join(process.cwd(), "screenshots", "headers");
 const shots = [
   { name: "public-header", path: "/shop", selector: ".bk-public-header-inner", widths: [1440, 390, 768, 360] },
   { name: "home-header", path: "/", selector: ".bk-public-header-inner", widths: [1440, 390, 768, 360] },
-  { name: "home-hero-brand", path: "/", selector: ".bk-public-brand--hero", widths: [1440, 390] },
 ];
 
 async function main() {

@@ -48,7 +48,7 @@ export function TabloGalleryTile({
               mime={product.mime}
               sizes={tabloPictureSizes("landing")}
               priority={priority}
-              layout="contain"
+              layout="cover"
             />
           ) : (
             <span className="bk-tablo-gallery-placeholder bk-meta">no image</span>
