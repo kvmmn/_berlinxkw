@@ -1,21 +1,20 @@
 #!/usr/bin/env node
-/** Button / footer ink bounds via screenshot pixel scan (full bounds, ink-colored pixels). */
+/** Button / footer / finish ink bounds via screenshot pixel scan (full bounds, ink-colored pixels). */
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
 
 const base = (process.argv[2] || "http://127.0.0.1:3001").replace(/\/$/, "");
+const widths = (process.argv[3] || "390,768,1440")
+  .split(",")
+  .map((s) => Number.parseInt(s.trim(), 10))
+  .filter((n) => Number.isFinite(n));
 const vercelShare = process.env.VERCEL_SHARE?.trim();
+
 function pageUrl(path) {
   const p = path.startsWith("/") ? path : `/${path}`;
   if (!vercelShare) return `${base}${p}`;
   const sep = p.includes("?") ? "&" : "?";
   return `${base}${p}${sep}_vercel_share=${encodeURIComponent(vercelShare)}`;
-}
-
-function parseRgb(css) {
-  const m = css.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
-  if (!m) return null;
-  return [Number(m[1]), Number(m[2]), Number(m[3])];
 }
 
 function colorDistance(r, g, b, target) {
@@ -45,12 +44,18 @@ function inkOffsetFromScreenshot(pngBuffer, box, inkRgb, tolerance = 55) {
   if (bottom < 0) return { error: "no ink pixels" };
   const inkCenter = box.y + (top + bottom) / 2;
   const boxCenter = box.y + box.height / 2;
-  return { offsetPx: inkCenter - boxCenter, inkTop: box.y + top, inkBottom: box.y + bottom };
+  return {
+    offsetPx: inkCenter - boxCenter,
+    absOffsetPx: Math.abs(inkCenter - boxCenter),
+    inkTop: box.y + top,
+    inkBottom: box.y + bottom,
+  };
 }
 
 async function measureButton(page, selector) {
   const el = page.locator(selector).first();
-  await el.waitFor({ state: "visible" });
+  await el.scrollIntoViewIfNeeded();
+  await el.waitFor({ state: "visible", timeout: 60000 });
   const inkRgb = await el.evaluate((node) => {
     const cs = getComputedStyle(node);
     const m = cs.color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
@@ -63,13 +68,20 @@ async function measureButton(page, selector) {
   return { selector, box, inkRgb, ...inkOffsetFromScreenshot(shot, box, inkRgb) };
 }
 
-async function measureFooterPath(page) {
-  const shell = page.locator(".bk-public-footer .bk-public-shell").first();
+async function measureFooter(page) {
+  const bar = page.locator(".bk-public-footer-bar").first();
+  await bar.scrollIntoViewIfNeeded();
+  const note = page.locator(".bk-public-footer-note").first();
   const link = page.locator(".bk-public-footer-advisor").first();
-  const shellBox = await shell.boundingBox();
+  const noteBox = await note.boundingBox();
   const linkBox = await link.boundingBox();
-  const shot = await link.screenshot();
-  const png = PNG.sync.read(shot);
+  const noteShot = await note.screenshot();
+  const noteInk = inkOffsetFromScreenshot(noteShot, noteBox, [107, 107, 102], 45);
+  const markShot = await link.locator(".bk-public-advisor-mark").screenshot();
+  const markBox = await link.locator(".bk-public-advisor-mark").boundingBox();
+  const markInk = inkOffsetFromScreenshot(markShot, markBox, [20, 20, 18], 45);
+  const footShot = await link.screenshot();
+  const png = PNG.sync.read(footShot);
   let right = -1;
   for (let y = 0; y < png.height; y++) {
     for (let x = 0; x < png.width; x++) {
@@ -81,52 +93,95 @@ async function measureFooterPath(page) {
   }
   const pathRight = linkBox.x + right;
   const contentRight = linkBox.x + linkBox.width;
+  const noteCenter = noteBox.y + noteBox.height / 2;
+  const markCenter =
+    markInk.inkTop != null && markInk.inkBottom != null
+      ? (markInk.inkTop + markInk.inkBottom) / 2
+      : markBox.y + markBox.height / 2;
   return {
-    shellRight: shellBox.x + shellBox.width,
+    noteInkOffsetPx: noteInk.offsetPx,
+    markVsNoteCenterPx: markCenter - noteCenter,
+    absMarkVsNoteCenterPx: Math.abs(markCenter - noteCenter),
+    shellRight: (await page.locator(".bk-public-footer .bk-public-shell").first().boundingBox()).x +
+      (await page.locator(".bk-public-footer .bk-public-shell").first().boundingBox()).width,
     linkRight: contentRight,
     pathRight,
     inkInsetFromContentRight: contentRight - pathRight,
+    chipCenterX: linkBox.x + linkBox.width / 2,
+    markInkCenterX: markBox.x + (markShot ? PNG.sync.read(markShot).width / 2 : 0),
   };
 }
 
-async function main() {
-  const browser = await chromium.launch();
-  const report = { buttons: {}, footer: null };
+async function measureFinishEnglishLabel(page) {
+  const row = page.locator(".bk-frame-finish-fieldset--shop .bk-frame-finish-option").first();
+  await row.waitFor({ state: "visible" });
+  const radio = row.locator('input[type="radio"]');
+  const labelEn = row.locator(".bk-frame-finish-label > span").first();
+  const radioBox = await radio.boundingBox();
+  const labelShot = await labelEn.screenshot();
+  const labelBox = await labelEn.boundingBox();
+  const inkRgb = await labelEn.evaluate((node) => {
+    const cs = getComputedStyle(node);
+    const m = cs.color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (!m) return [20, 20, 18];
+    return [Number(m[1]), Number(m[2]), Number(m[3])];
+  });
+  const ink = inkOffsetFromScreenshot(labelShot, labelBox, inkRgb);
+  const radioCenterY = radioBox.y + radioBox.height / 2;
+  const labelInkCenterY =
+    ink.inkTop != null && ink.inkBottom != null ? (ink.inkTop + ink.inkBottom) / 2 : null;
+  return {
+    labelVsRadioCenterPx: labelInkCenterY != null ? labelInkCenterY - radioCenterY : null,
+    absLabelVsRadioCenterPx:
+      labelInkCenterY != null ? Math.abs(labelInkCenterY - radioCenterY) : null,
+  };
+}
+
+async function measureAtWidth(browser, width) {
+  const report = { width, buttons: {}, footer: null, finishLabel: null };
 
   const shop = await browser.newPage();
-  await shop.setViewportSize({ width: 900, height: 800 });
+  await shop.setViewportSize({ width, height: 900 });
   await shop.goto(pageUrl("/shop"), { waitUntil: "networkidle", timeout: 120000 });
   report.buttons.shopBuy = await measureButton(shop, ".bk-tablo-buy");
+  report.footer = await measureFooter(shop);
   await shop.close();
 
   const home = await browser.newPage();
-  await home.setViewportSize({ width: 900, height: 800 });
+  await home.setViewportSize({ width, height: 900 });
   await home.goto(pageUrl("/"), { waitUntil: "networkidle", timeout: 120000 });
   report.buttons.viewShop = await measureButton(home, ".bk-landing-actions .bk-btn-primary");
   report.buttons.instagram = await measureButton(home, ".bk-landing-actions .bk-btn:not(.bk-btn-primary)");
   await home.close();
 
   const detail = await browser.newPage();
-  await detail.setViewportSize({ width: 900, height: 1200 });
-  await detail.goto(pageUrl("/shop/berlin-clouds-01"), { waitUntil: "networkidle", timeout: 120000 });
+  await detail.setViewportSize({ width, height: 1200 });
+  await detail.goto(pageUrl("/shop/berlin-sunset-03"), { waitUntil: "networkidle", timeout: 120000 });
   report.buttons.detailBuy = await measureButton(detail, ".bk-tablo-buy-lg");
+  report.finishLabel = await measureFinishEnglishLabel(detail);
   await detail.close();
 
   const nf = await browser.newPage();
-  await nf.setViewportSize({ width: 900, height: 800 });
-  await nf.goto(pageUrl("/this-route-does-not-exist-404-test"), { waitUntil: "networkidle", timeout: 120000 });
+  await nf.setViewportSize({ width, height: 900 });
+  await nf.goto(pageUrl("/this-route-does-not-exist-404-test"), {
+    waitUntil: "networkidle",
+    timeout: 120000,
+  });
   report.buttons.notFoundShop = await measureButton(nf, ".bk-landing-actions .bk-btn-primary");
   report.buttons.notFoundHome = await measureButton(nf, ".bk-landing-actions .bk-btn:not(.bk-btn-primary)");
   await nf.close();
 
-  const foot = await browser.newPage();
-  await foot.setViewportSize({ width: 1440, height: 400 });
-  await foot.goto(pageUrl("/shop"), { waitUntil: "networkidle", timeout: 120000 });
-  report.footer = await measureFooterPath(foot);
-  await foot.close();
+  return report;
+}
 
+async function main() {
+  const browser = await chromium.launch();
+  const out = [];
+  for (const w of widths) {
+    out.push(await measureAtWidth(browser, w));
+  }
   await browser.close();
-  console.log(JSON.stringify(report, null, 2));
+  console.log(JSON.stringify({ base, widths, measurements: out }, null, 2));
 }
 
 main().catch((e) => {

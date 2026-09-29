@@ -29,6 +29,9 @@ type TabloPictureProps = {
   priority?: boolean;
   layout?: TabloPictureLayout;
   className?: string;
+  /** Wire dimensions for next/image (stable SSR + optimized srcset). */
+  width: number;
+  height: number;
 };
 
 /**
@@ -42,6 +45,8 @@ export function TabloPicture({
   priority = false,
   layout = "contain",
   className = "bk-tablo-picture",
+  width,
+  height,
 }: TabloPictureProps) {
   if (isSvgSrc(src, mime)) {
     return (
@@ -50,28 +55,11 @@ export function TabloPicture({
         src={src}
         alt={alt}
         className={className}
+        width={width}
+        height={height}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
         data-fit={layout}
-      />
-    );
-  }
-
-  /** Native `<img>` on shop/landing grids avoids next/image fill hydration mismatches. */
-  const useNativeRaster =
-    sizes === SIZE_PRESETS.card || sizes === SIZE_PRESETS.landing;
-
-  if (useNativeRaster) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={src}
-        alt={alt}
-        className={className}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        data-fit={layout}
-        sizes={sizes}
       />
     );
   }
@@ -80,7 +68,8 @@ export function TabloPicture({
     <Image
       src={src}
       alt={alt}
-      fill
+      width={width}
+      height={height}
       sizes={sizes}
       priority={priority}
       className={className}

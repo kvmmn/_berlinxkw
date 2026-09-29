@@ -5,6 +5,8 @@ import {
 } from "@/lib/tablo-images";
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
+import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
+import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
@@ -24,6 +26,7 @@ type MediaFrameProps = {
 };
 
 function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrameProps) {
+  const dims = intrinsicDimensionsFromAspect(aspectRatio);
   return (
     <div className="bk-tablo-detail-figure-media" style={{ aspectRatio }}>
       <TabloPicture
@@ -33,6 +36,8 @@ function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrame
         sizes={sizes}
         priority={priority}
         layout="contain"
+        width={dims.width}
+        height={dims.height}
       />
     </div>
   );
@@ -55,6 +60,8 @@ export function TabloCardMedia({
   }
 
   const kind = tabloFramedImageForFinish(tablo) ? "framed" : "artwork";
+  const aspectForDims = aspectRatioFromImage(product, aspectRatio);
+  const dims = intrinsicDimensionsFromAspect(aspectForDims);
 
   return (
     <div className="bk-aspect-frame bk-tablo-tile-media" style={{ aspectRatio }}>
@@ -65,6 +72,8 @@ export function TabloCardMedia({
         sizes={tabloPictureSizes("card")}
         layout={fit}
         priority={priority}
+        width={dims.width}
+        height={dims.height}
       />
     </div>
   );

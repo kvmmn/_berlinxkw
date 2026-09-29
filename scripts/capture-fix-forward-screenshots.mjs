@@ -30,17 +30,22 @@ async function main() {
     await page.close();
   }
 
+  const { readFile } = await import("node:fs/promises");
+  const { dirname } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const fixtureDir = dirname(fileURLToPath(import.meta.url));
+  const fixtureHtml = await readFile(join(fixtureDir, "fixtures/gallery-fixture-tiles.html"), "utf8");
   const fixturePage = await browser.newPage();
   await fixturePage.setViewportSize({ width: 1440, height: 2400 });
-  await fixturePage.goto(pageUrl("/shop/gallery-fixture"), { waitUntil: "networkidle", timeout: 120000 });
-  await fixturePage.waitForTimeout(400);
+  await fixturePage.setContent(fixtureHtml, { waitUntil: "load" });
+  await fixturePage.waitForTimeout(200);
   await fixturePage.locator("#fixture-four").screenshot({
     path: join(outDir, "gallery-four-tablos-1440.png"),
   });
   await fixturePage.locator("#fixture-five").screenshot({
     path: join(outDir, "gallery-five-tablos-1440.png"),
   });
-  console.log("wrote gallery fixtures from /shop/gallery-fixture");
+  console.log("wrote gallery fixture tiles (scripts/fixtures)");
   await fixturePage.close();
 
   const btnPage = await browser.newPage();
