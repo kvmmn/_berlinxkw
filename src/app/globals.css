@@ -849,8 +849,8 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-footer-advisor {
   --bk-advisor-chip: 10px;
-  --bk-advisor-link-y: 0px;
-  --bk-advisor-mark-y: -1px;
+  --bk-advisor-link-y: -1px;
+  --bk-advisor-mark-y: 0px;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
@@ -892,19 +892,19 @@ textarea.bk-input[dir="auto"] {
 
 @media (min-width: 481px) and (max-width: 767px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -2px;
+    --bk-advisor-link-y: -2px;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -2px;
+    --bk-advisor-link-y: -2px;
   }
 }
 
 @media (min-width: 1025px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -3.5px;
+    --bk-advisor-link-y: -3.5px;
   }
 }
 
@@ -1519,8 +1519,9 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
-  position: relative;
-  top: -0.04em;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {
