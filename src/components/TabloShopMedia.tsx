@@ -79,7 +79,7 @@ export function TabloCardMedia({
   );
 }
 
-/** SSR: all finish variants in the DOM; visibility toggled via `data-finish` on the detail root. */
+/** SSR: all finish variants in the DOM; visibility toggled via CSS :has() on finish radios in the grid. */
 export function TabloDetailGalleryAllFinishes({
   tablo,
   framedSlotAspect,

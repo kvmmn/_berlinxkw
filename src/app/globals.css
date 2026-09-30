@@ -849,6 +849,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-footer-advisor {
   --bk-advisor-chip: 10px;
+  --bk-advisor-link-y: 0px;
   --bk-advisor-mark-y: -1px;
   display: inline-flex;
   align-items: center;
@@ -866,6 +867,7 @@ textarea.bk-input[dir="auto"] {
   border-radius: 4px;
   text-decoration: none;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transform: translateY(var(--bk-advisor-link-y));
 }
 
 .bk-public-root .bk-public-footer-advisor:hover {
@@ -886,6 +888,24 @@ textarea.bk-input[dir="auto"] {
   display: block;
   flex-shrink: 0;
   transform: translateY(var(--bk-advisor-mark-y));
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .bk-public-footer-advisor {
+    --bk-advisor-mark-y: -2px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bk-public-footer-advisor {
+    --bk-advisor-mark-y: -3px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .bk-public-footer-advisor {
+    --bk-advisor-mark-y: -3.5px;
+  }
 }
 
 
@@ -1107,7 +1127,8 @@ textarea.bk-input[dir="auto"] {
 
 @media (max-width: 480px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -3px;
+    --bk-advisor-link-y: -3px;
+    --bk-advisor-mark-y: 0px;
   }
 
   .bk-public-root .bk-btn {
@@ -1257,13 +1278,16 @@ textarea.bk-input[dir="auto"] {
   gap: clamp(1.25rem, 3vw, 1.75rem);
 }
 
-.bk-tablo-detail-root .bk-tablo-detail-figure-finish {
+.bk-tablo-detail-grid .bk-tablo-detail-figure-finish {
   display: none;
 }
 
-.bk-tablo-detail-root[data-finish="bronze"] .bk-tablo-detail-finish-bronze,
-.bk-tablo-detail-root[data-finish="matte-black-brushed"] .bk-tablo-detail-finish-matte-black-brushed,
-.bk-tablo-detail-root[data-finish="matte-steel-brushed"] .bk-tablo-detail-finish-matte-steel-brushed {
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
+  .bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
+  .bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
+  .bk-tablo-detail-finish-matte-steel-brushed {
   display: block;
 }
 
@@ -1496,7 +1520,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
   position: relative;
-  top: 0.015em;
+  top: -0.04em;
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {

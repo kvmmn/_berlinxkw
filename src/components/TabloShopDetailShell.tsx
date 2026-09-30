@@ -7,18 +7,17 @@ import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 /**
- * Client shell for finish picker + buy CTA. Gallery and static copy are SSR siblings/children
- * so first-paint HTML matches (avoids hydration drift from finish-dependent media).
+ * Client shell for finish picker + buy CTA. Gallery stays an SSR sibling in the page grid
+ * (not under this client boundary) so hydration never re-wraps server markup.
+ * Finish figure visibility is driven by CSS :has() on the finish radios in this shell.
  */
 export function TabloShopDetailShell({
   tablo,
   initialFinish,
-  gallery,
   children,
 }: {
   tablo: Tablo;
   initialFinish: FrameFinish;
-  gallery: ReactNode;
   children: ReactNode;
 }) {
   const [finish, setFinish] = useState<FrameFinish>(initialFinish);
@@ -26,11 +25,7 @@ export function TabloShopDetailShell({
   const external = tabloBuyExternal(tablo);
 
   return (
-    <>
-      <div className="bk-tablo-detail-media bk-tablo-detail-root" data-finish={finish}>
-        {gallery}
-      </div>
-      <div className="bk-tablo-detail-copy">
+    <div className="bk-tablo-detail-copy">
         {children}
         <TabloFrameFinishPicker
           tablo={tablo}
@@ -49,7 +44,6 @@ export function TabloShopDetailShell({
           </a>
           <TabloBuyFinishNote tablo={tablo} finish={finish} external={external} />
         </div>
-      </div>
-    </>
+    </div>
   );
 }

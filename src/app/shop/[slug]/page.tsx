@@ -51,17 +51,14 @@ export default async function TabloDetailPage({
           ← all tablos
         </Link>
         <div className="bk-tablo-detail-grid">
-          <TabloShopDetailShell
-            tablo={tablo}
-            initialFinish={initialFinish}
-            gallery={
-              <TabloDetailGalleryAllFinishes
-                tablo={tablo}
-                framedSlotAspect={framedSlotAspect}
-                artworkAspect={artworkAspect}
-              />
-            }
-          >
+          <div className="bk-tablo-detail-media bk-tablo-detail-root">
+            <TabloDetailGalleryAllFinishes
+              tablo={tablo}
+              framedSlotAspect={framedSlotAspect}
+              artworkAspect={artworkAspect}
+            />
+          </div>
+          <TabloShopDetailShell tablo={tablo} initialFinish={initialFinish}>
             <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
             <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>
             <p className="bk-tablo-detail-price">{priceLabel}</p>
