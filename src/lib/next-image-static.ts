@@ -10,8 +10,43 @@ import {
  */
 export const DETAIL_OPTIMIZED_WIDTHS = [640, 828, 1080, 1200, 1920] as const;
 
-/** Justified grid — production-aligned buckets including desktop landscape. */
-export const GRID_OPTIMIZED_WIDTHS = [384, 480, 640, 750, 828, 1080] as const;
+/**
+ * Default Next.js `images.deviceSizes` / `images.imageSizes` when `next.config` omits them.
+ * Must stay in sync with Next defaults — custom config requires updating this list.
+ */
+export const NEXT_DEFAULT_DEVICE_SIZES = [
+  640, 750, 828, 1080, 1200, 1920, 2048, 3840,
+] as const;
+
+export const NEXT_DEFAULT_IMAGE_SIZES = [16, 32, 48, 64, 96, 128, 256, 384] as const;
+
+const NEXT_ALLOWED_OPTIMIZER_WIDTHS = new Set<number>([
+  ...NEXT_DEFAULT_DEVICE_SIZES,
+  ...NEXT_DEFAULT_IMAGE_SIZES,
+]);
+
+/** Justified grid — allowed Next optimizer widths only (no custom next.config). */
+export const GRID_OPTIMIZED_WIDTHS = [384, 640, 750, 828, 1080] as const;
+
+/** All static srcset width lists used in the app. */
+export const STATIC_OPTIMIZER_WIDTH_LISTS = {
+  grid: GRID_OPTIMIZED_WIDTHS,
+  detail: DETAIL_OPTIMIZED_WIDTHS,
+} as const;
+
+export function assertStaticOptimizerWidthsAllowed(): void {
+  for (const [name, widths] of Object.entries(STATIC_OPTIMIZER_WIDTH_LISTS)) {
+    for (const w of widths) {
+      if (!NEXT_ALLOWED_OPTIMIZER_WIDTHS.has(w)) {
+        throw new Error(
+          `Static srcset width ${w} (${name}) is not in Next.js default deviceSizes/imageSizes`,
+        );
+      }
+    }
+  }
+}
+
+assertStaticOptimizerWidthsAllowed();
 
 /**
  * Widest landscape tile at desktop row height (~430px @ 360px row), from packing reference.

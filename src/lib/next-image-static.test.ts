@@ -1,13 +1,20 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  assertStaticOptimizerWidthsAllowed,
   buildStaticOptimizedImageProps,
+  GRID_OPTIMIZED_WIDTHS,
   nextImageOptimizerSrcSet,
   nextImageOptimizerUrl,
 } from "./next-image-static";
 
 describe("next-image-static", () => {
   const sample = "/api/shop/media?pathname=berlinxkw/tablos/x.jpg";
+
+  it("uses only Next-default allowed optimizer widths in grid and detail srcsets", () => {
+    assertStaticOptimizerWidthsAllowed();
+    assert.deepEqual([...GRID_OPTIMIZED_WIDTHS], [384, 640, 750, 828, 1080]);
+  });
 
   it("builds stable optimizer URLs", () => {
     assert.equal(
