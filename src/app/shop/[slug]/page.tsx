@@ -56,6 +56,7 @@ export default async function TabloDetailPage({
               tablo={tablo}
               framedSlotAspect={framedSlotAspect}
               artworkAspect={artworkAspect}
+              priorityFinish={initialFinish}
             />
           </div>
           <div className="bk-tablo-detail-copy">

@@ -4,16 +4,11 @@ import {
   tabloProductImage,
 } from "@/lib/tablo-images";
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
+import { TabloOptimizedPicture } from "@/components/TabloOptimizedPicture";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { FrameFinish, Tablo } from "@/lib/types";
-
-function isSvgSrc(src: string, mime?: string): boolean {
-  if (mime === "image/svg+xml") return true;
-  const path = src.split("?")[0] ?? "";
-  return path.endsWith(".svg");
-}
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
   if (kind === "framed") return `${tablo.title} — framed tablo on wall`;
@@ -29,47 +24,22 @@ type MediaFrameProps = {
   sizes: string;
   priority?: boolean;
   aspectRatio: string;
-  /** Native `<img>` only — stable SSR/hydration for multi-figure detail galleries. */
-  stableImg?: boolean;
 };
 
-function MediaFrame({
-  src,
-  alt,
-  mime,
-  sizes,
-  priority,
-  aspectRatio,
-  stableImg = false,
-}: MediaFrameProps) {
+function MediaFrame({ src, alt, mime, sizes, priority, aspectRatio }: MediaFrameProps) {
   const dims = intrinsicDimensionsFromAspect(aspectRatio);
   return (
     <div className="bk-tablo-detail-figure-media" style={{ aspectRatio }}>
-      {stableImg || isSvgSrc(src, mime) ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={alt}
-          className="bk-tablo-picture"
-          width={dims.width}
-          height={dims.height}
-          sizes={sizes}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          data-fit="contain"
-        />
-      ) : (
-        <TabloPicture
-          src={src}
-          alt={alt}
-          mime={mime}
-          sizes={sizes}
-          priority={priority}
-          layout="contain"
-          width={dims.width}
-          height={dims.height}
-        />
-      )}
+      <TabloOptimizedPicture
+        src={src}
+        alt={alt}
+        mime={mime}
+        sizes={sizes}
+        priority={priority}
+        layout="contain"
+        width={dims.width}
+        height={dims.height}
+      />
     </div>
   );
 }
@@ -115,10 +85,13 @@ export function TabloDetailGalleryAllFinishes({
   tablo,
   framedSlotAspect,
   artworkAspect,
+  priorityFinish,
 }: {
   tablo: Tablo;
   framedSlotAspect: string;
   artworkAspect: string;
+  /** Which finish figure is visible on first paint (LCP / fetchpriority). */
+  priorityFinish: FrameFinish;
 }) {
   const artwork = tabloArtworkImage(tablo);
   const hasAnyFramed = FRAME_FINISHES.some((finish) => tabloFramedImageForFinish(tablo, finish)?.url);
@@ -143,9 +116,8 @@ export function TabloDetailGalleryAllFinishes({
                 alt={`${tablo.title} — framed tablo on wall`}
                 mime={framed.mime}
                 sizes={tabloPictureSizes("detail")}
-                priority={finish === FRAME_FINISHES[0]}
+                priority={finish === priorityFinish}
                 aspectRatio={framedSlotAspect}
-                stableImg
               />
             ) : (
               <div
@@ -172,7 +144,6 @@ export function TabloDetailGalleryAllFinishes({
             mime={artwork.mime}
             sizes={tabloPictureSizes("detail")}
             aspectRatio={artworkAspect}
-            stableImg
           />
           <figcaption className="bk-meta bk-tablo-detail-caption">artwork</figcaption>
         </figure>
