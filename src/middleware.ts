@@ -33,11 +33,6 @@ function isProtectedPath(pathname: string): boolean {
   return true;
 }
 
-function withPublicDocumentCachePolicy(response: NextResponse): NextResponse {
-  response.headers.set("Cache-Control", "private, no-cache, must-revalidate");
-  return response;
-}
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
@@ -49,9 +44,6 @@ export function middleware(request: NextRequest) {
   }
 
   if (!isProtectedPath(pathname)) {
-    if (request.method === "GET" && isPublicPath(pathname) && !pathname.startsWith("/api/")) {
-      return withPublicDocumentCachePolicy(NextResponse.next());
-    }
     return NextResponse.next();
   }
 

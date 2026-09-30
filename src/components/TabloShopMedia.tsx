@@ -5,7 +5,7 @@ import {
 } from "@/lib/tablo-images";
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
 import { TabloOptimizedPicture } from "@/components/TabloOptimizedPicture";
-import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
+import { tabloPictureSizes } from "@/components/TabloPicture";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { FrameFinish, Tablo } from "@/lib/types";
@@ -66,16 +66,16 @@ export function TabloCardMedia({
 
   return (
     <div className="bk-aspect-frame bk-tablo-tile-media" style={{ aspectRatio }}>
-      <TabloPicture
-        src={product.url}
-        alt={productAlt(tablo, kind)}
-        mime={product.mime}
-        sizes={tabloPictureSizes("card")}
-        layout={fit}
-        priority={priority}
-        width={dims.width}
-        height={dims.height}
-      />
+        <TabloOptimizedPicture
+          src={product.url}
+          alt={productAlt(tablo, kind)}
+          mime={product.mime}
+          sizes={tabloPictureSizes("card")}
+          priority={priority}
+          layout={fit}
+          width={dims.width}
+          height={dims.height}
+        />
     </div>
   );
 }

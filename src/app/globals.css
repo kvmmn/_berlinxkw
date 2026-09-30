@@ -1291,6 +1291,29 @@ textarea.bk-input[dir="auto"] {
   display: block;
 }
 
+.bk-tablo-detail-grid .bk-tablo-detail-buy-btn-finish,
+.bk-tablo-detail-grid .bk-tablo-detail-buy-note-finish {
+  display: none;
+}
+
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
+  .bk-tablo-detail-buy-btn-finish-bronze,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
+  .bk-tablo-detail-buy-btn-finish-matte-black-brushed,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
+  .bk-tablo-detail-buy-btn-finish-matte-steel-brushed {
+  display: inline-flex;
+}
+
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
+  .bk-tablo-detail-buy-note-finish-bronze,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
+  .bk-tablo-detail-buy-note-finish-matte-black-brushed,
+.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
+  .bk-tablo-detail-buy-note-finish-matte-steel-brushed {
+  display: block;
+}
+
 .bk-tablo-detail-figure {
   margin: 0;
 }
@@ -1524,12 +1547,6 @@ textarea.bk-input[dir="auto"] {
   line-height: 1;
   transform: translateY(0.11em);
   text-box: trim-both cap alphabetic;
-}
-
-@media (min-width: 768px) and (max-width: 1024px) {
-  .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
-    transform: translateY(0.07em);
-  }
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {

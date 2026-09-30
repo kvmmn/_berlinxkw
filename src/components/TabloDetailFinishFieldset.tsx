@@ -1,36 +1,21 @@
-"use client";
+import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
+import type { FrameFinish } from "@/lib/types";
 
-import { FRAME_FINISHES, FRAME_FINISH_LABELS, tabloFrameFinishes } from "@/lib/frame-finish";
-import type { FrameFinish, Tablo } from "@/lib/types";
-
-export function TabloFrameFinishPicker({
-  tablo,
-  value,
-  onChange,
-  idPrefix = "finish",
-  mode = "admin",
+/** SSR finish radios — native behaviour + CSS :has(); no client hydration. */
+export function TabloDetailFinishFieldset({
+  initialFinish,
+  idPrefix = "detail",
 }: {
-  tablo: Tablo;
-  value: FrameFinish;
-  onChange: (finish: FrameFinish) => void;
+  initialFinish: FrameFinish;
   idPrefix?: string;
-  /** Public shop always offers all three standard finishes. */
-  mode?: "shop" | "admin";
 }) {
-  const options = mode === "shop" ? [...FRAME_FINISHES] : tabloFrameFinishes(tablo);
-  if (options.length <= 1) return null;
-
   return (
-    <fieldset
-      className={
-        mode === "shop" ? "bk-frame-finish-fieldset bk-frame-finish-fieldset--shop" : "bk-frame-finish-fieldset"
-      }
-    >
+    <fieldset className="bk-frame-finish-fieldset bk-frame-finish-fieldset--shop">
       <legend className="bk-meta">
         frame finish · <span lang="fa">جنس قاب</span>
       </legend>
       <div className="bk-frame-finish-options" role="radiogroup" aria-label="Frame finish">
-        {options.map((finish) => {
+        {FRAME_FINISHES.map((finish) => {
           const label = FRAME_FINISH_LABELS[finish];
           const inputId = `${idPrefix}-${finish}`;
           return (
@@ -40,8 +25,7 @@ export function TabloFrameFinishPicker({
                 type="radio"
                 name={`${idPrefix}-frame-finish`}
                 value={finish}
-                checked={value === finish}
-                onChange={() => onChange(finish)}
+                defaultChecked={finish === initialFinish}
               />
               <span
                 className="bk-frame-finish-swatch"

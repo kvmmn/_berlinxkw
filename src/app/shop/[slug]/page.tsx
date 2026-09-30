@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
-import { TabloShopDetailBuyIsland } from "@/components/TabloShopDetailBuyIsland";
+import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
 import { normalizeTabloFrameFields, tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
@@ -73,7 +73,7 @@ export default async function TabloDetailPage({
               </span>
             </p>
             {tablo.description ? <TabloDescription text={tablo.description} /> : null}
-            <TabloShopDetailBuyIsland tablo={tablo} initialFinish={initialFinish} />
+            <TabloDetailPurchaseBlock tablo={tablo} initialFinish={initialFinish} />
           </div>
         </div>
       </div>

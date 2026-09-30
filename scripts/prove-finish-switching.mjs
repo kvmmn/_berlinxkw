@@ -32,7 +32,11 @@ async function prove(engineName, launcher) {
       if (!fig) return false;
       return getComputedStyle(fig).display !== "none";
     }, finish);
-    const buyHref = await page.locator(".bk-tablo-buy-lg").getAttribute("href");
+    const buyHref = await page
+      .locator(".bk-tablo-buy-lg")
+      .filter({ visible: true })
+      .first()
+      .getAttribute("href");
     results.push({ finish, visible, buyHref: buyHref?.slice(0, 80) });
   }
   await browser.close();
