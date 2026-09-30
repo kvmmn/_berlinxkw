@@ -1,8 +1,27 @@
+import {
+  GALLERY_PACK_GAP,
+  GALLERY_TARGET_ROW_HEIGHT_DESKTOP,
+} from "@/lib/tablo-gallery-rows";
+
 /**
  * Deterministic `/_next/image` URLs for native `<img srcset>` (SSR === client bytes).
  * Width list matches common Next.js deviceSizes subset used on product detail.
  */
 export const DETAIL_OPTIMIZED_WIDTHS = [640, 828, 1080, 1200, 1920] as const;
+
+/** Justified grid — align with production optimizer buckets (portrait tile widths). */
+export const GRID_OPTIMIZED_WIDTHS = [384, 480, 640, 750, 828] as const;
+
+/**
+ * Static tile width cap from row target height × typical portrait grow (~0.85).
+ * Same constants as SSR `planJustifiedGalleryRows` packing reference.
+ */
+export const GRID_TILE_SIZES_MAX_PX = Math.round(GALLERY_TARGET_ROW_HEIGHT_DESKTOP * 0.85);
+
+export const GRID_OPTIMIZED_SIZES =
+  `(max-width: 720px) calc(100vw - 2.5rem), ` +
+  `(max-width: 1024px) min(${GRID_TILE_SIZES_MAX_PX}px, calc((100vw - ${GALLERY_PACK_GAP}px - 2.5rem) / 2)), ` +
+  `${GRID_TILE_SIZES_MAX_PX}px`;
 
 export const DETAIL_OPTIMIZE_QUALITY = 75;
 

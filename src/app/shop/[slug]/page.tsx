@@ -50,7 +50,7 @@ export default async function TabloDetailPage({
         <Link href="/shop" className="bk-meta bk-shop-back">
           ← all tablos
         </Link>
-        <div className="bk-tablo-detail-grid">
+        <div className="bk-tablo-detail-grid" data-default-finish={initialFinish}>
           <div className="bk-tablo-detail-media bk-tablo-detail-root">
             <TabloDetailGalleryAllFinishes
               tablo={tablo}

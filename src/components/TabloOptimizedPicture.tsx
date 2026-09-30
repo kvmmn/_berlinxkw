@@ -24,6 +24,8 @@ export function TabloOptimizedPicture({
   className = "bk-tablo-picture",
   width,
   height,
+  optimizerWidths,
+  optimizerFallbackWidth,
 }: {
   src: string;
   alt: string;
@@ -34,6 +36,8 @@ export function TabloOptimizedPicture({
   className?: string;
   width: number;
   height: number;
+  optimizerWidths?: readonly number[];
+  optimizerFallbackWidth?: number;
 }) {
   if (isSvgSrc(src, mime)) {
     return (
@@ -52,7 +56,12 @@ export function TabloOptimizedPicture({
     );
   }
 
-  const img = buildStaticOptimizedImageProps(src, { sizes, priority });
+  const img = buildStaticOptimizedImageProps(src, {
+    sizes,
+    priority,
+    widths: optimizerWidths,
+    fallbackWidth: optimizerFallbackWidth,
+  });
 
   return (
     // eslint-disable-next-line @next/next/no-img-element

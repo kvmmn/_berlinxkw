@@ -6,6 +6,10 @@ import {
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
 import { TabloOptimizedPicture } from "@/components/TabloOptimizedPicture";
 import { tabloPictureSizes } from "@/components/TabloPicture";
+import {
+  GRID_OPTIMIZED_SIZES,
+  GRID_OPTIMIZED_WIDTHS,
+} from "@/lib/next-image-static";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { FrameFinish, Tablo } from "@/lib/types";
@@ -70,7 +74,9 @@ export function TabloCardMedia({
           src={product.url}
           alt={productAlt(tablo, kind)}
           mime={product.mime}
-          sizes={tabloPictureSizes("card")}
+          sizes={GRID_OPTIMIZED_SIZES}
+          optimizerWidths={GRID_OPTIMIZED_WIDTHS}
+          optimizerFallbackWidth={384}
           priority={priority}
           layout={fit}
           width={dims.width}
