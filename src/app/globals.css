@@ -898,13 +898,13 @@ textarea.bk-input[dir="auto"] {
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -4px;
+    --bk-advisor-mark-y: -2px;
   }
 }
 
 @media (min-width: 1025px) {
   .bk-public-footer-advisor {
-    --bk-advisor-mark-y: -4px;
+    --bk-advisor-mark-y: -3.5px;
   }
 }
 
