@@ -1282,11 +1282,10 @@ textarea.bk-input[dir="auto"] {
   display: none;
 }
 
-.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
-  .bk-tablo-detail-finish-bronze,
-.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
+.bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
   .bk-tablo-detail-finish-matte-black-brushed,
-.bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
+.bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
   .bk-tablo-detail-finish-matte-steel-brushed {
   display: block;
 }
@@ -1313,6 +1312,11 @@ textarea.bk-input[dir="auto"] {
 }
 
 @supports selector(:has(*)) {
+  .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
+    .bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
+    .bk-tablo-detail-finish-matte-steel-brushed,
   .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-buy-btn-finish-bronze,
   .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
     .bk-tablo-detail-buy-btn-finish-matte-black-brushed,
@@ -1324,6 +1328,15 @@ textarea.bk-input[dir="auto"] {
   .bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
     .bk-tablo-detail-buy-note-finish-matte-steel-brushed {
     display: none;
+  }
+
+  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
+    .bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
+    .bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
+    .bk-tablo-detail-finish-matte-steel-brushed {
+    display: block;
   }
 
   .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)

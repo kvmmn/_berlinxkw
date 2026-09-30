@@ -1,5 +1,6 @@
 import {
   GALLERY_PACK_GAP,
+  GALLERY_PACK_REFERENCE_WIDTH,
   GALLERY_TARGET_ROW_HEIGHT_DESKTOP,
 } from "@/lib/tablo-gallery-rows";
 
@@ -9,19 +10,25 @@ import {
  */
 export const DETAIL_OPTIMIZED_WIDTHS = [640, 828, 1080, 1200, 1920] as const;
 
-/** Justified grid — align with production optimizer buckets (portrait tile widths). */
-export const GRID_OPTIMIZED_WIDTHS = [384, 480, 640, 750, 828] as const;
+/** Justified grid — production-aligned buckets including desktop landscape. */
+export const GRID_OPTIMIZED_WIDTHS = [384, 480, 640, 750, 828, 1080] as const;
 
 /**
- * Static tile width cap from row target height × typical portrait grow (~0.85).
- * Same constants as SSR `planJustifiedGalleryRows` packing reference.
+ * Widest landscape tile at desktop row height (~430px @ 360px row), from packing reference.
+ * Used as the desktop `sizes` cap so DPR2 landscape tiles reach ≥828/1080w.
  */
-export const GRID_TILE_SIZES_MAX_PX = Math.round(GALLERY_TARGET_ROW_HEIGHT_DESKTOP * 0.85);
+/** ~430px at 360px desktop row height (widest landscape in reference packing). */
+export const GRID_LANDSCAPE_TILE_MAX_PX = Math.round(
+  GALLERY_TARGET_ROW_HEIGHT_DESKTOP * (430 / 360),
+);
+
+/** Share of gallery row width for the widest landscape cell (reference pack width). */
+const GRID_LANDSCAPE_ROW_WIDTH_SHARE = GRID_LANDSCAPE_TILE_MAX_PX / GALLERY_PACK_REFERENCE_WIDTH;
 
 export const GRID_OPTIMIZED_SIZES =
   `(max-width: 720px) calc(100vw - 2.5rem), ` +
-  `(max-width: 1024px) min(${GRID_TILE_SIZES_MAX_PX}px, calc((100vw - ${GALLERY_PACK_GAP}px - 2.5rem) / 2)), ` +
-  `${GRID_TILE_SIZES_MAX_PX}px`;
+  `(max-width: 1024px) min(${GRID_LANDSCAPE_TILE_MAX_PX}px, calc((100vw - ${GALLERY_PACK_GAP}px - 2.5rem) * ${GRID_LANDSCAPE_ROW_WIDTH_SHARE})), ` +
+  `${GRID_LANDSCAPE_TILE_MAX_PX}px`;
 
 export const DETAIL_OPTIMIZE_QUALITY = 75;
 
