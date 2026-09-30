@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
-import { TabloShopDetailShell } from "@/components/TabloShopDetailShell";
+import { TabloShopDetailBuyIsland } from "@/components/TabloShopDetailBuyIsland";
 import { normalizeTabloFrameFields, tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
@@ -58,7 +58,7 @@ export default async function TabloDetailPage({
               artworkAspect={artworkAspect}
             />
           </div>
-          <TabloShopDetailShell tablo={tablo} initialFinish={initialFinish}>
+          <div className="bk-tablo-detail-copy">
             <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
             <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>
             <p className="bk-tablo-detail-price">{priceLabel}</p>
@@ -72,7 +72,8 @@ export default async function TabloDetailPage({
               </span>
             </p>
             {tablo.description ? <TabloDescription text={tablo.description} /> : null}
-          </TabloShopDetailShell>
+            <TabloShopDetailBuyIsland tablo={tablo} initialFinish={initialFinish} />
+          </div>
         </div>
       </div>
     </ShopShell>

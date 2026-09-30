@@ -42,6 +42,7 @@ export function TabloFrameFinishPicker({
                 value={finish}
                 checked={value === finish}
                 onChange={() => onChange(finish)}
+                suppressHydrationWarning
               />
               <span
                 className="bk-frame-finish-swatch"

@@ -1522,6 +1522,14 @@ textarea.bk-input[dir="auto"] {
   display: inline-flex;
   align-items: center;
   line-height: 1;
+  transform: translateY(0.11em);
+  text-box: trim-both cap alphabetic;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label > span:first-child {
+    transform: translateY(0.07em);
+  }
 }
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-label-fa {
