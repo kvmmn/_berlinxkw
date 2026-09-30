@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
+import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
@@ -54,6 +55,7 @@ export function TabloGalleryTile({
               sizes={tabloPictureSizes("landing")}
               priority={priority}
               layout="cover"
+              {...intrinsicDimensionsFromAspect(productAspect)}
             />
           ) : (
             <span className="bk-tablo-gallery-placeholder bk-meta">no image</span>

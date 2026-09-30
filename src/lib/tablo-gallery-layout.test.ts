@@ -3,7 +3,11 @@ import { describe, it } from "node:test";
 import { planTabloGalleryLayout } from "./tablo-gallery-layout";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
 import type { Tablo } from "./types";
-import { chunkTabloGalleryRows, tabloAspectFlexGrow } from "./tablo-gallery-rows";
+import {
+  chunkTabloGalleryRows,
+  planJustifiedGalleryRows,
+  tabloAspectFlexGrow,
+} from "./tablo-gallery-rows";
 
 function stubTablo(id: string): Tablo {
   return {
@@ -58,5 +62,40 @@ describe("tablo-gallery-rows", () => {
   it("parses aspect flex grow as width/height", () => {
     assert.equal(tabloAspectFlexGrow("4 / 3"), 4 / 3);
     assert.equal(tabloAspectFlexGrow("3 / 4"), 0.75);
+  });
+
+  it("keeps three tablos on one full row", () => {
+    const three = ["l1", "l2", "p"].map((id) =>
+      item(id, id === "p" ? "portrait" : "landscape"),
+    );
+    const rows = planJustifiedGalleryRows(three);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0]!.layout, "full");
+    assert.equal(rows[0]!.items.length, 3);
+  });
+
+  it("packs five tablos into full + tail rows", () => {
+    const five = ["l1", "l2", "l3", "l4", "p"].map((id) =>
+      item(id, id === "p" ? "portrait" : "landscape"),
+    );
+    const rows = planJustifiedGalleryRows(five);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0]!.layout, "full");
+    assert.equal(rows[1]!.layout, "tail");
+    assert.equal(rows[0]!.items.length, 3);
+    assert.equal(rows[1]!.items.length, 2);
+    assert.ok(rows[1]!.rowHeightPx != null && rows[1]!.rowHeightPx > 0);
+  });
+
+  it("rebalances four tablos into two rows of two (portrait last)", () => {
+    const four = ["l1", "l2", "l3", "p"].map((id) =>
+      item(id, id === "p" ? "portrait" : "landscape"),
+    );
+    const rows = planJustifiedGalleryRows(four);
+    assert.equal(rows.length, 2);
+    assert.equal(rows[0]!.items.length, 2);
+    assert.equal(rows[1]!.items.length, 2);
+    assert.equal(rows[1]!.layout, "tail");
+    assert.equal(rows[1]!.items[1]!.tablo.id, "p");
   });
 });

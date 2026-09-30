@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gallery fixture tiles (local measurement only)</title>
+    <link rel="stylesheet" href="/globals.css" />
+    <style>
+      /* Minimal subset mirroring production gallery + shop tile chrome */
+      body {
+        margin: 0;
+        padding: 1rem;
+        background: #f3f3ef;
+        font-family: system-ui, sans-serif;
+      }
+      .shell {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        box-sizing: border-box;
+      }
+      .bk-tablo-justified-gallery {
+        container-type: inline-size;
+        --bk-tablo-gap: 2.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: var(--bk-tablo-gap);
+      }
+      @media (min-width: 721px) {
+        .bk-tablo-justified-row {
+          display: flex;
+          flex-direction: row;
+          gap: var(--bk-tablo-gap);
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        .bk-tablo-justified-row--full .bk-tablo-justified-cell {
+          flex: var(--tile-aspect-grow) 1 0;
+          min-width: 0;
+        }
+        .bk-tablo-justified-row--tail {
+          justify-content: center;
+          --bk-row-h: calc(
+            (100cqw - (var(--bk-ref-cells) - 1) * var(--bk-tablo-gap)) / var(--bk-ref-aspect-sum)
+          );
+        }
+        .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
+          flex: 0 0 auto;
+          width: calc(var(--tile-aspect-grow) * var(--bk-row-h));
+        }
+        .bk-tablo-justified-row--tail .bk-aspect-frame {
+          height: var(--bk-row-h);
+          aspect-ratio: unset;
+        }
+      }
+      .bk-aspect-frame {
+        width: 100%;
+        aspect-ratio: var(--tile-aspect-ratio);
+        background: #e0e0dc;
+      }
+      .bk-tablo-tile-caption {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      .bk-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 11px 1rem 6px;
+        font-size: 13px;
+        text-transform: uppercase;
+        background: #141412;
+        color: #f3f3ef;
+        width: fit-content;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <section id="fixture-four">
+        <h2>four tablos</h2>
+        <div
+          class="bk-tablo-justified-gallery"
+          style="--bk-ref-aspect-sum: 2.666; --bk-ref-cells: 2"
+        >
+          <ul class="bk-tablo-justified-row bk-tablo-justified-row--full">
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3">
+              <article class="bk-tablo-tile">
+                <div class="bk-aspect-frame"></div>
+                <div class="bk-tablo-tile-caption"><span class="bk-btn">Buy via DM</span></div>
+              </article>
+            </li>
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3">
+              <article class="bk-tablo-tile">
+                <div class="bk-aspect-frame"></div>
+                <div class="bk-tablo-tile-caption"><span class="bk-btn">Buy via DM</span></div>
+              </article>
+            </li>
+          </ul>
+          <ul class="bk-tablo-justified-row bk-tablo-justified-row--tail">
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3">
+              <article class="bk-tablo-tile">
+                <div class="bk-aspect-frame"></div>
+                <div class="bk-tablo-tile-caption"><span class="bk-btn">Buy via DM</span></div>
+              </article>
+            </li>
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 0.75; --tile-aspect-ratio: 3/4">
+              <article class="bk-tablo-tile">
+                <div class="bk-aspect-frame"></div>
+                <div class="bk-tablo-tile-caption"><span class="bk-btn">Buy via DM</span></div>
+              </article>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section id="fixture-five" style="margin-top: 3rem">
+        <h2>five tablos</h2>
+        <div
+          class="bk-tablo-justified-gallery"
+          style="--bk-ref-aspect-sum: 4; --bk-ref-cells: 3"
+        >
+          <ul class="bk-tablo-justified-row bk-tablo-justified-row--full">
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3"><div class="bk-aspect-frame"></div></li>
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3"><div class="bk-aspect-frame"></div></li>
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3"><div class="bk-aspect-frame"></div></li>
+          </ul>
+          <ul class="bk-tablo-justified-row bk-tablo-justified-row--tail">
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 1.333; --tile-aspect-ratio: 4/3"><div class="bk-aspect-frame"></div></li>
+            <li class="bk-tablo-justified-cell" style="--tile-aspect-grow: 0.75; --tile-aspect-ratio: 3/4"><div class="bk-aspect-frame"></div></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

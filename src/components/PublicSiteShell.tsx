@@ -21,7 +21,7 @@ export function PublicSiteShell({
       <footer className="bk-public-footer">
         <div className="bk-public-shell">
           <div className="bk-public-footer-bar bk-meta">
-            <span>{footerNote}</span>
+            <span className="bk-public-footer-note">{footerNote}</span>
             <Link href="/login" className="bk-public-footer-advisor" aria-label="Advisor">
               <PublicAdvisorMark />
             </Link>

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/lib/instagram/**/*.test.ts src/lib/tablo-frame-spec.test.ts src/lib/tablo-gallery-order.test.ts src/lib/tablo-gallery-layout.test.ts src/lib/tablo-description.test.ts src/lib/jpeg-exif.test.ts"
+    "test": "tsx --test src/lib/instagram/**/*.test.ts src/lib/tablo-frame-spec.test.ts src/lib/tablo-gallery-order.test.ts src/lib/tablo-gallery-layout.test.ts src/lib/tablo-description.test.ts src/lib/jpeg-exif.test.ts src/lib/next-image-static.test.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.0",
@@ -41,6 +41,7 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.5.0",
     "playwright": "^1.63.0",
+    "pngjs": "^7.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.0.0"
   }
