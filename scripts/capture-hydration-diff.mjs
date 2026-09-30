@@ -67,9 +67,16 @@ function extractTagContext(html, index) {
   return tagMatch ? tagMatch.slice(-3) : [];
 }
 
-async function runOnce(browser, url) {
+async function runOnce(browser, url, combo) {
   let serverHtml = "";
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    viewport: { width: combo?.width ?? 1440, height: combo?.height ?? 900 },
+    colorScheme: combo?.colorScheme ?? "light",
+  });
+  await context.route("**/*", (route) => {
+    if (route.request().url().includes("vercel.live")) return route.abort();
+    return route.continue();
+  });
   await context.addInitScript(PRE_HYDRATE_SNAPSHOT);
   const page = await context.newPage();
 
@@ -104,6 +111,15 @@ async function runOnce(browser, url) {
   return { serverHtml, preHydrate, postDom, errors: [...new Set(errors)] };
 }
 
+const COMBOS = [
+  { tag: "390light", width: 390, height: 844, colorScheme: "light" },
+  { tag: "390dark", width: 390, height: 844, colorScheme: "dark" },
+  { tag: "768light", width: 768, height: 900, colorScheme: "light" },
+  { tag: "768dark", width: 768, height: 900, colorScheme: "dark" },
+  { tag: "1440light", width: 1440, height: 900, colorScheme: "light" },
+  { tag: "1440dark", width: 1440, height: 900, colorScheme: "dark" },
+];
+
 async function main() {
   const url = pageUrl(path);
   const browser = await chromium.launch();
@@ -111,7 +127,8 @@ async function main() {
   let sample = null;
 
   for (let i = 0; i < attempts; i++) {
-    const result = await runOnce(browser, url);
+    const combo = COMBOS[i % COMBOS.length];
+    const result = await runOnce(browser, url, combo);
     if (result.errors.length) {
       failures += 1;
       if (!sample) {
@@ -122,6 +139,7 @@ async function main() {
         const preVsPost = firstMismatch(normPre, normPost);
         sample = {
           attempt: i + 1,
+          combo: combo.tag,
           errors: result.errors,
           serverVsPre,
           preVsPost,
