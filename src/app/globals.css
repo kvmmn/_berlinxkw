@@ -908,6 +908,12 @@ textarea.bk-input[dir="auto"] {
   }
 }
 
+@media (min-width: 1440px) {
+  .bk-public-footer-advisor {
+    --bk-advisor-mark-y: -4.5px;
+  }
+}
+
 
 .bk-shop-empty {
   text-align: center;
