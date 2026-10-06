@@ -30,6 +30,7 @@ export function TabloJustifiedGallery({
               "--bk-row-width-cm-sum": String(rowWidthCmSum(row.items)),
               "--bk-row-cells": String(row.items.length),
               "--bk-row-stage-ref-width-cm": String(rowStageRefWidthCm(row.items)),
+              "--bk-grid-frame-long-px": "calc(var(--bk-grid-long-px) * 0.8)",
             } as CSSProperties
           }
           role="list"
