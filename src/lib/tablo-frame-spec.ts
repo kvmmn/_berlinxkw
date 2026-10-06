@@ -103,6 +103,15 @@ export function rowMockupHeightFactor(row: { orientation: TabloOrientation }[]):
 /** Re-export for gallery row math (avoids circular imports from tablo-grid-mockup-view). */
 export const TABLO_GRID_STAGE_MARGIN_RATIO = 0.1;
 
+/** Uniform desktop grid stage box (width : height). */
+export const TABLO_GRID_STAGE_BOX_ASPECT = "4 / 5";
+
+/** Widest catalog frame width in a row — sets shared stage height at {@link TABLO_GRID_STAGE_BOX_ASPECT}. */
+export function rowStageRefWidthCm(row: { orientation: TabloOrientation }[]): number {
+  if (row.length === 0) return FRAME_LONG_CM;
+  return Math.max(...row.map((item) => frameGridCellFlexGrow(item.orientation)));
+}
+
 export function orientationCopy(orientation: TabloOrientation): { en: string; fa: string } {
   return orientation === "landscape"
     ? { en: "landscape", fa: "افقی" }

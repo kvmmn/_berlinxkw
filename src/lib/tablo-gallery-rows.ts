@@ -1,9 +1,4 @@
-import {
-  FRAME_LONG_CM,
-  frameGridCellFlexGrow,
-  frameGridCellStageWidthCm,
-  TABLO_GRID_STAGE_MARGIN_RATIO,
-} from "./tablo-frame-spec";
+import { FRAME_LONG_CM, frameGridCellFlexGrow } from "./tablo-frame-spec";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
 
 /** Parse CSS aspect-ratio string (e.g. `4032 / 3024`) to width/height flex-grow weight. */
@@ -28,10 +23,7 @@ export function chunkTabloGalleryRows<T>(items: T[], columns: number): T[][] {
 }
 
 export function rowWidthCmSum(row: TabloGalleryLayoutItem[]): number {
-  return row.reduce(
-    (sum, item) => sum + frameGridCellStageWidthCm(item.orientation, TABLO_GRID_STAGE_MARGIN_RATIO),
-    0,
-  );
+  return row.reduce((sum, item) => sum + frameGridCellFlexGrow(item.orientation), 0);
 }
 
 /** @deprecated Use rowWidthCmSum */
