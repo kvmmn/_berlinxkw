@@ -5,6 +5,8 @@ import { describe, it } from "node:test";
 import { countHashtags, validateCaption, validateVideoUrl } from "./validate";
 
 const FIXTURE_MP4 = join(process.cwd(), "data/fixtures/instagram/publish-sample.mp4");
+const ALLOWED_VIDEO =
+  "https://berlinxkw.vercel.app/api/shop/media?pathname=berlinxkw/instagram/demo/publish-sample.mp4";
 
 describe("validateCaption", () => {
   it("accepts normal captions", () => {
@@ -68,7 +70,7 @@ describe("validateVideoUrl", () => {
     };
 
     try {
-      const r = await validateVideoUrl("https://cdn.example.com/reel.mp4");
+      const r = await validateVideoUrl(ALLOWED_VIDEO);
       assert.equal(r.ok, false);
       assert.match(r.errors.join(" "), /duration/i);
       assert.equal(r.contentLength, bytes.length);
@@ -98,7 +100,7 @@ describe("validateVideoUrl", () => {
     };
 
     try {
-      const r = await validateVideoUrl("https://cdn.example.com/reel.mp4");
+      const r = await validateVideoUrl(ALLOWED_VIDEO);
       assert.equal(r.contentLength, bytes.length);
       assert.match(r.errors.join(" "), /duration/i);
     } finally {
