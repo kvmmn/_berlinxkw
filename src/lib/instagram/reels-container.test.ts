@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { fetchReelsContainerStatusCode, isReelsContainerPublished } from "./reels-container";
 
 describe("reels container status (S2-a)", () => {
-  it("uses status_code only and treats PUBLISHED as live", async () => {
+  it("uses status_code,status and treats PUBLISHED as live", async () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async (input) => {
       const url = String(input);
@@ -13,7 +13,7 @@ describe("reels container status (S2-a)", () => {
           { status: 400, headers: { "content-type": "application/json" } },
         );
       }
-      if (url.includes("fields=status_code")) {
+      if (url.includes("status_code") && url.includes("status") && !url.includes("ig_id")) {
         return new Response(JSON.stringify({ status_code: "PUBLISHED", id: "ctr-1" }), {
           status: 200,
           headers: { "content-type": "application/json" },

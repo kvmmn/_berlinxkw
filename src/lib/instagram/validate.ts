@@ -389,24 +389,28 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
         height = mp4.height;
         aspectRatio = mp4.aspectRatio;
 
-        if (durationSec != null) {
-          if (durationSec < REELS_MIN_DURATION_SEC) {
-            errors.push(
-              `Video duration ${durationSec.toFixed(2)}s is below the ${REELS_MIN_DURATION_SEC}s Reels minimum.`,
-            );
-          }
-          if (durationSec > REELS_MAX_DURATION_SEC) {
-            errors.push(
-              `Video duration exceeds ${REELS_MAX_DURATION_SEC / 60} minute Reels maximum.`,
-            );
-          }
-        } else if (mp4.errors.length === 0) {
-          errors.push("Could not read MP4 duration from metadata.");
-        }
+        const moovRangeError = mp4.errors.some((e) => e.includes("moov atom"));
 
-        if (width == null || height == null) {
-          if (!mp4.errors.some((e) => e.includes("video track"))) {
-            errors.push("Could not read MP4 video track dimensions.");
+        if (!moovRangeError) {
+          if (durationSec != null) {
+            if (durationSec < REELS_MIN_DURATION_SEC) {
+              errors.push(
+                `Video duration ${durationSec.toFixed(2)}s is below the ${REELS_MIN_DURATION_SEC}s Reels minimum.`,
+              );
+            }
+            if (durationSec > REELS_MAX_DURATION_SEC) {
+              errors.push(
+                `Video duration exceeds ${REELS_MAX_DURATION_SEC / 60} minute Reels maximum.`,
+              );
+            }
+          } else if (mp4.errors.length === 0) {
+            errors.push("Could not read MP4 duration from metadata.");
+          }
+
+          if (width == null || height == null) {
+            if (!mp4.errors.some((e) => e.includes("video track"))) {
+              errors.push("Could not read MP4 video track dimensions.");
+            }
           }
         }
 

@@ -9,9 +9,10 @@ import {
 } from "./constants";
 import { igFetch, isFetchTimeoutError } from "./graph-fetch";
 import {
-  fetchReelsContainerStatusCode,
-  isReelsContainerPublished,
+  fetchReelsContainerStatus,
+  reelsContainerStatusCode,
   REELS_PUBLISHED_MEDIA_ID_NOTE,
+  waitForReelsContainerPublishedAfterFailure,
 } from "./reels-container";
 import { ReelsStillProcessingError } from "./reels-processing";
 import type { InstagramTokenRecord } from "./token-store";
@@ -121,9 +122,9 @@ async function waitForReelsContainerReady(
   const deadlineAt = startedAtMs + REELS_CONTAINER_POLL_DEADLINE_MS;
 
   while (Date.now() < deadlineAt) {
-    let code: string | undefined;
+    let status: Awaited<ReturnType<typeof fetchReelsContainerStatus>>;
     try {
-      code = await fetchReelsContainerStatusCode(containerId, accessToken);
+      status = await fetchReelsContainerStatus(containerId, accessToken);
     } catch (err) {
       if (isFetchTimeoutError(err) && Date.now() < deadlineAt) {
         const remaining = deadlineAt - Date.now();
@@ -134,10 +135,16 @@ async function waitForReelsContainerReady(
       throw err;
     }
 
+    const code = reelsContainerStatusCode(status);
     if (code === "PUBLISHED") return "published";
     if (code === "FINISHED") return "finished";
     if (code === "ERROR") {
-      throw new Error("Instagram media container processing failed.");
+      const detail = status.status ?? status.status_code;
+      throw new Error(
+        detail && detail !== "ERROR"
+          ? `Instagram media container processing failed: ${detail}`
+          : "Instagram media container processing failed.",
+      );
     }
     if (code === "EXPIRED") {
       throw new Error("Instagram media container expired before publish.");
@@ -194,6 +201,7 @@ async function publishReelsContainer(
   igUserId: string,
   accessToken: string,
   creationId: string,
+  startedAtMs: number,
 ): Promise<string | null> {
   const params = new URLSearchParams();
   params.set("creation_id", creationId);
@@ -208,7 +216,7 @@ async function publishReelsContainer(
     if (!res.id) throw new Error("Missing media id after publish.");
     return res.id;
   } catch (err) {
-    if (await isReelsContainerPublished(creationId, accessToken)) {
+    if (await waitForReelsContainerPublishedAfterFailure(creationId, accessToken, startedAtMs)) {
       return null;
     }
     throw err;
@@ -319,7 +327,7 @@ export async function publishReelsToInstagram(
     };
   }
 
-  const mediaId = await publishReelsContainer(igUserId, accessToken, creationId);
+  const mediaId = await publishReelsContainer(igUserId, accessToken, creationId, startedAtMs);
   if (mediaId === null) {
     return {
       igUserId,
