@@ -36,6 +36,8 @@ export const REELS_ASPECT_RATIO_MAX = 10;
 /** 9:16 vertical through ~16:9 — recommended, not required. */
 export const REELS_ASPECT_RATIO_RECOMMENDED_MIN = 9 / 16;
 export const REELS_ASPECT_RATIO_RECOMMENDED_MAX = 16 / 9;
+/** Tolerance for recommended-band warnings (avoids spurious warn on rounded 16:9). */
+export const REELS_ASPECT_RATIO_RECOMMENDED_TOLERANCE = 0.002;
 
 /** Instagram Reels remote video URL limit (dryRun validation). */
 export const REELS_VIDEO_MAX_BYTES = 300 * 1024 * 1024;

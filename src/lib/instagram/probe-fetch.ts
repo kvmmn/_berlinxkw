@@ -67,6 +67,19 @@ function mergeSignals(timeoutMs: number, extra?: AbortSignal | null): AbortSigna
   return AbortSignal.any([timeout, extra]);
 }
 
+export async function discardResponseBody(res: Response): Promise<void> {
+  if (!res.body) return;
+  try {
+    await res.body.cancel();
+  } catch {
+    try {
+      await res.arrayBuffer();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 export function rejectRedirectResponse(res: Response): void {
   if (res.status >= 300 && res.status < 400) {
     const location = res.headers.get("location") ?? "";

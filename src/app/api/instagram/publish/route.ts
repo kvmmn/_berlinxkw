@@ -94,6 +94,7 @@ export async function POST(req: Request) {
             code: "reels_still_processing",
             message: err.message,
             containerId: err.containerId,
+            retrySafe: true,
           },
           { status: 202 },
         );

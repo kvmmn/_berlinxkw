@@ -90,9 +90,10 @@ function tkhdDisplayDimensions(
   tkhdOffset: number,
 ): { width: number; height: number } | null {
   const version = buf[tkhdOffset + 8];
-  const matrixStart = version === 0 ? tkhdOffset + 40 : tkhdOffset + 52;
+  // ISO/IEC 14496-12 tkhd: matrix begins after layer/alt/volume (v0 @48, v1 @60); width/height fixed-point @84/@96.
+  const matrixStart = version === 0 ? tkhdOffset + 48 : tkhdOffset + 60;
   const dimStart = version === 0 ? tkhdOffset + 84 : tkhdOffset + 96;
-  if (dimStart + 8 > buf.length || matrixStart + 16 > buf.length) return null;
+  if (dimStart + 8 > buf.length || matrixStart + 36 > buf.length) return null;
 
   let width = readU32(buf, dimStart) / 65536;
   let height = readU32(buf, dimStart + 4) / 65536;
@@ -103,9 +104,7 @@ function tkhdDisplayDimensions(
   const c = readU32(buf, matrixStart + 8) / 65536;
   const d = readU32(buf, matrixStart + 12) / 65536;
 
-  const rotated90or270 =
-    (Math.abs(a) < 0.01 && Math.abs(d) < 0.01 && Math.abs(b) > 0.5 && Math.abs(c) > 0.5) ||
-    (Math.abs(b) > 0.9 && Math.abs(c) > 0.9);
+  const rotated90or270 = Math.abs(a) < 0.01 && Math.abs(d) < 0.01 && Math.abs(b) > 0.5 && Math.abs(c) > 0.5;
 
   if (rotated90or270) {
     [width, height] = [height, width];

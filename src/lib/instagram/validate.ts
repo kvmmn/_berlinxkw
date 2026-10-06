@@ -9,6 +9,7 @@ import {
   REELS_ASPECT_RATIO_MIN,
   REELS_ASPECT_RATIO_RECOMMENDED_MAX,
   REELS_ASPECT_RATIO_RECOMMENDED_MIN,
+  REELS_ASPECT_RATIO_RECOMMENDED_TOLERANCE,
   REELS_MAX_DURATION_SEC,
   REELS_MIN_DURATION_SEC,
   REELS_VIDEO_CONTENT_TYPES,
@@ -21,6 +22,7 @@ import {
   ProbeUrlRejectedError,
   PROBE_IMAGE_MAX_BYTES,
   PROBE_VIDEO_META_MAX_BYTES,
+  discardResponseBody,
   safeProbeFetch,
 } from "./probe-fetch";
 
@@ -271,9 +273,10 @@ function applyReelsAspectRules(
     );
     return;
   }
+  const tol = REELS_ASPECT_RATIO_RECOMMENDED_TOLERANCE;
   if (
-    aspectRatio < REELS_ASPECT_RATIO_RECOMMENDED_MIN ||
-    aspectRatio > REELS_ASPECT_RATIO_RECOMMENDED_MAX
+    aspectRatio < REELS_ASPECT_RATIO_RECOMMENDED_MIN - tol ||
+    aspectRatio > REELS_ASPECT_RATIO_RECOMMENDED_MAX + tol
   ) {
     warnings.push(
       `Video aspect ratio ${aspectRatio} is outside the recommended 9:16–16:9 range (${REELS_ASPECT_RATIO_RECOMMENDED_MIN.toFixed(4)}–${REELS_ASPECT_RATIO_RECOMMENDED_MAX.toFixed(4)}).`,
@@ -301,6 +304,7 @@ async function probeVideoUrl(url: string): Promise<{
 
   let res = head;
   if (res.status === 405 || res.status === 501) {
+    await discardResponseBody(head);
     ({ res } = await safeProbeFetch(url, {
       method: "GET",
       headers: { Range: "bytes=0-0" },
