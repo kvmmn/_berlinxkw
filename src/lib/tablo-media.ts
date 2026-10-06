@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { join } from "path";
+import { canonicalBlobPathname } from "./blob-pathname";
 import { blobProxyUrl, isBlobStorePathname, writeBlob } from "./blob-private";
 import { MAX_IMAGE_BYTES } from "./idea-limits";
 import { getStorageMode } from "./storage";
@@ -175,5 +176,6 @@ export async function deleteTabloImage(image: TabloImage | null | undefined): Pr
 }
 
 export function isPublicTabloBlobPathname(pathname: string): boolean {
-  return pathname.startsWith(TABLO_BLOB_PREFIX);
+  const canonical = canonicalBlobPathname(pathname);
+  return Boolean(canonical?.startsWith(TABLO_BLOB_PREFIX));
 }
