@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { authorizeInstagramPublish } from "@/lib/instagram/auth-request";
+import { ReelsStillProcessingError } from "@/lib/instagram/reels-processing";
 import {
   dryRunOrPublish,
   dryRunOrPublishReels,
@@ -54,10 +55,13 @@ export async function POST(req: Request) {
       );
     }
 
+    const reelsRequestStartedAt = Date.now();
+
     try {
       const result = await dryRunOrPublishReels(
         { videoUrl, caption, coverUrl, shareToFeed },
         dryRun,
+        { startedAtMs: reelsRequestStartedAt },
       );
 
       if (result.dryRun) {
@@ -82,6 +86,18 @@ export async function POST(req: Request) {
         validation: result.validation,
       });
     } catch (err) {
+      if (err instanceof ReelsStillProcessingError) {
+        return NextResponse.json(
+          {
+            ok: false,
+            mediaType: "REELS",
+            code: "reels_still_processing",
+            message: err.message,
+            containerId: err.containerId,
+          },
+          { status: 202 },
+        );
+      }
       if (err instanceof InstagramNotConfiguredError) {
         return NextResponse.json(
           { error: err.message, code: "instagram_not_configured" },

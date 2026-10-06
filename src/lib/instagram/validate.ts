@@ -7,6 +7,8 @@ import {
   HASHTAG_MAX_COUNT,
   REELS_ASPECT_RATIO_MAX,
   REELS_ASPECT_RATIO_MIN,
+  REELS_ASPECT_RATIO_RECOMMENDED_MAX,
+  REELS_ASPECT_RATIO_RECOMMENDED_MIN,
   REELS_MAX_DURATION_SEC,
   REELS_MIN_DURATION_SEC,
   REELS_VIDEO_CONTENT_TYPES,
@@ -14,11 +16,19 @@ import {
 } from "./constants";
 import { jpegDimensionsFromBuffer } from "./jpeg-dimensions";
 import { probeMp4Buffer } from "./mp4-probe";
+import {
+  assertProbeUrlAllowed,
+  ProbeUrlRejectedError,
+  PROBE_IMAGE_MAX_BYTES,
+  PROBE_VIDEO_META_MAX_BYTES,
+  safeProbeFetch,
+} from "./probe-fetch";
 
 export type ImageValidationResult = {
   url: string;
   ok: boolean;
   errors: string[];
+  warnings?: string[];
   contentType?: string;
   width?: number;
   height?: number;
@@ -36,6 +46,7 @@ export type VideoValidationResult = {
   url: string;
   ok: boolean;
   errors: string[];
+  warnings?: string[];
   contentType?: string;
   contentLength?: number;
   durationSec?: number;
@@ -79,8 +90,12 @@ function aspectOk(width: number, height: number): boolean {
   return ratio >= ASPECT_RATIO_MIN && ratio <= ASPECT_RATIO_MAX;
 }
 
-export async function validateImageUrl(url: string): Promise<ImageValidationResult> {
+export async function validateImageUrl(
+  url: string,
+  opts?: { allowlistedProbe?: boolean },
+): Promise<ImageValidationResult> {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   let parsed: URL;
   try {
@@ -91,6 +106,56 @@ export async function validateImageUrl(url: string): Promise<ImageValidationResu
 
   if (parsed.protocol !== "https:") {
     errors.push("Image URL must use HTTPS.");
+  }
+
+  if (opts?.allowlistedProbe) {
+    if (errors.length > 0) {
+      return { url, ok: false, errors, warnings };
+    }
+    try {
+      const { res, body } = await safeProbeFetch(url, {
+        method: "GET",
+        headers: { Range: `bytes=0-${PROBE_IMAGE_MAX_BYTES - 1}` },
+        maxBodyBytes: PROBE_IMAGE_MAX_BYTES,
+      });
+      if (!res.ok && res.status !== 206) {
+        errors.push(`Image URL returned HTTP ${res.status}.`);
+        return { url, ok: false, errors, warnings };
+      }
+      const contentType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+      if (contentType !== "image/jpeg") {
+        errors.push(`Content-Type must be image/jpeg (got ${contentType || "unknown"}).`);
+      }
+      const dims = jpegDimensionsFromBuffer(body);
+      if (!dims) {
+        errors.push("Could not read JPEG dimensions (invalid or truncated file).");
+        return { url, ok: false, errors, warnings, contentType };
+      }
+      const aspectRatio = Math.round((dims.width / dims.height) * 1000) / 1000;
+      if (!aspectOk(dims.width, dims.height)) {
+        errors.push(
+          `Aspect ratio ${aspectRatio} is outside Instagram feed limits (${ASPECT_RATIO_MIN}–${ASPECT_RATIO_MAX}).`,
+        );
+      }
+      return {
+        url,
+        ok: errors.length === 0,
+        errors,
+        warnings,
+        contentType,
+        width: dims.width,
+        height: dims.height,
+        aspectRatio,
+      };
+    } catch (err) {
+      const msg =
+        err instanceof ProbeUrlRejectedError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : String(err);
+      return { url, ok: false, errors: [`Could not fetch image: ${msg}.`], warnings };
+    }
   }
 
   let res: Response;
@@ -194,26 +259,52 @@ function isAllowedVideoContentType(contentType: string): boolean {
   return (REELS_VIDEO_CONTENT_TYPES as readonly string[]).includes(base);
 }
 
+function applyReelsAspectRules(
+  aspectRatio: number | undefined,
+  errors: string[],
+  warnings: string[],
+): void {
+  if (aspectRatio == null) return;
+  if (aspectRatio < REELS_ASPECT_RATIO_MIN || aspectRatio > REELS_ASPECT_RATIO_MAX) {
+    errors.push(
+      `Video aspect ratio ${aspectRatio} is outside Reels limits (${REELS_ASPECT_RATIO_MIN}–${REELS_ASPECT_RATIO_MAX}).`,
+    );
+    return;
+  }
+  if (
+    aspectRatio < REELS_ASPECT_RATIO_RECOMMENDED_MIN ||
+    aspectRatio > REELS_ASPECT_RATIO_RECOMMENDED_MAX
+  ) {
+    warnings.push(
+      `Video aspect ratio ${aspectRatio} is outside the recommended 9:16–16:9 range (${REELS_ASPECT_RATIO_RECOMMENDED_MIN.toFixed(4)}–${REELS_ASPECT_RATIO_RECOMMENDED_MAX.toFixed(4)}).`,
+    );
+  }
+}
+
 async function probeVideoUrl(url: string): Promise<{
   res: Response;
   contentType: string;
   contentLength?: number;
 }> {
-  let res: Response;
+  let head: Response;
   try {
-    res = await fetch(url, { method: "HEAD", redirect: "follow", cache: "no-store" });
+    ({ res: head } = await safeProbeFetch(url, { method: "HEAD" }));
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const msg =
+      err instanceof ProbeUrlRejectedError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : String(err);
     throw new Error(`Could not fetch video: ${msg}.`);
   }
 
+  let res = head;
   if (res.status === 405 || res.status === 501) {
-    res = await fetch(url, {
+    ({ res } = await safeProbeFetch(url, {
       method: "GET",
-      redirect: "follow",
-      cache: "no-store",
       headers: { Range: "bytes=0-0" },
-    });
+    }));
   }
 
   const contentType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
@@ -223,6 +314,7 @@ async function probeVideoUrl(url: string): Promise<{
 
 export async function validateVideoUrl(url: string): Promise<VideoValidationResult> {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   let parsed: URL;
   try {
@@ -234,6 +326,13 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
   if (parsed.protocol !== "https:") {
     errors.push("Video URL must use HTTPS.");
     return { url, ok: false, errors };
+  }
+
+  try {
+    assertProbeUrlAllowed(url);
+  } catch (err) {
+    const msg = err instanceof ProbeUrlRejectedError ? err.message : String(err);
+    return { url, ok: false, errors: [msg] };
   }
 
   let probe: Awaited<ReturnType<typeof probeVideoUrl>>;
@@ -269,16 +368,15 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
 
   if (contentType === "video/mp4" && errors.length === 0) {
     try {
-      const metaRes = await fetch(url, {
+      const { res: metaRes, body } = await safeProbeFetch(url, {
         method: "GET",
-        redirect: "follow",
-        cache: "no-store",
-        headers: { Range: "bytes=0-262143" },
+        headers: { Range: `bytes=0-${PROBE_VIDEO_META_MAX_BYTES - 1}` },
+        maxBodyBytes: PROBE_VIDEO_META_MAX_BYTES,
       });
       if (metaRes.ok || metaRes.status === 206) {
-        const buf = Buffer.from(await metaRes.arrayBuffer());
-        const mp4 = probeMp4Buffer(buf);
+        const mp4 = probeMp4Buffer(body);
         errors.push(...mp4.errors);
+        warnings.push(...mp4.warnings);
         durationSec = mp4.durationSec;
         width = mp4.width;
         height = mp4.height;
@@ -295,17 +393,27 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
               `Video duration exceeds ${REELS_MAX_DURATION_SEC / 60} minute Reels maximum.`,
             );
           }
+        } else if (mp4.errors.length === 0) {
+          errors.push("Could not read MP4 duration from metadata.");
         }
-        if (aspectRatio != null) {
-          if (aspectRatio < REELS_ASPECT_RATIO_MIN || aspectRatio > REELS_ASPECT_RATIO_MAX) {
-            errors.push(
-              `Video aspect ratio ${aspectRatio} is outside Reels limits (${REELS_ASPECT_RATIO_MIN}–${REELS_ASPECT_RATIO_MAX}).`,
-            );
+
+        if (width == null || height == null) {
+          if (!mp4.errors.some((e) => e.includes("video track"))) {
+            errors.push("Could not read MP4 video track dimensions.");
           }
         }
+
+        applyReelsAspectRules(aspectRatio, errors, warnings);
+      } else {
+        errors.push(`Video metadata fetch returned HTTP ${metaRes.status}.`);
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const msg =
+        err instanceof ProbeUrlRejectedError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : String(err);
       errors.push(`Could not probe video metadata: ${msg}.`);
     }
   }
@@ -314,6 +422,7 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
     url,
     ok: errors.length === 0,
     errors,
+    warnings: warnings.length > 0 ? warnings : undefined,
     contentType,
     contentLength,
     durationSec,
@@ -358,7 +467,7 @@ export async function validateReelsPayload(input: {
   let cover: ImageValidationResult | undefined;
   const coverUrl = input.coverUrl?.trim();
   if (coverUrl) {
-    cover = await validateImageUrl(coverUrl);
+    cover = await validateImageUrl(coverUrl, { allowlistedProbe: true });
     if (!cover.ok) {
       errors.push(...cover.errors.map((e) => `${cover!.url}: ${e}`));
     }

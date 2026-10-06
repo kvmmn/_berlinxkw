@@ -206,10 +206,12 @@ export async function dryRunOrPublishReels(
     shareToFeed?: boolean;
   },
   dryRun: boolean,
+  opts?: { startedAtMs?: number },
 ): Promise<
   | { dryRun: true; validation: ReelsValidationResult }
   | { dryRun: false; validation: ReelsValidationResult; mediaId: string; permalink?: string }
 > {
+  const requestStartedAtMs = opts?.startedAtMs ?? Date.now();
   const validation = await validateReelsPayload(input);
   if (dryRun || !validation.ok) {
     return { dryRun: true, validation };
@@ -225,12 +227,17 @@ export async function dryRunOrPublishReels(
     });
   }
 
-  const result = await publishReelsToInstagram(creds.accessToken, creds.igUserId, {
-    videoUrl: input.videoUrl,
-    caption: input.caption,
-    coverUrl: input.coverUrl,
-    shareToFeed: input.shareToFeed !== false,
-  });
+  const result = await publishReelsToInstagram(
+    creds.accessToken,
+    creds.igUserId,
+    {
+      videoUrl: input.videoUrl,
+      caption: input.caption,
+      coverUrl: input.coverUrl,
+      shareToFeed: input.shareToFeed !== false,
+    },
+    { startedAtMs: requestStartedAtMs },
+  );
 
   return {
     dryRun: false,

@@ -1,18 +1,26 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { isInstagramVideoClientUploadPathname } from "@/lib/blob-pathname";
+import { canonicalBlobPathname, isInstagramVideoClientUploadPathname } from "@/lib/blob-pathname";
 import { authorizeInstagramPortal } from "@/lib/instagram/auth-request";
 import { IG_UPLOAD_VIDEO_MAX_BYTES } from "@/lib/instagram/constants";
 import { uploadInstagramJpeg, uploadInstagramMp4 } from "@/lib/instagram/media";
 
 export const runtime = "nodejs";
 
-function assertClientUploadPathname(pathname: string): void {
-  if (!isInstagramVideoClientUploadPathname(pathname)) {
+function assertClientUploadPathname(pathname: string): string {
+  if (pathname !== pathname.trim()) {
+    throw new Error("Upload pathname must not contain leading or trailing whitespace.");
+  }
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical || canonical !== pathname) {
+    throw new Error("Upload pathname must be canonical (no whitespace or path normalization).");
+  }
+  if (!isInstagramVideoClientUploadPathname(canonical)) {
     throw new Error(
       "Upload pathname must be berlinxkw/instagram/{uuid}/{filename}.mp4 with no traversal.",
     );
   }
+  return canonical;
 }
 
 async function handleClientBlobUpload(req: Request, jsonBody: HandleUploadBody): Promise<Response> {
@@ -20,8 +28,9 @@ async function handleClientBlobUpload(req: Request, jsonBody: HandleUploadBody):
     request: req,
     body: jsonBody,
     onBeforeGenerateToken: async (pathname) => {
-      assertClientUploadPathname(pathname);
+      const canonical = assertClientUploadPathname(pathname);
       return {
+        pathname: canonical,
         allowedContentTypes: ["video/mp4"],
         maximumSizeInBytes: IG_UPLOAD_VIDEO_MAX_BYTES,
         addRandomSuffix: true,

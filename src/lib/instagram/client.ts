@@ -4,9 +4,11 @@ import {
   CONTAINER_POLL_INTERVAL_MS,
   CONTAINER_POLL_MAX_ATTEMPTS,
   IG_GRAPH_BASE,
+  IG_GRAPH_FETCH_TIMEOUT_MS,
+  REELS_CONTAINER_POLL_DEADLINE_MS,
   REELS_CONTAINER_POLL_INTERVAL_MS,
-  REELS_CONTAINER_POLL_MAX_ATTEMPTS,
 } from "./constants";
+import { ReelsStillProcessingError } from "./reels-processing";
 import type { InstagramTokenRecord } from "./token-store";
 
 type GraphError = { message?: string; type?: string; code?: number };
@@ -26,7 +28,11 @@ async function igFetch<T>(
 
   const rest: RequestInit = { ...(init ?? {}) };
   delete (rest as { searchParams?: unknown }).searchParams;
-  const res = await fetch(url.toString(), { ...rest, cache: "no-store" });
+  const res = await fetch(url.toString(), {
+    ...rest,
+    cache: "no-store",
+    signal: rest.signal ?? AbortSignal.timeout(IG_GRAPH_FETCH_TIMEOUT_MS),
+  });
   const body = (await res.json()) as T & { error?: GraphError };
   if (!res.ok || body.error) {
     throw new Error(body.error?.message ?? `Instagram Graph API ${res.status}`);
@@ -93,11 +99,13 @@ type ContainerStatus = {
   status?: string;
 };
 
+type ContainerReadyState = "finished" | "published";
+
 async function waitForContainerReady(
   containerId: string,
   accessToken: string,
   opts?: { intervalMs?: number; maxAttempts?: number },
-): Promise<void> {
+): Promise<ContainerReadyState> {
   const intervalMs = opts?.intervalMs ?? CONTAINER_POLL_INTERVAL_MS;
   const maxAttempts = opts?.maxAttempts ?? CONTAINER_POLL_MAX_ATTEMPTS;
 
@@ -106,7 +114,8 @@ async function waitForContainerReady(
       searchParams: { fields: "status_code,status" },
     });
     const code = status.status_code ?? status.status;
-    if (code === "FINISHED" || code === "PUBLISHED") return;
+    if (code === "PUBLISHED") return "published";
+    if (code === "FINISHED") return "finished";
     if (code === "ERROR") {
       const detail = status.status ?? status.status_code;
       throw new Error(
@@ -118,9 +127,46 @@ async function waitForContainerReady(
     if (code === "EXPIRED") {
       throw new Error("Instagram media container expired before publish.");
     }
-    await new Promise((r) => setTimeout(r, intervalMs));
+    if (attempt + 1 < maxAttempts) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+    }
   }
   throw new Error("Timed out waiting for Instagram media container.");
+}
+
+async function waitForReelsContainerReady(
+  containerId: string,
+  accessToken: string,
+  startedAtMs: number,
+): Promise<ContainerReadyState> {
+  const intervalMs = REELS_CONTAINER_POLL_INTERVAL_MS;
+  const deadlineAt = startedAtMs + REELS_CONTAINER_POLL_DEADLINE_MS;
+
+  while (Date.now() < deadlineAt) {
+    const status = await igFetch<ContainerStatus>(containerId, accessToken, {
+      searchParams: { fields: "status_code,status" },
+    });
+    const code = status.status_code ?? status.status;
+    if (code === "PUBLISHED") return "published";
+    if (code === "FINISHED") return "finished";
+    if (code === "ERROR") {
+      const detail = status.status ?? status.status_code;
+      throw new Error(
+        detail && detail !== "ERROR"
+          ? `Instagram media container processing failed: ${detail}`
+          : "Instagram media container processing failed.",
+      );
+    }
+    if (code === "EXPIRED") {
+      throw new Error("Instagram media container expired before publish.");
+    }
+
+    const remaining = deadlineAt - Date.now();
+    if (remaining <= 0) break;
+    await new Promise((r) => setTimeout(r, Math.min(intervalMs, remaining)));
+  }
+
+  throw new ReelsStillProcessingError(containerId);
 }
 
 async function createReelsContainer(
@@ -216,13 +262,19 @@ export async function publishReelsToInstagram(
   accessToken: string,
   igUserId: string,
   input: { videoUrl: string; caption: string; coverUrl?: string; shareToFeed: boolean },
+  opts?: { startedAtMs?: number },
 ): Promise<PublishToInstagramResult> {
+  const startedAtMs = opts?.startedAtMs ?? Date.now();
   const creationId = await createReelsContainer(igUserId, accessToken, input);
-  await waitForContainerReady(creationId, accessToken, {
-    intervalMs: REELS_CONTAINER_POLL_INTERVAL_MS,
-    maxAttempts: REELS_CONTAINER_POLL_MAX_ATTEMPTS,
-  });
-  const mediaId = await publishContainer(igUserId, accessToken, creationId);
+  const ready = await waitForReelsContainerReady(creationId, accessToken, startedAtMs);
+
+  let mediaId: string;
+  if (ready === "published") {
+    mediaId = creationId;
+  } else {
+    mediaId = await publishContainer(igUserId, accessToken, creationId);
+  }
+
   const permalink = await fetchPermalink(mediaId, accessToken);
   return { mediaId, permalink, igUserId };
 }
