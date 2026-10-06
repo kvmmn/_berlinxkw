@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test \"src/lib/instagram/**/*.test.ts\" src/lib/blob-pathname.test.ts src/lib/blob-private.test.ts src/lib/session-token.test.ts src/lib/shop-media-range.test.ts src/lib/tablo-frame-spec.test.ts src/lib/tablo-gallery-order.test.ts src/lib/tablo-gallery-layout.test.ts src/lib/tablo-description.test.ts src/lib/jpeg-exif.test.ts src/lib/next-image-static.test.ts"
+    "test": "tsx --test src/lib/instagram/validate.test.ts src/lib/instagram/mp4-probe.test.ts src/lib/blob-pathname.test.ts src/lib/blob-private.test.ts src/lib/session-token.test.ts src/lib/shop-media-range.test.ts src/lib/tablo-frame-spec.test.ts src/lib/tablo-gallery-order.test.ts src/lib/tablo-gallery-layout.test.ts src/lib/tablo-description.test.ts src/lib/jpeg-exif.test.ts src/lib/next-image-static.test.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.0",
