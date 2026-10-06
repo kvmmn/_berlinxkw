@@ -12,7 +12,6 @@ import {
 } from "@/lib/next-image-static";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
-import { tabloGridMockupViewBox } from "@/lib/tablo-grid-mockup-view";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -76,8 +75,6 @@ export function TabloCardMedia({
   const dims = intrinsicDimensionsFromAspect(aspectForDims);
 
   const mediaClass = ["bk-aspect-frame", "bk-tablo-tile-media", className].filter(Boolean).join(" ");
-  const viewBox = gridOrientation ? tabloGridMockupViewBox(gridOrientation) : undefined;
-
   return (
     <div
       className={mediaClass}
@@ -95,7 +92,6 @@ export function TabloCardMedia({
         layout={fit}
         width={dims.width}
         height={dims.height}
-        objectViewBox={viewBox}
       />
     </div>
   );

@@ -942,56 +942,28 @@ textarea.bk-input[dir="auto"] {
 @media (min-width: 721px) {
   .bk-tablo-justified-row {
     flex-direction: row;
-    align-items: stretch;
-  }
-
-  .bk-tablo-justified-row--tail {
-    align-items: flex-start;
+    align-items: flex-end;
   }
 }
 
 .bk-tablo-justified-row--full .bk-tablo-justified-cell {
   box-sizing: border-box;
-  flex: var(--tile-aspect-grow) 1 0;
+  flex: var(--tile-width-grow) 1 0;
   min-width: 0;
 }
 
 @media (min-width: 721px) {
   .bk-tablo-justified-row--tail {
     justify-content: center;
-    --bk-row-h: calc(
-      (100cqw - (var(--bk-ref-cells) - 1) * var(--bk-tablo-gap)) / var(--bk-ref-aspect-sum)
-    );
+    --bk-row-w: calc(100cqw - (var(--bk-ref-cells) - 1) * var(--bk-tablo-gap));
   }
-}
 
-@media (min-width: 721px) {
   .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
     box-sizing: border-box;
     flex: 0 0 auto;
-    width: calc(var(--tile-aspect-grow) * var(--bk-row-h));
+    width: calc(var(--tile-width-grow) / var(--bk-ref-width-cm-sum) * var(--bk-row-w));
     max-width: 100%;
-  }
-
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell {
-    overflow: hidden;
-  }
-
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media,
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-aspect-frame {
-    width: 100%;
-    max-width: 100%;
-    height: var(--bk-row-h);
-    max-height: var(--bk-row-h);
-    aspect-ratio: unset;
-    box-sizing: border-box;
-  }
-
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media > span,
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-picture,
-  .bk-tablo-justified-row--tail .bk-tablo-justified-cell .bk-tablo-tile-media img {
-    max-width: 100%;
-    max-height: 100%;
+    min-width: 0;
   }
 }
 
@@ -1055,8 +1027,15 @@ textarea.bk-input[dir="auto"] {
 }
 
 @media (min-width: 721px) {
-  .bk-tablo-tile-media--frame-stage .bk-tablo-picture,
-  .bk-tablo-tile-media--frame-stage img {
+  .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-picture,
+  .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] img {
+    object-view-box: inset(15.36% 12.56% 16.53% 16.31%);
+    object-fit: fill;
+  }
+
+  .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] .bk-tablo-picture,
+  .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] img {
+    object-view-box: inset(16.25% 17.65% 16.25% 17.65%);
     object-fit: fill;
   }
 }

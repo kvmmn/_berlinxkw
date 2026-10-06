@@ -39,9 +39,15 @@ export function frameGridStageAspect(orientation: TabloOrientation): string {
   return frameDimensionsForOrientation(orientation).aspectRatio;
 }
 
+/** @deprecated Prefer frameGridCellFlexGrow for row width allocation. */
 export function frameGridStageFlexGrow(orientation: TabloOrientation): number {
   const { widthCm, heightCm } = frameDimensionsForOrientation(orientation);
   return widthCm / heightCm;
+}
+
+/** Share of row width ∝ catalog frame width (70 cm landscape, 50 cm portrait). */
+export function frameGridCellFlexGrow(orientation: TabloOrientation): number {
+  return frameDimensionsForOrientation(orientation).widthCm;
 }
 
 export function orientationCopy(orientation: TabloOrientation): { en: string; fa: string } {

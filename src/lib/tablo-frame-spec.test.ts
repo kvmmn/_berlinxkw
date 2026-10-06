@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { dimensionsFromBuffer } from "./image-dimensions";
 import {
+  frameGridCellFlexGrow,
   frameGridStageAspect,
   frameGridStageFlexGrow,
   orientationFromDimensions,
@@ -13,6 +14,8 @@ describe("frame grid stage", () => {
     assert.equal(frameGridStageAspect("portrait"), "50 / 70");
     assert.equal(frameGridStageFlexGrow("landscape"), 70 / 50);
     assert.equal(frameGridStageFlexGrow("portrait"), 50 / 70);
+    assert.equal(frameGridCellFlexGrow("landscape"), 70);
+    assert.equal(frameGridCellFlexGrow("portrait"), 50);
   });
 });
 
