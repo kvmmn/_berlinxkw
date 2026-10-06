@@ -1037,6 +1037,16 @@ textarea.bk-input[dir="auto"] {
   height: auto;
 }
 
+.bk-tablo-tile-media--frame-stage {
+  background: var(--bk-public-bg);
+}
+
+.bk-tablo-tile-media--frame-stage .bk-tablo-picture,
+.bk-tablo-tile-media--frame-stage img {
+  object-fit: cover;
+  object-position: center;
+}
+
 .bk-tablo-justified-cell {
   display: flex;
   flex-direction: column;

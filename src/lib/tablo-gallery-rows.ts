@@ -1,3 +1,4 @@
+import { frameGridStageFlexGrow } from "./tablo-frame-spec";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
 
 /** Parse CSS aspect-ratio string (e.g. `4032 / 3024`) to width/height flex-grow weight. */
@@ -22,7 +23,7 @@ export function chunkTabloGalleryRows<T>(items: T[], columns: number): T[][] {
 }
 
 export function rowAspectSum(row: TabloGalleryLayoutItem[]): number {
-  return row.reduce((sum, item) => sum + tabloAspectFlexGrow(item.productAspect), 0);
+  return row.reduce((sum, item) => sum + frameGridStageFlexGrow(item.orientation), 0);
 }
 
 /** Reference content width for greedy packing (~1240px shell minus gutters). */
@@ -92,7 +93,7 @@ export function planJustifiedGalleryRows(
   let aspectSum = 0;
 
   for (const item of items) {
-    const aspect = tabloAspectFlexGrow(item.productAspect);
+    const aspect = frameGridStageFlexGrow(item.orientation);
     current.push(item);
     aspectSum += aspect;
 

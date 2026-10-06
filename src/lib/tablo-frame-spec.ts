@@ -34,6 +34,16 @@ export function frameSizeLabel(orientation: TabloOrientation): string {
   return `${widthCm}×${heightCm} cm`;
 }
 
+/** Shop / landing grid stage — physical frame ratio, not product JPEG pixels. */
+export function frameGridStageAspect(orientation: TabloOrientation): string {
+  return frameDimensionsForOrientation(orientation).aspectRatio;
+}
+
+export function frameGridStageFlexGrow(orientation: TabloOrientation): number {
+  const { widthCm, heightCm } = frameDimensionsForOrientation(orientation);
+  return widthCm / heightCm;
+}
+
 export function orientationCopy(orientation: TabloOrientation): { en: string; fa: string } {
   return orientation === "landscape"
     ? { en: "landscape", fa: "افقی" }

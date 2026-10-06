@@ -53,11 +53,13 @@ export function TabloCardMedia({
   aspectRatio,
   fit = "cover",
   priority = false,
+  className,
 }: {
   tablo: Tablo;
   aspectRatio: string;
   fit?: "contain" | "cover";
   priority?: boolean;
+  className?: string;
 }) {
   const product = tabloProductImage(tablo);
   if (!product?.url) {
@@ -68,8 +70,10 @@ export function TabloCardMedia({
   const aspectForDims = aspectRatioFromImage(product, aspectRatio);
   const dims = intrinsicDimensionsFromAspect(aspectForDims);
 
+  const mediaClass = ["bk-aspect-frame", "bk-tablo-tile-media", className].filter(Boolean).join(" ");
+
   return (
-    <div className="bk-aspect-frame bk-tablo-tile-media" style={{ aspectRatio }}>
+    <div className={mediaClass} style={{ aspectRatio }}>
         <TabloOptimizedPicture
           src={product.url}
           alt={productAlt(tablo, kind)}

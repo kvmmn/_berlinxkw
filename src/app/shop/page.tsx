@@ -27,11 +27,7 @@ export default async function ShopPage() {
         <TabloJustifiedGallery
           items={layout.items}
           renderTile={(item) => (
-            <TabloShopGridTile
-              tablo={item.tablo}
-              orientation={item.orientation}
-              productAspect={item.productAspect}
-            />
+            <TabloShopGridTile tablo={item.tablo} orientation={item.orientation} />
           )}
         />
       )}

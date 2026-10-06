@@ -1,8 +1,5 @@
-import {
-  planJustifiedGalleryRows,
-  rowAspectSum,
-  tabloAspectFlexGrow,
-} from "@/lib/tablo-gallery-rows";
+import { frameGridStageAspect, frameGridStageFlexGrow } from "@/lib/tablo-frame-spec";
+import { planJustifiedGalleryRows, rowAspectSum } from "@/lib/tablo-gallery-rows";
 import type { TabloGalleryLayoutItem } from "@/lib/tablo-gallery-order";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -44,8 +41,8 @@ export function TabloJustifiedGallery({
                 className="bk-tablo-justified-cell"
                 style={
                   {
-                    "--tile-aspect-grow": String(tabloAspectFlexGrow(item.productAspect)),
-                    "--tile-aspect-ratio": item.productAspect.replace(/\s+/g, " "),
+                    "--tile-aspect-grow": String(frameGridStageFlexGrow(item.orientation)),
+                    "--tile-aspect-ratio": frameGridStageAspect(item.orientation),
                   } as CSSProperties
                 }
               >

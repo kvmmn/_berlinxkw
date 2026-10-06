@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
-import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import {
+  frameGridStageAspect,
+  frameSizeLabel,
+  type TabloOrientation,
+} from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
@@ -18,16 +22,15 @@ function formatEur(price: number): string {
 export function TabloShopGridTile({
   tablo,
   orientation,
-  productAspect,
   showBuy = true,
   priority = false,
 }: {
   tablo: Tablo;
   orientation: TabloOrientation;
-  productAspect: string;
   showBuy?: boolean;
   priority?: boolean;
 }) {
+  const stageAspect = frameGridStageAspect(orientation);
   const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
   const external = tabloBuyExternal(tablo);
 
@@ -40,9 +43,10 @@ export function TabloShopGridTile({
       >
         <TabloCardMedia
           tablo={tablo}
-          aspectRatio={productAspect}
-          fit="contain"
+          aspectRatio={stageAspect}
+          fit="cover"
           priority={priority}
+          className="bk-tablo-tile-media--frame-stage"
         />
       </Link>
       <div className="bk-tablo-tile-caption">
