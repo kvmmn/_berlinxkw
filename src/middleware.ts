@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const AUTH_COOKIE = "bk_portal_session";
+import { AUTH_COOKIE, verifySessionToken } from "@/lib/session-token";
 
 /** Browser pages that never require a portal session cookie (unknown paths → Next 404). */
 const PUBLIC_PAGE_PREFIXES = ["/shop", "/login"] as const;
@@ -33,7 +32,16 @@ function isProtectedPath(pathname: string): boolean {
   return true;
 }
 
-export function middleware(request: NextRequest) {
+async function rejectUnauthenticated(request: NextRequest, pathname: string): Promise<NextResponse> {
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const login = new URL("/login", request.url);
+  login.searchParams.set("from", pathname);
+  return NextResponse.redirect(login);
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
     pathname.startsWith("/_next") ||
@@ -48,13 +56,9 @@ export function middleware(request: NextRequest) {
   }
 
   const session = request.cookies.get(AUTH_COOKIE)?.value;
-  if (!session) {
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const login = new URL("/login", request.url);
-    login.searchParams.set("from", pathname);
-    return NextResponse.redirect(login);
+  const ok = await verifySessionToken(session);
+  if (!ok) {
+    return rejectUnauthenticated(request, pathname);
   }
   return NextResponse.next();
 }

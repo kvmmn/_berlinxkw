@@ -13,6 +13,8 @@ export function hasBlobToken(): boolean {
 
 export { isBlobStorePathname } from "./blob-pathname";
 
+export { isPortalBlobProxyPathname } from "./portal-blob-paths";
+
 /** Portal-authenticated URL for private idea media (browser img/video src). */
 export function blobProxyUrl(pathname: string): string {
   return `/api/blob?pathname=${encodeURIComponent(pathname)}`;

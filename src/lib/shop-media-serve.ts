@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "fs";
-import { join, resolve } from "path";
+import { resolve } from "path";
 import {
   canonicalBlobPathname,
   instagramBlobRelativePath,
