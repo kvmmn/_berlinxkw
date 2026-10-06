@@ -81,6 +81,8 @@ async function measureViewport(page, viewportWidth) {
     }
     const pxPerCmW = cm ? bounds.fw / cm.w : null;
     const pxPerCmH = cm ? bounds.fh / cm.h : null;
+    const longEdgePx = cm && cm.w === 70 && cm.h === 50 ? bounds.fw : bounds.fh;
+    const pxPerCmLong = cm ? longEdgePx / 70 : null;
     rows.push({
       title,
       meta,
@@ -90,6 +92,7 @@ async function measureViewport(page, viewportWidth) {
       cmH: cm?.h,
       pxPerCmW: pxPerCmW != null ? Math.round(pxPerCmW * 100) / 100 : null,
       pxPerCmH: pxPerCmH != null ? Math.round(pxPerCmH * 100) / 100 : null,
+      pxPerCmLong: pxPerCmLong != null ? Math.round(pxPerCmLong * 100) / 100 : null,
     });
   }
   return rows;

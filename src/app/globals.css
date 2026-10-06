@@ -918,7 +918,7 @@ textarea.bk-input[dir="auto"] {
   container-type: inline-size;
   --bk-tablo-gap: clamp(2rem, 4vw, 2.75rem);
   --bk-tablo-row-target-h: 280px;
-  --bk-grid-stage-margin-ratio: 0.12;
+  --bk-grid-stage-margin-ratio: 0.1;
   --bk-grid-frame-frac-landscape-w: 0.677916667;
   --bk-grid-frame-frac-portrait-h: 0.642083333;
   display: flex;
@@ -950,7 +950,8 @@ textarea.bk-input[dir="auto"] {
       (100cqw - (var(--bk-row-cells) - 1) * var(--bk-tablo-gap)) * 70 / var(--bk-row-width-cm-sum)
     );
     --bk-stage-margin: calc(var(--bk-grid-long-px) * var(--bk-grid-stage-margin-ratio));
-    --bk-stage-h: calc(var(--bk-grid-long-px) + 2 * var(--bk-stage-margin));
+    --bk-stage-inner-h: calc(var(--bk-grid-long-px) * var(--bk-row-mockup-h-factor, 1));
+    --bk-stage-h: calc(var(--bk-stage-inner-h) + 2 * var(--bk-stage-margin));
   }
 }
 
@@ -1043,17 +1044,19 @@ textarea.bk-input[dir="auto"] {
     aspect-ratio: unset;
     box-sizing: border-box;
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
     height: var(--bk-stage-h);
-    padding: var(--bk-stage-margin);
+    padding: var(--bk-stage-margin) 0;
     overflow: hidden;
     background: var(--bk-public-bg);
   }
 
   .bk-tablo-grid-mockup-inner {
-    flex: 1;
-    min-width: 0;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 100%;
+    height: var(--bk-stage-inner-h);
     min-height: 0;
     display: flex;
     align-items: center;
@@ -1063,20 +1066,28 @@ textarea.bk-input[dir="auto"] {
   .bk-tablo-tile-media--frame-stage .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage img {
     box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     object-position: center;
+    object-view-box: none;
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] img {
-    object-view-box: inset(14% 12.5% 14% 12.5%);
+    width: calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-landscape-w));
+    height: auto;
+    max-height: 100%;
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] img {
-    object-view-box: inset(14% 15% 14% 15%);
+    height: calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-portrait-h));
+    width: auto;
+    max-width: 100%;
   }
 }
 

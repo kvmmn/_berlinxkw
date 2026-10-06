@@ -1,5 +1,10 @@
-import { frameGridCellFlexGrow, frameGridStageAspect } from "@/lib/tablo-frame-spec";
+import {
+  frameGridCellStageWidthCm,
+  frameGridStageAspect,
+  TABLO_GRID_STAGE_MARGIN_RATIO,
+} from "@/lib/tablo-frame-spec";
 import { planJustifiedGalleryRows, rowWidthCmSum } from "@/lib/tablo-gallery-rows";
+import { rowMockupHeightFactor } from "@/lib/tablo-frame-spec";
 import type { TabloGalleryLayoutItem } from "@/lib/tablo-gallery-order";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -25,6 +30,7 @@ export function TabloJustifiedGallery({
             {
               "--bk-row-width-cm-sum": String(rowWidthCmSum(row.items)),
               "--bk-row-cells": String(row.items.length),
+              "--bk-row-mockup-h-factor": String(rowMockupHeightFactor(row.items)),
             } as CSSProperties
           }
           role="list"
@@ -37,7 +43,9 @@ export function TabloJustifiedGallery({
                 className="bk-tablo-justified-cell"
                 style={
                   {
-                    "--tile-width-grow": String(frameGridCellFlexGrow(item.orientation)),
+                    "--tile-width-grow": String(
+                      frameGridCellStageWidthCm(item.orientation, TABLO_GRID_STAGE_MARGIN_RATIO),
+                    ),
                     "--tile-aspect-ratio": frameGridStageAspect(item.orientation),
                   } as CSSProperties
                 }
