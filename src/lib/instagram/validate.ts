@@ -211,6 +211,7 @@ export async function validateImageUrl(
 export async function validatePublishPayload(
   imageUrls: string[],
   caption: string,
+  opts?: { dryRun?: boolean },
 ): Promise<PublishValidationResult> {
   const errors: string[] = [];
   const captionResult = validateCaption(caption);
@@ -236,7 +237,12 @@ export async function validatePublishPayload(
     errors.push(...captionResult.errors);
   }
 
-  const images = await Promise.all(imageUrls.map((u) => validateImageUrl(String(u).trim())));
+  const useSafeImageProbe = opts?.dryRun === true;
+  const images = await Promise.all(
+    imageUrls.map((u) =>
+      validateImageUrl(String(u).trim(), useSafeImageProbe ? { allowlistedProbe: true } : undefined),
+    ),
+  );
 
   for (const img of images) {
     if (!img.ok) errors.push(...img.errors.map((e) => `${img.url}: ${e}`));

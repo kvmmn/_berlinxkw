@@ -168,7 +168,7 @@ export async function dryRunOrPublish(
   | { dryRun: true; validation: PublishValidationResult }
   | { dryRun: false; validation: PublishValidationResult; mediaId: string; permalink?: string }
 > {
-  const validation = await validatePublishPayload(imageUrls, caption);
+  const validation = await validatePublishPayload(imageUrls, caption, { dryRun });
   if (dryRun || !validation.ok) {
     return { dryRun: true, validation };
   }
