@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { loadState, saveState } from "@/lib/storage";
 import type { DecisionStatus } from "@/lib/types";
 
@@ -6,6 +7,8 @@ export async function PATCH(
   req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const body = (await req.json()) as { status?: DecisionStatus };
   const { state } = await loadState();

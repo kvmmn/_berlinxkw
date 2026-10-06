@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { requirePortalSession } from "@/lib/auth";
 import { getCurrentWeek } from "@/lib/brain";
 import { loadState, saveState } from "@/lib/storage";
 import type { Session } from "@/lib/types";
 
 export async function GET() {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { state } = await loadState();
   return NextResponse.json({ sessions: state.sessions });
 }
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const body = (await req.json()) as { weekId?: string };
   const { state } = await loadState();
   const weekId = body.weekId ?? getCurrentWeek(state).id;

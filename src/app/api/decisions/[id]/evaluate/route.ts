@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { loadState, saveState } from "@/lib/storage";
 
 export async function POST(
   req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const body = (await req.json()) as { score?: number; notes?: string };
   if (body.score == null || body.score < 1 || body.score > 5) {

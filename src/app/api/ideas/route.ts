@@ -2,11 +2,14 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 import { v4 as uuidv4 } from "uuid";
+import { requirePortalSession } from "@/lib/auth";
 import { uploadIdeaMedia, withClientMediaUrls } from "@/lib/idea-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { IdeaInput, IdeaStatus } from "@/lib/types";
 
 export async function GET() {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { state } = await loadState();
   const ideas = [...(state.ideas ?? [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -15,6 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const contentType = req.headers.get("content-type") ?? "";
   if (!contentType.includes("multipart/form-data")) {
     return NextResponse.json({ error: "Expected multipart/form-data" }, { status: 400 });
