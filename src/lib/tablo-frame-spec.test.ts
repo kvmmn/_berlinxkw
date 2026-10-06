@@ -1,7 +1,23 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { dimensionsFromBuffer } from "./image-dimensions";
-import { orientationFromDimensions } from "./tablo-frame-spec";
+import {
+  frameGridCellFlexGrow,
+  frameGridStageAspect,
+  frameGridStageFlexGrow,
+  orientationFromDimensions,
+} from "./tablo-frame-spec";
+
+describe("frame grid stage", () => {
+  it("uses catalog 70×50 cm ratios for shop grid cells", () => {
+    assert.equal(frameGridStageAspect("landscape"), "70 / 50");
+    assert.equal(frameGridStageAspect("portrait"), "50 / 70");
+    assert.equal(frameGridStageFlexGrow("landscape"), 70 / 50);
+    assert.equal(frameGridStageFlexGrow("portrait"), 50 / 70);
+    assert.equal(frameGridCellFlexGrow("landscape"), 70);
+    assert.equal(frameGridCellFlexGrow("portrait"), 50);
+  });
+});
 
 describe("tablo frame orientation", () => {
   it("treats 4032×3024 artwork as landscape", () => {

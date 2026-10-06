@@ -1,0 +1,29 @@
+{
+  "target": "#ded6ca",
+  "items": [
+    {
+      "slug": "berlin-clouds-01",
+      "top": "#e0d8cb",
+      "bottom": "#ddd5ca",
+      "left": "#e0d8cc",
+      "right": "#ddd5c9",
+      "horizontalBlend": false
+    },
+    {
+      "slug": "berlin-sunset-2",
+      "top": "#e2dbcf",
+      "bottom": "#dfd6cc",
+      "left": "#e2dace",
+      "right": "#dad0c3",
+      "horizontalBlend": true
+    },
+    {
+      "slug": "berlin-sunset-3",
+      "top": "#e1d9cd",
+      "bottom": "#ded6cb",
+      "left": "#e1dacd",
+      "right": "#d9d0c3",
+      "horizontalBlend": true
+    }
+  ]
+}

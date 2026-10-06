@@ -62,7 +62,6 @@ export default async function Home() {
                 <TabloShopGridTile
                   tablo={item.tablo}
                   orientation={item.orientation}
-                  productAspect={item.productAspect}
                   showBuy={false}
                   priority={index === 0}
                 />
