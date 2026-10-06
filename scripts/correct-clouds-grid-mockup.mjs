@@ -109,23 +109,23 @@ async function main() {
       if (insideFrame) continue;
 
       const tgt = targetRgb(x, y, width, height);
-      let strength = 0.94;
+      let shadowKeep = 0;
 
       if (y >= frameBottom - 2 && y <= shadowEnd) {
         const rel = Math.max(0, Math.min(1, (y - (frameBottom - 2)) / (shadowEnd - frameBottom + 2)));
         const origL = rgbToLab(r, g, b).L;
         const tgtL = rgbToLab(tgt.r, tgt.g, tgt.b).L;
-        if (origL < tgtL - 2) {
-          strength *= Math.max(0.08, 1 - rel * 0.92);
+        if (origL < tgtL - 3) {
+          shadowKeep = Math.min(0.82, rel * 0.82);
         }
       }
 
       const origLab = rgbToLab(r, g, b);
       const tgtLab = rgbToLab(tgt.r, tgt.g, tgt.b);
       const newLab = {
-        L: origLab.L + (tgtLab.L - origLab.L) * strength,
-        a: origLab.a + (tgtLab.a - origLab.a) * strength,
-        b: origLab.b + (tgtLab.b - origLab.b) * strength,
+        L: tgtLab.L + (origLab.L - tgtLab.L) * shadowKeep,
+        a: tgtLab.a + (origLab.a - tgtLab.a) * shadowKeep,
+        b: tgtLab.b + (origLab.b - tgtLab.b) * shadowKeep,
       };
       const corrected = labToRgb(newLab.L, newLab.a, newLab.b);
       out[i] = corrected.r;
