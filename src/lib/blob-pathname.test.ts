@@ -4,7 +4,9 @@ import {
   canonicalBlobPathname,
   classifyBlobPathname,
   isBlobStorePathname,
+  isInstagramVideoClientUploadPathname,
   isPublicShopMediaPathname,
+  resolvePathUnderRoot,
 } from "./blob-pathname";
 
 describe("blob-pathname", () => {
@@ -73,6 +75,46 @@ describe("blob-pathname", () => {
 
     it("rejects normalization that would change the path", () => {
       assert.equal(canonicalBlobPathname("berlinxkw/instagram/./x.jpg"), null);
+    });
+  });
+
+  describe("isInstagramVideoClientUploadPathname", () => {
+    it("allows uuid folder mp4 uploads", () => {
+      assert.equal(
+        isInstagramVideoClientUploadPathname(
+          "berlinxkw/instagram/a1b2c3d4-e5f6-4789-abcd-ef1234567890/reel.mp4",
+        ),
+        true,
+      );
+    });
+
+    it("rejects traversal and non-mp4", () => {
+      assert.equal(
+        isInstagramVideoClientUploadPathname(
+          "berlinxkw/instagram/../system/x.mp4",
+        ),
+        false,
+      );
+      assert.equal(
+        isInstagramVideoClientUploadPathname(
+          "berlinxkw/instagram/a1b2c3d4-e5f6-7890-abcd-ef1234567890/photo.jpg",
+        ),
+        false,
+      );
+    });
+  });
+
+  describe("resolvePathUnderRoot", () => {
+    it("resolves safe relative paths", () => {
+      const root = "/tmp/instagram-uploads";
+      const resolved = resolvePathUnderRoot(root, "uuid/clip.mp4");
+      assert.equal(resolved, "/tmp/instagram-uploads/uuid/clip.mp4");
+    });
+
+    it("rejects escape attempts", () => {
+      const root = "/tmp/instagram-uploads";
+      assert.equal(resolvePathUnderRoot(root, "../etc/passwd"), null);
+      assert.equal(resolvePathUnderRoot(root, "uuid/../../secret"), null);
     });
   });
 

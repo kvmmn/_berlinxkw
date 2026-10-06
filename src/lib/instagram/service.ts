@@ -1,6 +1,11 @@
 import "server-only";
 
-import { publishToInstagram, refreshInstagramAccessToken, resolveIgCredentials } from "./client";
+import {
+  publishReelsToInstagram,
+  publishToInstagram,
+  refreshInstagramAccessToken,
+  resolveIgCredentials,
+} from "./client";
 import {
   buildRecordFromEnvToken,
   daysUntilExpiry,
@@ -9,7 +14,12 @@ import {
   saveInstagramTokenRecord,
   type InstagramTokenRecord,
 } from "./token-store";
-import { validatePublishPayload, type PublishValidationResult } from "./validate";
+import {
+  validatePublishPayload,
+  validateReelsPayload,
+  type PublishValidationResult,
+  type ReelsValidationResult,
+} from "./validate";
 
 export function isInstagramPublishConfigured(): boolean {
   return Boolean(process.env.IG_ACCESS_TOKEN?.trim());
@@ -179,6 +189,48 @@ export async function dryRunOrPublish(
     imageUrls,
     caption,
   );
+
+  return {
+    dryRun: false,
+    validation,
+    mediaId: result.mediaId,
+    permalink: result.permalink,
+  };
+}
+
+export async function dryRunOrPublishReels(
+  input: {
+    videoUrl: string;
+    caption: string;
+    coverUrl?: string;
+    shareToFeed?: boolean;
+  },
+  dryRun: boolean,
+): Promise<
+  | { dryRun: true; validation: ReelsValidationResult }
+  | { dryRun: false; validation: ReelsValidationResult; mediaId: string; permalink?: string }
+> {
+  const validation = await validateReelsPayload(input);
+  if (dryRun || !validation.ok) {
+    return { dryRun: true, validation };
+  }
+
+  const record = await getOrInitTokenRecord();
+  const creds = await resolveIgCredentials(record);
+  if (!record.igUserId) {
+    await saveInstagramTokenRecord({
+      ...record,
+      igUserId: creds.igUserId,
+      username: creds.username,
+    });
+  }
+
+  const result = await publishReelsToInstagram(creds.accessToken, creds.igUserId, {
+    videoUrl: input.videoUrl,
+    caption: input.caption,
+    coverUrl: input.coverUrl,
+    shareToFeed: input.shareToFeed !== false,
+  });
 
   return {
     dryRun: false,

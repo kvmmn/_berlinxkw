@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { classifyBlobPathname, isPublicShopMediaPathname } from "@/lib/blob-pathname";
-import { hasBlobToken, streamBlob } from "@/lib/blob-private";
-import { IG_DEMO_BLOB_PATH, readDemoPublishSampleJpeg } from "@/lib/instagram/media";
+import { serveShopMedia } from "@/lib/shop-media-serve";
 
 export const runtime = "nodejs";
 
@@ -21,28 +20,5 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Invalid pathname" }, { status: 400, headers: NO_STORE });
   }
 
-  const blob = hasBlobToken() ? await streamBlob(pathname) : null;
-  if (!blob) {
-    if (pathname === IG_DEMO_BLOB_PATH) {
-      const demo = readDemoPublishSampleJpeg();
-      if (demo) {
-        return new NextResponse(new Uint8Array(demo), {
-          headers: {
-            "Content-Type": "image/jpeg",
-            "X-Content-Type-Options": "nosniff",
-            "Cache-Control": "public, max-age=3600, s-maxage=86400",
-          },
-        });
-      }
-    }
-    return new NextResponse("Not found", { status: 404, headers: NO_STORE });
-  }
-
-  return new NextResponse(blob.stream, {
-    headers: {
-      "Content-Type": blob.contentType,
-      "X-Content-Type-Options": "nosniff",
-      "Cache-Control": "public, max-age=3600, s-maxage=86400",
-    },
-  });
+  return serveShopMedia(pathname, req);
 }
