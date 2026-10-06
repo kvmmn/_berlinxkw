@@ -2,6 +2,7 @@ import {
   buildStaticOptimizedImageProps,
   DETAIL_OPTIMIZED_SIZES,
 } from "@/lib/next-image-static";
+import type { CSSProperties } from "react";
 import type { TabloPictureLayout } from "@/components/TabloPicture";
 
 function isSvgSrc(src: string, mime?: string): boolean {
@@ -54,7 +55,7 @@ export function TabloOptimizedPicture({
         fetchPriority={priority ? "high" : "auto"}
         decoding="async"
         data-fit={layout}
-        style={objectViewBox ? { objectViewBox } : undefined}
+        style={objectViewBox ? ({ objectViewBox } satisfies CSSProperties) : undefined}
       />
     );
   }
@@ -80,7 +81,7 @@ export function TabloOptimizedPicture({
       fetchPriority={img.fetchPriority}
       decoding="async"
       data-fit={layout}
-      style={objectViewBox ? { objectViewBox } : undefined}
+      style={objectViewBox ? ({ objectViewBox } satisfies CSSProperties) : undefined}
     />
   );
 }

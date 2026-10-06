@@ -5,10 +5,10 @@ import type { TabloOrientation } from "./tablo-frame-spec";
  * Values derived from production v4 mockups; keeps frame + shadow visible without equalizing row height alone.
  */
 export const TABLO_GRID_MOCKUP_VIEW_BOX: Record<TabloOrientation, string> = {
-  /** Bronze frame + shadow; aspect tuned to 70/50. */
-  landscape: "inset(10.6% 7% 10.6% 11.4%)",
-  /** Bronze frame + shadow; aspect tuned to 50/70. */
-  portrait: "inset(11% 12.7% 11% 12.7%)",
+  /** Frame + ~5% margin; aspect 70/50 on 2400×1790 v4 mockups. */
+  landscape: "inset(15.36% 12.56% 16.53% 16.31%)",
+  /** Frame + ~5% margin; aspect 50/70 on 1790×2400 v4 mockups. */
+  portrait: "inset(16.25% 17.65% 16.25% 17.65%)",
 };
 
 export function tabloGridMockupViewBox(orientation: TabloOrientation): string {
