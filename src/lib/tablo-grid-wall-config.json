@@ -7,7 +7,8 @@
       "bottom": "#dfd6cc",
       "left": "#e2dace",
       "right": "#dad0c3",
-      "horizontalBlend": true
+      "horizontalBlend": true,
+      "mockupFilter": "brightness(0.978) saturate(0.93)"
     },
     {
       "slug": "berlin-sunset-2",
