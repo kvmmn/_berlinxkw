@@ -1047,28 +1047,25 @@ textarea.bk-input[dir="auto"] {
     justify-content: center;
     height: var(--bk-stage-h);
     padding: var(--bk-stage-margin);
-    overflow: visible;
+    overflow: hidden;
     background: var(--bk-public-bg);
   }
 
-  .bk-tablo-tile-media-link:has(.bk-tablo-tile-media--frame-stage) {
-    overflow: visible;
+  .bk-tablo-tile-media--frame-stage .bk-tablo-picture,
+  .bk-tablo-tile-media--frame-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] img {
-    width: calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-landscape-w));
-    height: auto;
-    max-width: none;
-    max-height: 100%;
+    object-view-box: inset(8.4% 13% 9.6% 13%);
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] img {
-    height: calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-portrait-h));
-    width: auto;
-    max-height: none;
-    max-width: 100%;
+    object-view-box: inset(10.8% 16.5% 10.8% 16.5%);
   }
 }
 
