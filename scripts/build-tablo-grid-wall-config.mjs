@@ -122,15 +122,38 @@ async function sampleEdges(page, dataUrl) {
       const bottom = collect(img, (x, y) => y >= h - t);
       const left = collect(img, (x, y) => x < lr);
       const right = collect(img, (x, y) => x >= w - lr);
-      return { top, bottom, left, right, width: w, height: h };
+      const t0 = Math.floor(h * 0.02);
+      const t1 = Math.floor(h * 0.1);
+      const b0 = Math.floor(h * 0.9);
+      const b1 = h - Math.floor(h * 0.02);
+      const topWall = collect(img, (x, y) => y >= t0 && y < t1);
+      const bottomWall = collect(img, (x, y) => y >= b0 && y < b1);
+      return { top, bottom, left, right, topWall, bottomWall, width: w, height: h };
     },
     { dataUrl, stripFrac: STRIP_FRAC },
   );
 }
 
+function mockupFilterForMid(mid, targetRgb) {
+  const midLab = rgbToLab(mid);
+  const targetLab = rgbToLab(targetRgb);
+  const dE = deltaE(mid, targetRgb);
+  if (dE <= 2) return undefined;
+  const bright = 1 + (targetLab.L - midLab.L) / 120;
+  const sat = 1 - (midLab.a - targetLab.a) / 300;
+  const b = Math.max(0.94, Math.min(1.08, bright));
+  const s = Math.max(0.88, Math.min(1.05, sat));
+  if (Math.abs(b - 1) < 0.008 && Math.abs(s - 1) < 0.008) return undefined;
+  return `brightness(${b.toFixed(3)}) saturate(${s.toFixed(3)})`;
+}
+
 function normalizeSlugs(raw) {
   const target = meanRgb(
     raw.flatMap((s) => [hexToRgb(s.top), hexToRgb(s.bottom), hexToRgb(s.left), hexToRgb(s.right)]),
+  );
+
+  const rawMids = raw.map((s) =>
+    meanRgb([hexToRgb(s.top), hexToRgb(s.bottom), hexToRgb(s.left), hexToRgb(s.right)]),
   );
 
   let items = raw.map((s) => ({
@@ -163,21 +186,23 @@ function normalizeSlugs(raw) {
     }));
   }
 
+  const lift = (rgb) => mix(rgb, { r: 255, g: 255, b: 255 }, 0.035);
+
   return {
     target: rgbToHex(target),
-    items: items.map((it) => {
+    items: items.map((it, index) => {
       const horizontalBlend = deltaE(it.edges.left, it.edges.right) > 2;
-      const mid = meanRgb([it.edges.top, it.edges.bottom]);
-      const dMid = deltaE(mid, hexToRgb(rgbToHex(target)));
-      const mockupBrightness = 1 + Math.max(-0.04, Math.min(0.04, (target.L - rgbToLab(mid).L) / 400));
+      const stageMid = meanRgb([it.edges.top, it.edges.bottom]);
+      const filterFromRaw = mockupFilterForMid(rawMids[index], target);
+      const filterFromStage = mockupFilterForMid(stageMid, target);
       return {
         slug: it.slug,
-        top: rgbToHex(it.edges.top),
-        bottom: rgbToHex(it.edges.bottom),
+        top: rgbToHex(lift(it.edges.top)),
+        bottom: rgbToHex(lift(it.edges.bottom)),
         left: rgbToHex(it.edges.left),
         right: rgbToHex(it.edges.right),
         horizontalBlend,
-        mockupFilter: Math.abs(mockupBrightness - 1) > 0.005 ? `brightness(${mockupBrightness.toFixed(3)})` : undefined,
+        mockupFilter: filterFromRaw ?? filterFromStage,
       };
     }),
   };
@@ -194,10 +219,12 @@ async function main() {
     const b64 = Buffer.from(await res.arrayBuffer()).toString("base64");
     const dataUrl = `data:image/jpeg;base64,${b64}`;
     const edges = await sampleEdges(page, dataUrl);
+    const pickTop = edges.topWall ?? edges.top;
+    const pickBottom = edges.bottomWall ?? edges.bottom;
     raw.push({
       slug: entry.slug,
-      top: rgbToHex(edges.top),
-      bottom: rgbToHex(edges.bottom),
+      top: rgbToHex(pickTop),
+      bottom: rgbToHex(pickBottom),
       left: rgbToHex(edges.left),
       right: rgbToHex(edges.right),
     });

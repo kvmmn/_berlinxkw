@@ -51,7 +51,7 @@ export function tabloGridStageStyle(tablo: Tablo): CSSProperties {
     background: tabloGridStageBackground(wall),
   };
   if (wall.horizontalBlend) {
-    style.backgroundBlendMode = "multiply";
+    style.backgroundBlendMode = "soft-light";
   }
   if (wall.mockupFilter) {
     (style as Record<string, string>)["--bk-grid-mockup-filter"] = wall.mockupFilter;
