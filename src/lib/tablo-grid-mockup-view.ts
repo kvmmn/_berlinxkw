@@ -1,16 +1,17 @@
 import type { TabloOrientation } from "./tablo-frame-spec";
 
-/**
- * Crop mockups to a consistent wall margin around the bronze frame (not the full JPEG).
- * Values derived from production v4 mockups; keeps frame + shadow visible without equalizing row height alone.
- */
-export const TABLO_GRID_MOCKUP_VIEW_BOX: Record<TabloOrientation, string> = {
-  /** Frame + ~5% margin; aspect 70/50 on 2400×1790 v4 mockups. */
-  landscape: "inset(15.36% 12.56% 16.53% 16.31%)",
-  /** Frame + ~5% margin; aspect 50/70 on 1790×2400 v4 mockups. */
-  portrait: "inset(16.25% 17.65% 16.25% 17.65%)",
-};
+/** Bronze frame ÷ full JPEG (v4 production mockups). */
+export const TABLO_GRID_MOCKUP_FRAME_FRAC = {
+  landscape: { w: 1627 / 2400, h: 1228 / 1790 },
+  portrait: { w: 1082 / 1790, h: 1541 / 2400 },
+} as const;
 
-export function tabloGridMockupViewBox(orientation: TabloOrientation): string {
-  return TABLO_GRID_MOCKUP_VIEW_BOX[orientation];
+/** Wall margin around the 70 cm frame edge in desktop grid stages (~10%). */
+export const TABLO_GRID_STAGE_MARGIN_RATIO = 0.1;
+
+export function tabloGridMockupFrameFrac(orientation: TabloOrientation): {
+  w: number;
+  h: number;
+} {
+  return TABLO_GRID_MOCKUP_FRAME_FRAC[orientation];
 }

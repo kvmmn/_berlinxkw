@@ -13,24 +13,20 @@ export function TabloJustifiedGallery({
   renderTile: (item: TabloGalleryLayoutItem, index: number) => ReactNode;
 }) {
   const rows = planJustifiedGalleryRows(items);
-  const firstFull = rows.find((row) => row.layout === "full");
-  const galleryStyle = firstFull
-    ? ({
-        "--bk-ref-width-cm-sum": String(rowWidthCmSum(firstFull.items)),
-        "--bk-ref-cells": String(firstFull.items.length),
-      } as CSSProperties)
-    : undefined;
   let tileIndex = 0;
 
   return (
-    <div
-      className={`bk-tablo-justified-gallery ${className}`.trim()}
-      style={galleryStyle}
-    >
+    <div className={`bk-tablo-justified-gallery ${className}`.trim()}>
       {rows.map((row) => (
         <ul
           key={row.items.map((i) => i.tablo.id).join("-")}
           className={`bk-tablo-justified-row bk-tablo-justified-row--${row.layout}`}
+          style={
+            {
+              "--bk-row-width-cm-sum": String(rowWidthCmSum(row.items)),
+              "--bk-row-cells": String(row.items.length),
+            } as CSSProperties
+          }
           role="list"
         >
           {row.items.map((item) => {
