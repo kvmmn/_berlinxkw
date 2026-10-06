@@ -1066,16 +1066,17 @@ textarea.bk-input[dir="auto"] {
     width: 100%;
     height: 100%;
     object-fit: fill;
+    object-position: center;
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] img {
-    object-view-box: inset(12% 11% 13% 14%);
+    object-view-box: inset(13% 10.5% 14.5% 14%);
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] img {
-    object-view-box: inset(14% 15% 14% 15%);
+    object-view-box: inset(14% 15.5% 14% 15.5%);
   }
 }
 
