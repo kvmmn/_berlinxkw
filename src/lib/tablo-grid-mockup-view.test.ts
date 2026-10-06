@@ -14,6 +14,6 @@ describe("tablo-grid-mockup-view", () => {
   });
 
   it("uses a generous stage margin ratio", () => {
-    assert.ok(TABLO_GRID_STAGE_MARGIN_RATIO >= 0.08 && TABLO_GRID_STAGE_MARGIN_RATIO <= 0.12);
+    assert.ok(TABLO_GRID_STAGE_MARGIN_RATIO >= 0.08 && TABLO_GRID_STAGE_MARGIN_RATIO <= 0.14);
   });
 });

@@ -75,24 +75,28 @@ export function TabloCardMedia({
   const dims = intrinsicDimensionsFromAspect(aspectForDims);
 
   const mediaClass = ["bk-aspect-frame", "bk-tablo-tile-media", className].filter(Boolean).join(" ");
+  const picture = (
+    <TabloOptimizedPicture
+      src={product.url}
+      alt={productAlt(tablo, kind)}
+      mime={product.mime}
+      sizes={GRID_OPTIMIZED_SIZES}
+      optimizerWidths={GRID_OPTIMIZED_WIDTHS}
+      optimizerFallbackWidth={384}
+      priority={priority}
+      layout={fit}
+      width={dims.width}
+      height={dims.height}
+    />
+  );
+
   return (
     <div
       className={mediaClass}
       style={{ aspectRatio }}
       data-grid-orientation={gridOrientation}
     >
-      <TabloOptimizedPicture
-        src={product.url}
-        alt={productAlt(tablo, kind)}
-        mime={product.mime}
-        sizes={GRID_OPTIMIZED_SIZES}
-        optimizerWidths={GRID_OPTIMIZED_WIDTHS}
-        optimizerFallbackWidth={384}
-        priority={priority}
-        layout={fit}
-        width={dims.width}
-        height={dims.height}
-      />
+      {gridOrientation ? <div className="bk-tablo-grid-mockup-inner">{picture}</div> : picture}
     </div>
   );
 }

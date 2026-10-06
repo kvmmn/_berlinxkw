@@ -59,23 +59,20 @@ async function main() {
     const tile = tiles.nth(i);
     const title = (await tile.locator(".bk-tablo-tile-title").innerText()).trim();
     const media = tile.locator(".bk-tablo-tile-media--frame-stage").first();
-    const box = await media.boundingBox();
-    const shot = await media.screenshot();
+    const inner = media.locator(".bk-tablo-grid-mockup-inner").first();
+    const box = await inner.boundingBox();
+    const shot = await inner.screenshot();
     const b = bronzeBoundsInPng(shot);
     if (b.error || !box) {
       rows.push({ title, error: b.error || "no box" });
       continue;
     }
-    const padLeft = await media.evaluate((el) => Number.parseFloat(getComputedStyle(el).paddingLeft) || 0);
-    const padTop = await media.evaluate((el) => Number.parseFloat(getComputedStyle(el).paddingTop) || 0);
-    const innerW = box.width - padLeft * 2;
-    const innerH = box.height - padTop * 2;
     rows.push({
       title,
-      marginLeft: Math.round(b.left - padLeft),
-      marginRight: Math.round(innerW - (b.right + 1)),
-      marginTop: Math.round(b.top - padTop),
-      marginBottom: Math.round(innerH - (b.bottom + 1)),
+      marginLeft: Math.round(b.left),
+      marginRight: Math.round(box.width - (b.right + 1)),
+      marginTop: Math.round(b.top),
+      marginBottom: Math.round(box.height - (b.bottom + 1)),
       stagePx: `${Math.round(box.width)}×${Math.round(box.height)}`,
       framePx: `${b.fw}×${b.fh}`,
     });
