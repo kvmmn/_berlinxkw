@@ -12,6 +12,8 @@ import {
 
 export { isPublicShopMediaPathname };
 
+export { isPublicShopMediaPathname };
+
 const LOCAL_UPLOADS = join(process.cwd(), "public", "uploads", "instagram");
 const DEMO_JPEG_FS = join(process.cwd(), "public", "shop", "demo", "publish-sample.jpg");
 

@@ -1,6 +1,10 @@
 import { existsSync, readFileSync } from "fs";
-import { join, resolve, sep } from "path";
-import { canonicalBlobPathname } from "@/lib/blob-pathname";
+import { join, resolve } from "path";
+import {
+  canonicalBlobPathname,
+  instagramBlobRelativePath,
+  resolvePathUnderRoot,
+} from "@/lib/blob-pathname";
 import { headBlob, hasBlobToken, streamBlobWithRange } from "@/lib/blob-private";
 import { IG_DEMO_BLOB_PATH, readDemoPublishSampleJpeg } from "@/lib/instagram/media";
 import { contentRangeHeader, parseByteRange } from "@/lib/shop-media-range";
@@ -16,22 +20,14 @@ function normalizeServedContentType(pathname: string, contentType: string): stri
   return contentType.split(";")[0].trim() || "application/octet-stream";
 }
 
-function readLocalInstagramFile(pathname: string): Buffer | null {
+function readLocalInstagramFile(canonical: string): Buffer | null {
   if (process.env.VERCEL) return null;
 
-  const canonical = canonicalBlobPathname(pathname);
-  if (!canonical?.startsWith("berlinxkw/instagram/")) return null;
+  const rel = instagramBlobRelativePath(canonical);
+  if (!rel) return null;
 
-  const rel = canonical.slice("berlinxkw/instagram/".length);
-  if (!rel || rel.includes("..")) return null;
-
-  const diskPath = resolve(LOCAL_INSTAGRAM_ROOT, rel);
-  const rootWithSep = LOCAL_INSTAGRAM_ROOT.endsWith(sep)
-    ? LOCAL_INSTAGRAM_ROOT
-    : `${LOCAL_INSTAGRAM_ROOT}${sep}`;
-  if (!diskPath.startsWith(rootWithSep)) return null;
-
-  if (!existsSync(diskPath)) return null;
+  const diskPath = resolvePathUnderRoot(LOCAL_INSTAGRAM_ROOT, rel);
+  if (!diskPath || !existsSync(diskPath)) return null;
   try {
     return readFileSync(diskPath);
   } catch {

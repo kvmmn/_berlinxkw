@@ -1,15 +1,14 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { canonicalBlobPathname } from "@/lib/blob-pathname";
+import { isInstagramVideoClientUploadPathname } from "@/lib/blob-pathname";
 import { authorizeInstagramPortal } from "@/lib/instagram/auth-request";
-import { IG_UPLOAD_VIDEO_MAX_BYTES, IG_VIDEO_CLIENT_UPLOAD_PATH } from "@/lib/instagram/constants";
+import { IG_UPLOAD_VIDEO_MAX_BYTES } from "@/lib/instagram/constants";
 import { uploadInstagramJpeg, uploadInstagramMp4 } from "@/lib/instagram/media";
 
 export const runtime = "nodejs";
 
 function assertClientUploadPathname(pathname: string): void {
-  const canonical = canonicalBlobPathname(pathname);
-  if (!canonical || !IG_VIDEO_CLIENT_UPLOAD_PATH.test(canonical)) {
+  if (!isInstagramVideoClientUploadPathname(pathname)) {
     throw new Error(
       "Upload pathname must be berlinxkw/instagram/{uuid}/{filename}.mp4 with no traversal.",
     );

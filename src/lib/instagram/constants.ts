@@ -41,6 +41,3 @@ export const IG_DIRECT_UPLOAD_MAX_BYTES = 4 * 1024 * 1024;
 
 export const REELS_VIDEO_CONTENT_TYPES = ["video/mp4", "video/quicktime"] as const;
 
-/** Client upload path: server-chosen UUID folder + .mp4 filename only. */
-export const IG_VIDEO_CLIENT_UPLOAD_PATH =
-  /^berlinxkw\/instagram\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[A-Za-z0-9._-]+\.mp4$/i;
