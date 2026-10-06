@@ -40,6 +40,9 @@ export const GALLERY_PACK_GAP = 44;
 /** Target long-edge (70 cm) px for greedy packing on desktop. */
 export const GALLERY_TARGET_ROW_LONG_EDGE_PX = 400;
 
+/** @deprecated Renamed to GALLERY_TARGET_ROW_LONG_EDGE_PX (grid row long-edge target). */
+export const GALLERY_TARGET_ROW_HEIGHT_DESKTOP = GALLERY_TARGET_ROW_LONG_EDGE_PX;
+
 export type JustifiedGalleryRowPlan = {
   items: TabloGalleryLayoutItem[];
   /** `full` rows stretch to gallery width; `tail` is last row left-aligned at reference row height. */
