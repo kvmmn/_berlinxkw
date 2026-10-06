@@ -2,11 +2,20 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { countHashtags, validateCaption, validateVideoUrl } from "./validate";
+import { PROBE_FETCH_TIMEOUT_MS } from "./probe-fetch";
+import {
+  countHashtags,
+  validateCaption,
+  validatePublishPayload,
+  validateVideoUrl,
+} from "./validate";
 
 const FIXTURE_MP4 = join(process.cwd(), "data/fixtures/instagram/publish-sample.mp4");
+const FIXTURE_JPEG = join(process.cwd(), "public", "shop", "demo", "publish-sample.jpg");
 const ALLOWED_VIDEO =
   "https://berlinxkw.vercel.app/api/shop/media?pathname=berlinxkw/instagram/demo/publish-sample.mp4";
+const ALLOWED_IMAGE =
+  "https://berlinxkw.vercel.app/api/shop/media?pathname=berlinxkw/instagram/demo/publish-sample.jpg";
 
 describe("validateCaption", () => {
   it("accepts normal captions", () => {
@@ -24,6 +33,80 @@ describe("validateCaption", () => {
 
   it("counts unicode hashtags", () => {
     assert.equal(countHashtags("#برلین #berlin"), 2);
+  });
+});
+
+describe("validatePublishPayload dryRun image probe (R1)", () => {
+  it("dryRun uses SSRF-safe probe fetch (no redirect follow)", async () => {
+    let sawManualRedirect = false;
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (_url, init) => {
+      const redirect = init && typeof init === "object" ? init.redirect : undefined;
+      if (redirect === "manual") sawManualRedirect = true;
+      return new Response(null, {
+        status: 302,
+        headers: { location: "https://evil.example.com/image.jpg" },
+      });
+    };
+
+    try {
+      const r = await validatePublishPayload([ALLOWED_IMAGE], "caption", { dryRun: true });
+      assert.equal(r.ok, false);
+      assert.equal(sawManualRedirect, true);
+      assert.match(r.errors.join(" "), /redirect/i);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("dryRun aborts slow image probes at PROBE_FETCH_TIMEOUT_MS", async () => {
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (_url, init) => {
+      const signal = init?.signal;
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(() => resolve(), PROBE_FETCH_TIMEOUT_MS + 5_000);
+        signal?.addEventListener(
+          "abort",
+          () => {
+            clearTimeout(timer);
+            const err = new Error("The operation was aborted");
+            err.name = "TimeoutError";
+            reject(err);
+          },
+          { once: true },
+        );
+      });
+      return new Response(null, { status: 200 });
+    };
+
+    const started = Date.now();
+    try {
+      const r = await validatePublishPayload([ALLOWED_IMAGE], "caption", { dryRun: true });
+      assert.equal(r.ok, false);
+      assert.match(r.images[0]?.errors.join(" ") ?? "", /fetch/i);
+      assert.ok(Date.now() - started < PROBE_FETCH_TIMEOUT_MS + 3_000);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("dryRun reads JPEG dimensions from allowlisted shop media", async () => {
+    const bytes = readFileSync(FIXTURE_JPEG);
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () =>
+      new Response(bytes, {
+        status: 206,
+        headers: { "content-type": "image/jpeg" },
+      });
+
+    try {
+      const r = await validatePublishPayload([ALLOWED_IMAGE], "caption", { dryRun: true });
+      assert.equal(r.ok, true);
+      assert.equal(r.images[0]?.contentType, "image/jpeg");
+      assert.ok((r.images[0]?.width ?? 0) > 0);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
 

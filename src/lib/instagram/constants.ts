@@ -22,6 +22,8 @@ export const CONTAINER_POLL_MAX_ATTEMPTS = 30;
 
 /** Reels container processing — wall-clock deadline from request start (ms). */
 export const REELS_CONTAINER_POLL_DEADLINE_MS = 240_000;
+/** Post-publish timeout check-backs — separate budget so late publishes are not missed (ms). */
+export const REELS_PUBLISH_CHECKBACK_DEADLINE_MS = 280_000;
 export const REELS_CONTAINER_POLL_INTERVAL_MS = 8000;
 
 /** Instagram Graph HTTP timeout (ms). */
