@@ -1,20 +1,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { writeBlob } from "@/lib/blob-private";
-import { isPublicTabloBlobPathname } from "@/lib/tablo-media";
+import { isPublicShopMediaPathname } from "@/lib/blob-pathname";
 import { getStorageMode } from "@/lib/storage";
 import { IG_BLOB_PREFIX, IG_DEMO_BLOB_PATH } from "./constants";
 
+export { isPublicShopMediaPathname };
+
 const LOCAL_UPLOADS = join(process.cwd(), "public", "uploads", "instagram");
 const DEMO_JPEG_FS = join(process.cwd(), "public", "shop", "demo", "publish-sample.jpg");
-
-export function isPublicInstagramBlobPathname(pathname: string): boolean {
-  return pathname.startsWith(IG_BLOB_PREFIX);
-}
-
-export function isPublicShopMediaPathname(pathname: string): boolean {
-  return isPublicTabloBlobPathname(pathname) || isPublicInstagramBlobPathname(pathname);
-}
 
 export function publicInstagramMediaUrl(pathname: string, origin?: string): string {
   const path = `/api/shop/media?pathname=${encodeURIComponent(pathname)}`;

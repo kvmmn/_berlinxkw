@@ -1,5 +1,7 @@
 import "server-only";
 
+import { canonicalBlobPathname } from "./blob-pathname";
+
 /** Matches the linked Vercel Blob store (private). */
 export const BLOB_ACCESS = "private" as const;
 
@@ -9,9 +11,7 @@ export function hasBlobToken(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
-export function isBlobStorePathname(pathname: string): boolean {
-  return pathname.startsWith(BLOB_STORE_PREFIX);
-}
+export { isBlobStorePathname } from "./blob-pathname";
 
 export { isPortalBlobProxyPathname } from "./portal-blob-paths";
 
@@ -21,8 +21,10 @@ export function blobProxyUrl(pathname: string): string {
 }
 
 async function readBlobText(pathname: string, useCache = true): Promise<string | null> {
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical) return null;
   const { get } = await import("@vercel/blob");
-  const result = await get(pathname, { access: BLOB_ACCESS, useCache });
+  const result = await get(canonical, { access: BLOB_ACCESS, useCache });
   if (!result || result.statusCode !== 200 || !result.stream) return null;
   return new Response(result.stream).text();
 }
@@ -42,8 +44,12 @@ export async function writeBlob(
   body: string | Buffer,
   contentType: string,
 ): Promise<void> {
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical) {
+    throw new Error("Invalid blob pathname");
+  }
   const { put } = await import("@vercel/blob");
-  await put(pathname, body, {
+  await put(canonical, body, {
     access: BLOB_ACCESS,
     addRandomSuffix: false,
     allowOverwrite: true,
@@ -70,8 +76,10 @@ export async function streamBlob(pathname: string): Promise<{
   stream: ReadableStream<Uint8Array>;
   contentType: string;
 } | null> {
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical) return null;
   const { get } = await import("@vercel/blob");
-  const result = await get(pathname, { access: BLOB_ACCESS, useCache: true });
+  const result = await get(canonical, { access: BLOB_ACCESS, useCache: true });
   if (!result || result.statusCode !== 200 || !result.stream) return null;
   return {
     stream: result.stream,
