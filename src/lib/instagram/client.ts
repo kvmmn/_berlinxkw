@@ -8,6 +8,11 @@ import {
   REELS_CONTAINER_POLL_INTERVAL_MS,
 } from "./constants";
 import { igFetch, isFetchTimeoutError } from "./graph-fetch";
+import {
+  fetchReelsContainerStatusCode,
+  isReelsContainerPublished,
+  REELS_PUBLISHED_MEDIA_ID_NOTE,
+} from "./reels-container";
 import { ReelsStillProcessingError } from "./reels-processing";
 import type { InstagramTokenRecord } from "./token-store";
 
@@ -72,14 +77,6 @@ type ContainerStatus = {
   status?: string;
 };
 
-type ContainerPublishedLookup = {
-  status_code?: string;
-  status?: string;
-  id?: string;
-  ig_id?: string;
-  permalink?: string;
-};
-
 type ContainerReadyState = "finished" | "published";
 
 async function waitForContainerReady(
@@ -115,16 +112,6 @@ async function waitForContainerReady(
   throw new Error("Timed out waiting for Instagram media container.");
 }
 
-async function fetchReelsContainerStatus(
-  containerId: string,
-  accessToken: string,
-): Promise<ContainerStatus> {
-  return igFetch<ContainerStatus>(containerId, accessToken, {
-    searchParams: { fields: "status_code,status" },
-    timeoutMs: IG_GRAPH_FETCH_TIMEOUT_MS,
-  });
-}
-
 async function waitForReelsContainerReady(
   containerId: string,
   accessToken: string,
@@ -134,9 +121,9 @@ async function waitForReelsContainerReady(
   const deadlineAt = startedAtMs + REELS_CONTAINER_POLL_DEADLINE_MS;
 
   while (Date.now() < deadlineAt) {
-    let status: ContainerStatus;
+    let code: string | undefined;
     try {
-      status = await fetchReelsContainerStatus(containerId, accessToken);
+      code = await fetchReelsContainerStatusCode(containerId, accessToken);
     } catch (err) {
       if (isFetchTimeoutError(err) && Date.now() < deadlineAt) {
         const remaining = deadlineAt - Date.now();
@@ -147,16 +134,10 @@ async function waitForReelsContainerReady(
       throw err;
     }
 
-    const code = status.status_code ?? status.status;
     if (code === "PUBLISHED") return "published";
     if (code === "FINISHED") return "finished";
     if (code === "ERROR") {
-      const detail = status.status ?? status.status_code;
-      throw new Error(
-        detail && detail !== "ERROR"
-          ? `Instagram media container processing failed: ${detail}`
-          : "Instagram media container processing failed.",
-      );
+      throw new Error("Instagram media container processing failed.");
     }
     if (code === "EXPIRED") {
       throw new Error("Instagram media container expired before publish.");
@@ -213,7 +194,7 @@ async function publishReelsContainer(
   igUserId: string,
   accessToken: string,
   creationId: string,
-): Promise<string> {
+): Promise<string | null> {
   const params = new URLSearchParams();
   params.set("creation_id", creationId);
 
@@ -227,34 +208,35 @@ async function publishReelsContainer(
     if (!res.id) throw new Error("Missing media id after publish.");
     return res.id;
   } catch (err) {
-    const reconciled = await resolvePublishedMediaIdFromContainer(creationId, accessToken);
-    if (reconciled) return reconciled;
+    if (await isReelsContainerPublished(creationId, accessToken)) {
+      return null;
+    }
     throw err;
   }
 }
 
-/** When Graph reports PUBLISHED (or publish timed out but container is live), resolve IG media id. */
-export async function resolvePublishedMediaIdFromContainer(
-  containerId: string,
+async function fetchReelsPermalink(
+  mediaId: string,
   accessToken: string,
-): Promise<string | null> {
-  let detail: ContainerPublishedLookup;
+  timeoutMs: number,
+): Promise<string | undefined> {
+  if (timeoutMs <= 0) return undefined;
   try {
-    detail = await igFetch<ContainerPublishedLookup>(containerId, accessToken, {
-      searchParams: { fields: "status_code,status,id,ig_id,permalink" },
-      timeoutMs: IG_GRAPH_FETCH_TIMEOUT_MS,
+    const res = await igFetch<{ permalink?: string }>(mediaId, accessToken, {
+      searchParams: { fields: "permalink" },
+      timeoutMs,
     });
+    return res.permalink;
   } catch {
-    return null;
+    return undefined;
   }
+}
 
-  const code = detail.status_code ?? detail.status;
-  if (code !== "PUBLISHED") return null;
-
-  if (detail.ig_id) return detail.ig_id;
-  if (detail.id && detail.id !== containerId) return detail.id;
-
-  return null;
+function reelsPermalinkTimeoutMs(startedAtMs: number): number {
+  const deadlineAt = startedAtMs + REELS_CONTAINER_POLL_DEADLINE_MS;
+  const remaining = deadlineAt - Date.now();
+  if (remaining <= 0) return 0;
+  return Math.min(IG_GRAPH_FETCH_TIMEOUT_MS, remaining);
 }
 
 async function fetchPermalink(mediaId: string, accessToken: string): Promise<string | undefined> {
@@ -272,6 +254,15 @@ export type PublishToInstagramResult = {
   mediaId: string;
   permalink?: string;
   igUserId: string;
+};
+
+export type PublishReelsToInstagramResult = {
+  igUserId: string;
+  containerId: string;
+  published: true;
+  mediaId: string | null;
+  mediaIdNote?: string;
+  permalink?: string;
 };
 
 export async function publishToInstagram(
@@ -313,24 +304,45 @@ export async function publishReelsToInstagram(
   igUserId: string,
   input: { videoUrl: string; caption: string; coverUrl?: string; shareToFeed: boolean },
   opts?: { startedAtMs?: number },
-): Promise<PublishToInstagramResult> {
+): Promise<PublishReelsToInstagramResult> {
   const startedAtMs = opts?.startedAtMs ?? Date.now();
   const creationId = await createReelsContainer(igUserId, accessToken, input);
   const ready = await waitForReelsContainerReady(creationId, accessToken, startedAtMs);
 
-  let mediaId: string;
   if (ready === "published") {
-    const resolved = await resolvePublishedMediaIdFromContainer(creationId, accessToken);
-    if (!resolved) {
-      throw new Error("Reels container is published but Instagram media id could not be resolved.");
-    }
-    mediaId = resolved;
-  } else {
-    mediaId = await publishReelsContainer(igUserId, accessToken, creationId);
+    return {
+      igUserId,
+      containerId: creationId,
+      published: true,
+      mediaId: null,
+      mediaIdNote: REELS_PUBLISHED_MEDIA_ID_NOTE,
+    };
   }
 
-  const permalink = await fetchPermalink(mediaId, accessToken);
-  return { mediaId, permalink, igUserId };
+  const mediaId = await publishReelsContainer(igUserId, accessToken, creationId);
+  if (mediaId === null) {
+    return {
+      igUserId,
+      containerId: creationId,
+      published: true,
+      mediaId: null,
+      mediaIdNote: REELS_PUBLISHED_MEDIA_ID_NOTE,
+    };
+  }
+
+  const permalink = await fetchReelsPermalink(
+    mediaId,
+    accessToken,
+    reelsPermalinkTimeoutMs(startedAtMs),
+  );
+
+  return {
+    igUserId,
+    containerId: creationId,
+    published: true,
+    mediaId,
+    permalink,
+  };
 }
 
 export type RefreshTokenResult = {

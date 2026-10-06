@@ -81,7 +81,10 @@ export async function POST(req: Request) {
         ok: true,
         dryRun: false,
         mediaType: "REELS",
+        published: result.published,
+        containerId: result.containerId,
         mediaId: result.mediaId,
+        ...(result.mediaIdNote ? { mediaIdNote: result.mediaIdNote } : {}),
         permalink: result.permalink,
         validation: result.validation,
       });

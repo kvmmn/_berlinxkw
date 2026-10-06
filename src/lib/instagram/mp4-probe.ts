@@ -99,12 +99,15 @@ function tkhdDisplayDimensions(
   let height = readU32(buf, dimStart + 4) / 65536;
   if (width <= 0 || height <= 0) return null;
 
-  const a = readU32(buf, matrixStart) / 65536;
-  const b = readU32(buf, matrixStart + 4) / 65536;
-  const c = readU32(buf, matrixStart + 8) / 65536;
-  const d = readU32(buf, matrixStart + 12) / 65536;
+  // 3×3 display matrix stored as 9 signed 16.16 values: a,b,u,c,d,v,x,y,w (skip u,v,w for rotation).
+  const readFixed = (off: number) => buf.readInt32BE(off) / 65536;
+  const a = readFixed(matrixStart);
+  const b = readFixed(matrixStart + 4);
+  const c = readFixed(matrixStart + 12);
+  const d = readFixed(matrixStart + 16);
 
-  const rotated90or270 = Math.abs(a) < 0.01 && Math.abs(d) < 0.01 && Math.abs(b) > 0.5 && Math.abs(c) > 0.5;
+  const rotated90or270 =
+    Math.abs(a) < 0.01 && Math.abs(d) < 0.01 && Math.abs(b) > 0.5 && Math.abs(c) > 0.5;
 
   if (rotated90or270) {
     [width, height] = [height, width];

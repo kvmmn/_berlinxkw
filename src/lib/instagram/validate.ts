@@ -308,7 +308,10 @@ async function probeVideoUrl(url: string): Promise<{
     ({ res } = await safeProbeFetch(url, {
       method: "GET",
       headers: { Range: "bytes=0-0" },
+      maxBodyBytes: 1,
     }));
+  } else {
+    await discardResponseBody(head);
   }
 
   const contentType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();

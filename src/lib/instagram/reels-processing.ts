@@ -5,7 +5,7 @@ export class ReelsStillProcessingError extends Error {
 
   constructor(containerId: string) {
     super(
-      `Reels container ${containerId} is still processing on Instagram. Retry the same publish with this containerId when status is FINISHED or PUBLISHED — do not create a new container.`,
+      `Reels container ${containerId} is still processing on Instagram. Retry the same publish request (same videoUrl and caption) after processing finishes — do not create a new container.`,
     );
     this.name = "ReelsStillProcessingError";
     this.containerId = containerId;

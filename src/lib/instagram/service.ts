@@ -209,7 +209,15 @@ export async function dryRunOrPublishReels(
   opts?: { startedAtMs?: number },
 ): Promise<
   | { dryRun: true; validation: ReelsValidationResult }
-  | { dryRun: false; validation: ReelsValidationResult; mediaId: string; permalink?: string }
+  | {
+      dryRun: false;
+      validation: ReelsValidationResult;
+      published: true;
+      containerId: string;
+      mediaId: string | null;
+      mediaIdNote?: string;
+      permalink?: string;
+    }
 > {
   const requestStartedAtMs = opts?.startedAtMs ?? Date.now();
   const validation = await validateReelsPayload(input);
@@ -242,7 +250,10 @@ export async function dryRunOrPublishReels(
   return {
     dryRun: false,
     validation,
+    published: result.published,
+    containerId: result.containerId,
     mediaId: result.mediaId,
+    mediaIdNote: result.mediaIdNote,
     permalink: result.permalink,
   };
 }
