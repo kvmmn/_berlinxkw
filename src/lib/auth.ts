@@ -1,28 +1,32 @@
+import { timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
+import {
+  AUTH_COOKIE,
+  createSessionToken,
+  sessionCookieMaxAgeSec,
+  verifySessionToken,
+} from "./session-token";
 
-export const AUTH_COOKIE = "bk_portal_session";
+export { AUTH_COOKIE };
 
-export function getExpectedPasscode(): string {
-  return process.env.PORTAL_PASSCODE ?? "berlinxkw";
+export function getExpectedPasscode(): string | null {
+  const value = process.env.PORTAL_PASSCODE?.trim();
+  return value || null;
+}
+
+export function verifyPasscode(input: string): boolean {
+  const expected = getExpectedPasscode();
+  if (!expected) return false;
+  const a = Buffer.from(input, "utf8");
+  const b = Buffer.from(expected, "utf8");
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
 }
 
 export async function isAuthenticated(): Promise<boolean> {
   const jar = await cookies();
   const session = jar.get(AUTH_COOKIE)?.value;
-  if (!session) return false;
-  const expected = getExpectedPasscode();
-  return session === hashPasscode(expected);
+  return verifySessionToken(session);
 }
 
-export function hashPasscode(passcode: string): string {
-  // Simple constant-time-ish compare token (not cryptographic — MVP gate)
-  let h = 0;
-  for (let i = 0; i < passcode.length; i++) {
-    h = (Math.imul(31, h) + passcode.charCodeAt(i)) | 0;
-  }
-  return `bk_${h.toString(36)}`;
-}
-
-export function verifyPasscode(input: string): boolean {
-  return input === getExpectedPasscode();
-}
+export { createSessionToken, sessionCookieMaxAgeSec, verifySessionToken };

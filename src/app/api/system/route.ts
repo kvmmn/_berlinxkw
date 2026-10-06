@@ -6,11 +6,15 @@ import {
   isLangfuseEnabled,
   isLangSmithTracingEnabled,
 } from "@/agents/observability";
+import { isAuthenticated } from "@/lib/auth";
 import { getStorageMode, loadState, saveState } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
 export async function GET() {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { state } = await loadState();
   const storageMode = getStorageMode();
   const checkpointBackend = getCheckpointBackend();
@@ -32,6 +36,9 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const body = (await req.json()) as { brainMemory?: string };
   if (typeof body.brainMemory !== "string") {
     return NextResponse.json({ error: "brainMemory string required" }, { status: 400 });

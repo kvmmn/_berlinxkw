@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
-import { isBlobStorePathname, streamBlob } from "@/lib/blob-private";
+import { isAuthenticated } from "@/lib/auth";
+import { streamBlob } from "@/lib/blob-private";
+import { isPortalBlobProxyPathname } from "@/lib/portal-blob-paths";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const url = new URL(req.url);
   const pathname = url.searchParams.get("pathname")?.trim() ?? "";
 
-  if (!pathname || !isBlobStorePathname(pathname)) {
+  if (!pathname || !isPortalBlobProxyPathname(pathname)) {
     return NextResponse.json({ error: "Invalid pathname" }, { status: 400 });
   }
 
