@@ -26,6 +26,7 @@ export function TabloOptimizedPicture({
   height,
   optimizerWidths,
   optimizerFallbackWidth,
+  objectViewBox,
 }: {
   src: string;
   alt: string;
@@ -38,6 +39,7 @@ export function TabloOptimizedPicture({
   height: number;
   optimizerWidths?: readonly number[];
   optimizerFallbackWidth?: number;
+  objectViewBox?: string;
 }) {
   if (isSvgSrc(src, mime)) {
     return (
@@ -52,6 +54,7 @@ export function TabloOptimizedPicture({
         fetchPriority={priority ? "high" : "auto"}
         decoding="async"
         data-fit={layout}
+        style={objectViewBox ? { objectViewBox } : undefined}
       />
     );
   }
@@ -77,6 +80,7 @@ export function TabloOptimizedPicture({
       fetchPriority={img.fetchPriority}
       decoding="async"
       data-fit={layout}
+      style={objectViewBox ? { objectViewBox } : undefined}
     />
   );
 }

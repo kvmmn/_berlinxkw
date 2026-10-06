@@ -44,8 +44,9 @@ export function TabloShopGridTile({
         <TabloCardMedia
           tablo={tablo}
           aspectRatio={stageAspect}
-          fit="cover"
+          fit="contain"
           priority={priority}
+          gridOrientation={orientation}
           className="bk-tablo-tile-media--frame-stage"
         />
       </Link>

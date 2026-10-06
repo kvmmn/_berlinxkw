@@ -1043,7 +1043,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-tile-media--frame-stage .bk-tablo-picture,
 .bk-tablo-tile-media--frame-stage img {
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 

@@ -12,6 +12,8 @@ import {
 } from "@/lib/next-image-static";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
+import { tabloGridMockupViewBox } from "@/lib/tablo-grid-mockup-view";
+import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
@@ -54,12 +56,15 @@ export function TabloCardMedia({
   fit = "cover",
   priority = false,
   className,
+  gridOrientation,
 }: {
   tablo: Tablo;
   aspectRatio: string;
   fit?: "contain" | "cover";
   priority?: boolean;
   className?: string;
+  /** When set, crop wall mockup to a uniform frame viewport for shop/landing grids. */
+  gridOrientation?: TabloOrientation;
 }) {
   const product = tabloProductImage(tablo);
   if (!product?.url) {
@@ -71,21 +76,27 @@ export function TabloCardMedia({
   const dims = intrinsicDimensionsFromAspect(aspectForDims);
 
   const mediaClass = ["bk-aspect-frame", "bk-tablo-tile-media", className].filter(Boolean).join(" ");
+  const viewBox = gridOrientation ? tabloGridMockupViewBox(gridOrientation) : undefined;
 
   return (
-    <div className={mediaClass} style={{ aspectRatio }}>
-        <TabloOptimizedPicture
-          src={product.url}
-          alt={productAlt(tablo, kind)}
-          mime={product.mime}
-          sizes={GRID_OPTIMIZED_SIZES}
-          optimizerWidths={GRID_OPTIMIZED_WIDTHS}
-          optimizerFallbackWidth={384}
-          priority={priority}
-          layout={fit}
-          width={dims.width}
-          height={dims.height}
-        />
+    <div
+      className={mediaClass}
+      style={{ aspectRatio }}
+      data-grid-orientation={gridOrientation}
+    >
+      <TabloOptimizedPicture
+        src={product.url}
+        alt={productAlt(tablo, kind)}
+        mime={product.mime}
+        sizes={GRID_OPTIMIZED_SIZES}
+        optimizerWidths={GRID_OPTIMIZED_WIDTHS}
+        optimizerFallbackWidth={384}
+        priority={priority}
+        layout={fit}
+        width={dims.width}
+        height={dims.height}
+        objectViewBox={viewBox}
+      />
     </div>
   );
 }
