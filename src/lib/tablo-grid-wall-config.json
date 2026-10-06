@@ -3,10 +3,10 @@
   "items": [
     {
       "slug": "berlin-clouds-01",
-      "top": "#e1dacd",
-      "bottom": "#ded5ca",
-      "left": "#e2dace",
-      "right": "#dad0c3",
+      "top": "#e0d8cb",
+      "bottom": "#ddd5ca",
+      "left": "#e0d8cc",
+      "right": "#ddd5c9",
       "horizontalBlend": false
     },
     {
