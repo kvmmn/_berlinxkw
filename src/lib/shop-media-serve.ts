@@ -1,11 +1,13 @@
 import { existsSync, readFileSync } from "fs";
-import { join } from "path";
+import { join, resolve, sep } from "path";
+import { canonicalBlobPathname } from "@/lib/blob-pathname";
 import { headBlob, hasBlobToken, streamBlobWithRange } from "@/lib/blob-private";
-import { IG_DEMO_BLOB_PATH, IG_DEMO_REEL_PATH } from "@/lib/instagram/constants";
-import { readDemoPublishSampleJpeg, readDemoPublishSampleMp4 } from "@/lib/instagram/media";
+import { IG_DEMO_BLOB_PATH, readDemoPublishSampleJpeg } from "@/lib/instagram/media";
 import { contentRangeHeader, parseByteRange } from "@/lib/shop-media-range";
 
-const LOCAL_INSTAGRAM_ROOT = join(process.cwd(), "public", "uploads", "instagram");
+const LOCAL_INSTAGRAM_ROOT = resolve(process.cwd(), "public", "uploads", "instagram");
+
+const NO_STORE = { "Cache-Control": "no-store" } as const;
 
 function normalizeServedContentType(pathname: string, contentType: string): string {
   const lower = pathname.toLowerCase();
@@ -15,10 +17,20 @@ function normalizeServedContentType(pathname: string, contentType: string): stri
 }
 
 function readLocalInstagramFile(pathname: string): Buffer | null {
-  const prefix = "berlinxkw/instagram/";
-  if (!pathname.startsWith(prefix)) return null;
-  const rel = pathname.slice(prefix.length);
-  const diskPath = join(LOCAL_INSTAGRAM_ROOT, rel);
+  if (process.env.VERCEL) return null;
+
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical?.startsWith("berlinxkw/instagram/")) return null;
+
+  const rel = canonical.slice("berlinxkw/instagram/".length);
+  if (!rel || rel.includes("..")) return null;
+
+  const diskPath = resolve(LOCAL_INSTAGRAM_ROOT, rel);
+  const rootWithSep = LOCAL_INSTAGRAM_ROOT.endsWith(sep)
+    ? LOCAL_INSTAGRAM_ROOT
+    : `${LOCAL_INSTAGRAM_ROOT}${sep}`;
+  if (!diskPath.startsWith(rootWithSep)) return null;
+
   if (!existsSync(diskPath)) return null;
   try {
     return readFileSync(diskPath);
@@ -29,15 +41,10 @@ function readLocalInstagramFile(pathname: string): Buffer | null {
 
 function demoBytesForPath(pathname: string): Buffer | null {
   if (pathname === IG_DEMO_BLOB_PATH) return readDemoPublishSampleJpeg();
-  if (pathname === IG_DEMO_REEL_PATH) return readDemoPublishSampleMp4();
   return null;
 }
 
-function responseFromBuffer(
-  buf: Buffer,
-  pathname: string,
-  req: Request,
-): Response {
+function responseFromBuffer(buf: Buffer, pathname: string, req: Request): Response {
   const contentType = normalizeServedContentType(pathname, "application/octet-stream");
   const size = buf.length;
   const range = parseByteRange(req.headers.get("Range"), size);
@@ -78,12 +85,17 @@ function responseFromBuffer(
 }
 
 export async function serveShopMedia(pathname: string, req: Request): Promise<Response> {
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical) {
+    return new Response("Not found", { status: 404, headers: NO_STORE });
+  }
+
   const rangeHeader = req.headers.get("Range");
 
   if (hasBlobToken()) {
-    const meta = await headBlob(pathname);
+    const meta = await headBlob(canonical);
     if (meta) {
-      const contentType = normalizeServedContentType(pathname, meta.contentType);
+      const contentType = normalizeServedContentType(canonical, meta.contentType);
       const parsed = parseByteRange(rangeHeader, meta.size);
 
       if (parsed === "unsatisfiable") {
@@ -94,11 +106,9 @@ export async function serveShopMedia(pathname: string, req: Request): Promise<Re
       }
 
       const effectiveRange =
-        parsed != null
-          ? `bytes=${parsed.start}-${parsed.end}`
-          : rangeHeader;
+        parsed != null ? `bytes=${parsed.start}-${parsed.end}` : rangeHeader;
 
-      const blob = await streamBlobWithRange(pathname, effectiveRange ?? null);
+      const blob = await streamBlobWithRange(canonical, effectiveRange ?? null);
       if (blob) {
         const status = parsed != null ? 206 : blob.status;
         const headers: Record<string, string> = {
@@ -121,11 +131,11 @@ export async function serveShopMedia(pathname: string, req: Request): Promise<Re
     }
   }
 
-  const local = readLocalInstagramFile(pathname);
-  if (local) return responseFromBuffer(local, pathname, req);
+  const local = readLocalInstagramFile(canonical);
+  if (local) return responseFromBuffer(local, canonical, req);
 
-  const demo = demoBytesForPath(pathname);
-  if (demo) return responseFromBuffer(demo, pathname, req);
+  const demo = demoBytesForPath(canonical);
+  if (demo) return responseFromBuffer(demo, canonical, req);
 
-  return new Response("Not found", { status: 404 });
+  return new Response("Not found", { status: 404, headers: NO_STORE });
 }

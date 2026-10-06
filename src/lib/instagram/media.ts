@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { writeBlob } from "@/lib/blob-private";
-import { isPublicTabloBlobPathname } from "@/lib/tablo-media";
+import { isPublicShopMediaPathname } from "@/lib/blob-pathname";
 import { getStorageMode } from "@/lib/storage";
 import {
   IG_BLOB_PREFIX,
@@ -10,17 +10,10 @@ import {
   IG_UPLOAD_VIDEO_MAX_BYTES,
 } from "./constants";
 
+export { isPublicShopMediaPathname };
+
 const LOCAL_UPLOADS = join(process.cwd(), "public", "uploads", "instagram");
 const DEMO_JPEG_FS = join(process.cwd(), "public", "shop", "demo", "publish-sample.jpg");
-const DEMO_MP4_FS = join(process.cwd(), "public", "shop", "demo", "publish-sample.mp4");
-
-export function isPublicInstagramBlobPathname(pathname: string): boolean {
-  return pathname.startsWith(IG_BLOB_PREFIX);
-}
-
-export function isPublicShopMediaPathname(pathname: string): boolean {
-  return isPublicTabloBlobPathname(pathname) || isPublicInstagramBlobPathname(pathname);
-}
 
 export function publicInstagramMediaUrl(pathname: string, origin?: string): string {
   const path = `/api/shop/media?pathname=${encodeURIComponent(pathname)}`;
@@ -116,35 +109,11 @@ export async function uploadInstagramMp4(
   return writeInstagramBlob(pathname, bytes, "video/mp4", mode, id, filename);
 }
 
-/** Resolve a completed client-upload pathname under the Instagram prefix. */
-export function instagramUploadPublicResult(
-  pathname: string,
-  origin?: string,
-): { pathname: string; publicUrl: string; absoluteUrl: string } | { error: string } {
-  if (!pathname.startsWith(IG_BLOB_PREFIX)) {
-    return { error: "Upload pathname must be under the Instagram media prefix." };
-  }
-  const publicUrl = publicInstagramMediaUrl(pathname);
-  const absoluteUrl = publicUrl.startsWith("http")
-    ? publicUrl
-    : `${(origin ?? "").replace(/\/$/, "")}${publicUrl}`;
-  return { pathname, publicUrl, absoluteUrl };
-}
-
 /** Demo JPEG bytes for /api/shop/media fallback (preview dryRun without Blob upload). */
 export function readDemoPublishSampleJpeg(): Buffer | null {
   if (!existsSync(DEMO_JPEG_FS)) return null;
   try {
     return readFileSync(DEMO_JPEG_FS);
-  } catch {
-    return null;
-  }
-}
-
-export function readDemoPublishSampleMp4(): Buffer | null {
-  if (!existsSync(DEMO_MP4_FS)) return null;
-  try {
-    return readFileSync(DEMO_MP4_FS);
   } catch {
     return null;
   }

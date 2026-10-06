@@ -5,10 +5,15 @@ import {
   CAROUSEL_MAX_ITEMS,
   CAROUSEL_MIN_ITEMS,
   HASHTAG_MAX_COUNT,
+  REELS_ASPECT_RATIO_MAX,
+  REELS_ASPECT_RATIO_MIN,
+  REELS_MAX_DURATION_SEC,
+  REELS_MIN_DURATION_SEC,
   REELS_VIDEO_CONTENT_TYPES,
   REELS_VIDEO_MAX_BYTES,
 } from "./constants";
 import { jpegDimensionsFromBuffer } from "./jpeg-dimensions";
+import { probeMp4Buffer } from "./mp4-probe";
 
 export type ImageValidationResult = {
   url: string;
@@ -33,6 +38,10 @@ export type VideoValidationResult = {
   errors: string[];
   contentType?: string;
   contentLength?: number;
+  durationSec?: number;
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
 };
 
 export type ReelsValidationResult = {
@@ -224,6 +233,7 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
 
   if (parsed.protocol !== "https:") {
     errors.push("Video URL must use HTTPS.");
+    return { url, ok: false, errors };
   }
 
   let probe: Awaited<ReturnType<typeof probeVideoUrl>>;
@@ -252,12 +262,64 @@ export async function validateVideoUrl(url: string): Promise<VideoValidationResu
     );
   }
 
+  let durationSec: number | undefined;
+  let width: number | undefined;
+  let height: number | undefined;
+  let aspectRatio: number | undefined;
+
+  if (contentType === "video/mp4" && errors.length === 0) {
+    try {
+      const metaRes = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store",
+        headers: { Range: "bytes=0-262143" },
+      });
+      if (metaRes.ok || metaRes.status === 206) {
+        const buf = Buffer.from(await metaRes.arrayBuffer());
+        const mp4 = probeMp4Buffer(buf);
+        errors.push(...mp4.errors);
+        durationSec = mp4.durationSec;
+        width = mp4.width;
+        height = mp4.height;
+        aspectRatio = mp4.aspectRatio;
+
+        if (durationSec != null) {
+          if (durationSec < REELS_MIN_DURATION_SEC) {
+            errors.push(
+              `Video duration ${durationSec.toFixed(2)}s is below the ${REELS_MIN_DURATION_SEC}s Reels minimum.`,
+            );
+          }
+          if (durationSec > REELS_MAX_DURATION_SEC) {
+            errors.push(
+              `Video duration exceeds ${REELS_MAX_DURATION_SEC / 60} minute Reels maximum.`,
+            );
+          }
+        }
+        if (aspectRatio != null) {
+          if (aspectRatio < REELS_ASPECT_RATIO_MIN || aspectRatio > REELS_ASPECT_RATIO_MAX) {
+            errors.push(
+              `Video aspect ratio ${aspectRatio} is outside Reels limits (${REELS_ASPECT_RATIO_MIN}–${REELS_ASPECT_RATIO_MAX}).`,
+            );
+          }
+        }
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`Could not probe video metadata: ${msg}.`);
+    }
+  }
+
   return {
     url,
     ok: errors.length === 0,
     errors,
     contentType,
     contentLength,
+    durationSec,
+    width,
+    height,
+    aspectRatio,
   };
 }
 

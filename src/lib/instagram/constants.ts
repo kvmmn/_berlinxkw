@@ -20,9 +20,15 @@ export const ASPECT_RATIO_MAX = 1.91; // landscape
 export const CONTAINER_POLL_INTERVAL_MS = 2000;
 export const CONTAINER_POLL_MAX_ATTEMPTS = 30;
 
-/** Reels container processing can take several minutes. */
-export const REELS_CONTAINER_POLL_INTERVAL_MS = 2000;
-export const REELS_CONTAINER_POLL_MAX_ATTEMPTS = 150;
+/** Reels container processing — poll ~8s, stay under 300s route limit with publish headroom. */
+export const REELS_CONTAINER_POLL_INTERVAL_MS = 8000;
+export const REELS_CONTAINER_POLL_MAX_ATTEMPTS = 34;
+
+/** Meta Reels video constraints (dryRun). */
+export const REELS_MIN_DURATION_SEC = 3;
+export const REELS_MAX_DURATION_SEC = 15 * 60;
+export const REELS_ASPECT_RATIO_MIN = 0.5625;
+export const REELS_ASPECT_RATIO_MAX = 1.91;
 
 /** Instagram Reels remote video URL limit (dryRun validation). */
 export const REELS_VIDEO_MAX_BYTES = 300 * 1024 * 1024;
@@ -35,5 +41,6 @@ export const IG_DIRECT_UPLOAD_MAX_BYTES = 4 * 1024 * 1024;
 
 export const REELS_VIDEO_CONTENT_TYPES = ["video/mp4", "video/quicktime"] as const;
 
-/** Bundled demo MP4 for preview dryRun / Range checks when Blob object is missing. */
-export const IG_DEMO_REEL_PATH = `${IG_BLOB_PREFIX}demo/publish-sample.mp4`;
+/** Client upload path: server-chosen UUID folder + .mp4 filename only. */
+export const IG_VIDEO_CLIENT_UPLOAD_PATH =
+  /^berlinxkw\/instagram\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[A-Za-z0-9._-]+\.mp4$/i;

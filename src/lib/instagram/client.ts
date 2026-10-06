@@ -106,7 +106,7 @@ async function waitForContainerReady(
       searchParams: { fields: "status_code,status" },
     });
     const code = status.status_code ?? status.status;
-    if (code === "FINISHED") return;
+    if (code === "FINISHED" || code === "PUBLISHED") return;
     if (code === "ERROR") {
       const detail = status.status ?? status.status_code;
       throw new Error(

@@ -1,27 +1,32 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
+import { canonicalBlobPathname } from "@/lib/blob-pathname";
 import { authorizeInstagramPortal } from "@/lib/instagram/auth-request";
-import { IG_BLOB_PREFIX, IG_UPLOAD_VIDEO_MAX_BYTES } from "@/lib/instagram/constants";
+import { IG_UPLOAD_VIDEO_MAX_BYTES, IG_VIDEO_CLIENT_UPLOAD_PATH } from "@/lib/instagram/constants";
 import { uploadInstagramJpeg, uploadInstagramMp4 } from "@/lib/instagram/media";
 
 export const runtime = "nodejs";
+
+function assertClientUploadPathname(pathname: string): void {
+  const canonical = canonicalBlobPathname(pathname);
+  if (!canonical || !IG_VIDEO_CLIENT_UPLOAD_PATH.test(canonical)) {
+    throw new Error(
+      "Upload pathname must be berlinxkw/instagram/{uuid}/{filename}.mp4 with no traversal.",
+    );
+  }
+}
 
 async function handleClientBlobUpload(req: Request, jsonBody: HandleUploadBody): Promise<Response> {
   const result = await handleUpload({
     request: req,
     body: jsonBody,
     onBeforeGenerateToken: async (pathname) => {
-      if (!pathname.startsWith(IG_BLOB_PREFIX)) {
-        throw new Error("Upload pathname must start with the Instagram media prefix.");
-      }
-      if (!pathname.toLowerCase().endsWith(".mp4")) {
-        throw new Error("Client upload is supported for .mp4 Reels video only.");
-      }
+      assertClientUploadPathname(pathname);
       return {
         allowedContentTypes: ["video/mp4"],
         maximumSizeInBytes: IG_UPLOAD_VIDEO_MAX_BYTES,
-        addRandomSuffix: false,
-        allowOverwrite: true,
+        addRandomSuffix: true,
+        allowOverwrite: false,
       };
     },
   });
@@ -32,21 +37,15 @@ async function handleClientBlobUpload(req: Request, jsonBody: HandleUploadBody):
 export async function POST(req: Request) {
   const contentType = req.headers.get("content-type") ?? "";
   if (contentType.includes("application/json")) {
+    if (!(await authorizeInstagramPortal())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     let jsonBody: unknown;
     try {
       jsonBody = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-    }
-
-    const eventType =
-      jsonBody && typeof jsonBody === "object" && "type" in jsonBody
-        ? (jsonBody as { type?: string }).type
-        : undefined;
-    const isUploadCompleted = eventType === "blob.upload-completed";
-
-    if (!isUploadCompleted && !(await authorizeInstagramPortal())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     try {
