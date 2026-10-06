@@ -1063,25 +1063,20 @@ textarea.bk-input[dir="auto"] {
   .bk-tablo-tile-media--frame-stage .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage img {
     box-sizing: border-box;
-    display: block;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
     object-position: center;
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] img {
-    max-width: min(100%, calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-landscape-w)));
-    max-height: 100%;
-    object-view-box: inset(13% 10.5% 14.5% 14%);
+    object-view-box: inset(14% 12.5% 14% 12.5%);
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] .bk-tablo-picture,
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="portrait"] img {
-    max-height: min(100%, calc(var(--bk-grid-long-px) / var(--bk-grid-frame-frac-portrait-h)));
-    max-width: 100%;
-    object-view-box: inset(14% 15.5% 14% 15.5%);
+    object-view-box: inset(14% 15% 14% 15%);
   }
 }
 
