@@ -1,4 +1,4 @@
-import { handleUpload } from "@vercel/blob/client";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 import { authorizeInstagramPortal } from "@/lib/instagram/auth-request";
 import { IG_BLOB_PREFIX, IG_UPLOAD_VIDEO_MAX_BYTES } from "@/lib/instagram/constants";
@@ -6,9 +6,7 @@ import { uploadInstagramJpeg, uploadInstagramMp4 } from "@/lib/instagram/media";
 
 export const runtime = "nodejs";
 
-async function handleClientBlobUpload(req: Request): Promise<Response> {
-  const jsonBody = await req.json();
-
+async function handleClientBlobUpload(req: Request, jsonBody: HandleUploadBody): Promise<Response> {
   const result = await handleUpload({
     request: req,
     body: jsonBody,
@@ -32,18 +30,35 @@ async function handleClientBlobUpload(req: Request): Promise<Response> {
 }
 
 export async function POST(req: Request) {
-  if (!(await authorizeInstagramPortal())) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const contentType = req.headers.get("content-type") ?? "";
   if (contentType.includes("application/json")) {
+    let jsonBody: unknown;
     try {
-      return await handleClientBlobUpload(req);
+      jsonBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const eventType =
+      jsonBody && typeof jsonBody === "object" && "type" in jsonBody
+        ? (jsonBody as { type?: string }).type
+        : undefined;
+    const isUploadCompleted = eventType === "blob.upload-completed";
+
+    if (!isUploadCompleted && !(await authorizeInstagramPortal())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+      return await handleClientBlobUpload(req, jsonBody as HandleUploadBody);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       return NextResponse.json({ error: msg }, { status: 400 });
     }
+  }
+
+  if (!(await authorizeInstagramPortal())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let form: FormData;
