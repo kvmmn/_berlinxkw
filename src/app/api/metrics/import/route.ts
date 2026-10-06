@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { getCurrentWeek } from "@/lib/brain";
 import { extractMetricsFromInsights } from "@/lib/metrics-import";
 import { loadState, saveState } from "@/lib/storage";
@@ -9,6 +10,8 @@ const MAX_TEXT = 32_000;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const contentType = req.headers.get("content-type") ?? "";
 
   let text: string | undefined;

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { deleteIdeaMedia, withClientMediaUrls } from "@/lib/idea-media";
 import { loadState, saveState } from "@/lib/storage";
 import type { IdeaStatus } from "@/lib/types";
@@ -7,6 +8,8 @@ export async function PATCH(
   req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const body = (await req.json()) as {
     status?: IdeaStatus;
@@ -42,6 +45,8 @@ export async function DELETE(
   _req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const { state } = await loadState();
   const idx = state.ideas?.findIndex((i) => i.id === id) ?? -1;

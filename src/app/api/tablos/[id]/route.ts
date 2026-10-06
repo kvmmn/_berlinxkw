@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
 import {
   applyFrameFinishFieldsFromForm,
@@ -15,6 +16,8 @@ export async function PATCH(
   req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const contentType = req.headers.get("content-type") ?? "";
 
@@ -156,6 +159,8 @@ export async function DELETE(
   _req: Request,
   ctx: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { id } = await ctx.params;
   const { state } = await loadState();
   const idx = state.tablos?.findIndex((t) => t.id === id) ?? -1;

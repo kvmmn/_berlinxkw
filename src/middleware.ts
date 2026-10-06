@@ -11,8 +11,19 @@ const PUBLIC_API_PREFIXES = ["/api/shop", "/api/auth/login"] as const;
 /** Routes that authenticate via Bearer secret inside the handler (not portal cookie). */
 const BEARER_AUTH_API_PATHS = ["/api/instagram/publish", "/api/instagram/refresh-token"] as const;
 
+const STATIC_EXT = /\.(png|jpg|svg|ico|webp)$/i;
+
 function matchesPrefix(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
+/** Static files from public/ (e.g. /ig/**) — never skip auth for /api/* or /portal*. */
+export function isPublicStaticAssetPath(pathname: string): boolean {
+  if (pathname.startsWith("/api/") || matchesPrefix(pathname, "/portal")) {
+    return false;
+  }
+  if (pathname.startsWith("/favicon")) return true;
+  return STATIC_EXT.test(pathname);
 }
 
 function isPublicPath(pathname: string): boolean {
@@ -43,11 +54,7 @@ async function rejectUnauthenticated(request: NextRequest, pathname: string): Pr
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.match(/\.(png|jpg|svg|ico|webp)$/)
-  ) {
+  if (pathname.startsWith("/_next") || isPublicStaticAssetPath(pathname)) {
     return NextResponse.next();
   }
 

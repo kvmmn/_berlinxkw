@@ -1,5 +1,6 @@
 import { timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import {
   AUTH_COOKIE,
   createSessionToken,
@@ -27,6 +28,14 @@ export async function isAuthenticated(): Promise<boolean> {
   const jar = await cookies();
   const session = jar.get(AUTH_COOKIE)?.value;
   return verifySessionToken(session);
+}
+
+/** Defence-in-depth for portal API handlers (middleware also verifies session token). */
+export async function requirePortalSession(): Promise<NextResponse | null> {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
 }
 
 export { createSessionToken, sessionCookieMaxAgeSec, verifySessionToken };

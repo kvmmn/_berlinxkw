@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { requirePortalSession } from "@/lib/auth";
 import { loadState, saveState } from "@/lib/storage";
 import type { Decision, DecisionOwner, DecisionStatus } from "@/lib/types";
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const body = (await req.json()) as {
     sessionId: string;
     weekId: string;
