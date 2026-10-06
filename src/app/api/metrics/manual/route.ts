@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { getCurrentWeek } from "@/lib/brain";
 import { loadState, saveState } from "@/lib/storage";
 import { parseDailySnapshots, parseWeekMetrics } from "@/lib/metrics-parse";
@@ -6,6 +7,8 @@ import { parseDailySnapshots, parseWeekMetrics } from "@/lib/metrics-parse";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const body = (await req.json()) as {
     metrics?: unknown;
     dailySnapshots?: unknown;

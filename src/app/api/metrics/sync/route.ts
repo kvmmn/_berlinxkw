@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requirePortalSession } from "@/lib/auth";
 import { getCurrentWeek } from "@/lib/brain";
 import {
   fetchInstagramMetricsForWeek,
@@ -10,6 +11,8 @@ import { loadState, saveState } from "@/lib/storage";
 export const runtime = "nodejs";
 
 export async function GET() {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   return NextResponse.json({
     configured: isInstagramSyncConfigured(),
     hint: instagramSyncHint(),
@@ -17,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST() {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   if (!isInstagramSyncConfigured()) {
     return NextResponse.json(
       {

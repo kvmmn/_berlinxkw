@@ -1,9 +1,12 @@
 import { runPortalAgentStream } from "@/agents/stream";
+import { requirePortalSession } from "@/lib/auth";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   if (!process.env.OPENAI_API_KEY) {
     return new Response(
       JSON.stringify({

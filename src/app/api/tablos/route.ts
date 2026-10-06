@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { requirePortalSession } from "@/lib/auth";
 import { defaultCaptionDraft, slugifyTablo } from "@/lib/shop-url";
 import { applyFrameFinishFieldsFromForm } from "@/lib/tablo-frame-api";
 import { FRAME_FINISHES, tabloDefaultFrameFinish } from "@/lib/frame-finish";
@@ -11,6 +12,8 @@ import type { Tablo, TabloStatus } from "@/lib/types";
 export const runtime = "nodejs";
 
 export async function GET() {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const { state } = await loadState();
   const tablos = [...(state.tablos ?? [])].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
@@ -29,6 +32,8 @@ function uniqueSlug(base: string, existing: Tablo[]): string {
 }
 
 export async function POST(req: Request) {
+  const denied = await requirePortalSession();
+  if (denied) return denied;
   const contentType = req.headers.get("content-type") ?? "";
   if (!contentType.includes("multipart/form-data")) {
     return NextResponse.json({ error: "Expected multipart/form-data" }, { status: 400 });
