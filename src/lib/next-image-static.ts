@@ -1,8 +1,4 @@
-import {
-  GALLERY_PACK_GAP,
-  GALLERY_PACK_REFERENCE_WIDTH,
-  GALLERY_TARGET_ROW_HEIGHT_DESKTOP,
-} from "@/lib/tablo-gallery-rows";
+import { GALLERY_PACK_GAP, GALLERY_PACK_REFERENCE_WIDTH } from "@/lib/tablo-gallery-rows";
 
 /**
  * Deterministic `/_next/image` URLs for native `<img srcset>` (SSR === client bytes).
@@ -49,12 +45,11 @@ export function assertStaticOptimizerWidthsAllowed(): void {
 assertStaticOptimizerWidthsAllowed();
 
 /**
- * Widest landscape tile at desktop row height (~430px @ 360px row), from packing reference.
+ * Widest landscape tile long edge (70 cm) in a reference 2×70 + 50 cm row.
  * Used as the desktop `sizes` cap so DPR2 landscape tiles reach ≥828/1080w.
  */
-/** ~430px at 360px desktop row height (widest landscape in reference packing). */
 export const GRID_LANDSCAPE_TILE_MAX_PX = Math.round(
-  GALLERY_TARGET_ROW_HEIGHT_DESKTOP * (430 / 360),
+  ((GALLERY_PACK_REFERENCE_WIDTH - 2 * GALLERY_PACK_GAP) * 70) / 190,
 );
 
 /** Share of gallery row width for the widest landscape cell (reference pack width). */

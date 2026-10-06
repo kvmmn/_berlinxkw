@@ -1,3 +1,4 @@
+import { FRAME_LONG_CM, frameGridCellFlexGrow } from "./tablo-frame-spec";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
 
 /** Parse CSS aspect-ratio string (e.g. `4032 / 3024`) to width/height flex-grow weight. */
@@ -21,8 +22,13 @@ export function chunkTabloGalleryRows<T>(items: T[], columns: number): T[][] {
   return rows;
 }
 
+export function rowWidthCmSum(row: TabloGalleryLayoutItem[]): number {
+  return row.reduce((sum, item) => sum + frameGridCellFlexGrow(item.orientation), 0);
+}
+
+/** @deprecated Use rowWidthCmSum */
 export function rowAspectSum(row: TabloGalleryLayoutItem[]): number {
-  return row.reduce((sum, item) => sum + tabloAspectFlexGrow(item.productAspect), 0);
+  return rowWidthCmSum(row);
 }
 
 /** Reference content width for greedy packing (~1240px shell minus gutters). */
@@ -31,8 +37,11 @@ export const GALLERY_PACK_REFERENCE_WIDTH = 1140;
 /** Row gap used when estimating pack width (matches desktop gallery gap upper bound). */
 export const GALLERY_PACK_GAP = 44;
 
-/** Target row height for greedy packing on desktop. */
-export const GALLERY_TARGET_ROW_HEIGHT_DESKTOP = 360;
+/** Target long-edge (70 cm) px for greedy packing on desktop. */
+export const GALLERY_TARGET_ROW_LONG_EDGE_PX = 400;
+
+/** @deprecated Renamed to GALLERY_TARGET_ROW_LONG_EDGE_PX (grid row long-edge target). */
+export const GALLERY_TARGET_ROW_HEIGHT_DESKTOP = GALLERY_TARGET_ROW_LONG_EDGE_PX;
 
 export type JustifiedGalleryRowPlan = {
   items: TabloGalleryLayoutItem[];
@@ -49,9 +58,9 @@ export function computeJustifiedRowHeightPx(
   referenceWidth: number = GALLERY_PACK_REFERENCE_WIDTH,
   gap: number = GALLERY_PACK_GAP,
 ): number {
-  if (itemCount <= 0 || aspectSum <= 0) return GALLERY_TARGET_ROW_HEIGHT_DESKTOP;
+  if (itemCount <= 0 || aspectSum <= 0) return GALLERY_TARGET_ROW_LONG_EDGE_PX;
   const gaps = Math.max(0, itemCount - 1) * gap;
-  return (referenceWidth - gaps) / aspectSum;
+  return ((referenceWidth - gaps) * FRAME_LONG_CM) / aspectSum;
 }
 
 function balanceSingleTileTail(packed: TabloGalleryLayoutItem[][]): void {
@@ -74,7 +83,7 @@ export function planJustifiedGalleryRows(
   options?: {
     referenceWidth?: number;
     gap?: number;
-    targetRowHeight?: number;
+    targetLongEdgePx?: number;
   },
 ): JustifiedGalleryRowPlan[] {
   if (items.length === 0) return [];
@@ -84,43 +93,43 @@ export function planJustifiedGalleryRows(
 
   const referenceWidth = options?.referenceWidth ?? GALLERY_PACK_REFERENCE_WIDTH;
   const gap = options?.gap ?? GALLERY_PACK_GAP;
-  const targetRowHeight = options?.targetRowHeight ?? GALLERY_TARGET_ROW_HEIGHT_DESKTOP;
-  const maxAspectPerRow = referenceWidth / targetRowHeight;
+  const targetLongEdgePx = options?.targetLongEdgePx ?? GALLERY_TARGET_ROW_LONG_EDGE_PX;
+  const maxWidthCmPerRow = (referenceWidth * FRAME_LONG_CM) / targetLongEdgePx;
 
   const packed: TabloGalleryLayoutItem[][] = [];
   let current: TabloGalleryLayoutItem[] = [];
-  let aspectSum = 0;
+  let widthCmSum = 0;
 
   for (const item of items) {
-    const aspect = tabloAspectFlexGrow(item.productAspect);
+    const widthCm = frameGridCellFlexGrow(item.orientation);
     current.push(item);
-    aspectSum += aspect;
+    widthCmSum += widthCm;
 
-    if (current.length >= 3 && aspectSum >= maxAspectPerRow) {
+    if (current.length >= 3 && widthCmSum >= maxWidthCmPerRow) {
       packed.push(current);
       current = [];
-      aspectSum = 0;
+      widthCmSum = 0;
     }
   }
   if (current.length > 0) packed.push(current);
 
   balanceSingleTileTail(packed);
 
-  let referenceRowHeight: number | undefined;
+  let referenceLongEdgePx: number | undefined;
 
   return packed.map((rowItems, index) => {
     const isLast = index === packed.length - 1;
     const layout = isLast && packed.length > 1 ? "tail" : "full";
-    const sum = rowAspectSum(rowItems);
+    const sum = rowWidthCmSum(rowItems);
 
     if (layout === "full") {
-      referenceRowHeight = computeJustifiedRowHeightPx(sum, rowItems.length, referenceWidth, gap);
+      referenceLongEdgePx = computeJustifiedRowHeightPx(sum, rowItems.length, referenceWidth, gap);
     }
 
     return {
       items: rowItems,
       layout,
-      rowHeightPx: layout === "tail" ? referenceRowHeight : undefined,
+      rowHeightPx: layout === "tail" ? referenceLongEdgePx : undefined,
     };
   });
 }

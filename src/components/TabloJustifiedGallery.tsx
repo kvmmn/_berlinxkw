@@ -1,8 +1,9 @@
 import {
-  planJustifiedGalleryRows,
-  rowAspectSum,
-  tabloAspectFlexGrow,
-} from "@/lib/tablo-gallery-rows";
+  frameGridCellFlexGrow,
+  frameGridStageAspect,
+  rowStageRefWidthCm,
+} from "@/lib/tablo-frame-spec";
+import { planJustifiedGalleryRows, rowWidthCmSum } from "@/lib/tablo-gallery-rows";
 import type { TabloGalleryLayoutItem } from "@/lib/tablo-gallery-order";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -16,24 +17,22 @@ export function TabloJustifiedGallery({
   renderTile: (item: TabloGalleryLayoutItem, index: number) => ReactNode;
 }) {
   const rows = planJustifiedGalleryRows(items);
-  const firstFull = rows.find((row) => row.layout === "full");
-  const galleryStyle = firstFull
-    ? ({
-        "--bk-ref-aspect-sum": String(rowAspectSum(firstFull.items)),
-        "--bk-ref-cells": String(firstFull.items.length),
-      } as CSSProperties)
-    : undefined;
   let tileIndex = 0;
 
   return (
-    <div
-      className={`bk-tablo-justified-gallery ${className}`.trim()}
-      style={galleryStyle}
-    >
+    <div className={`bk-tablo-justified-gallery ${className}`.trim()}>
       {rows.map((row) => (
         <ul
           key={row.items.map((i) => i.tablo.id).join("-")}
           className={`bk-tablo-justified-row bk-tablo-justified-row--${row.layout}`}
+          style={
+            {
+              "--bk-row-width-cm-sum": String(rowWidthCmSum(row.items)),
+              "--bk-row-cells": String(row.items.length),
+              "--bk-row-stage-ref-width-cm": String(rowStageRefWidthCm(row.items)),
+              "--bk-grid-frame-long-px": "calc(var(--bk-grid-long-px) * 0.72)",
+            } as CSSProperties
+          }
           role="list"
         >
           {row.items.map((item) => {
@@ -44,8 +43,8 @@ export function TabloJustifiedGallery({
                 className="bk-tablo-justified-cell"
                 style={
                   {
-                    "--tile-aspect-grow": String(tabloAspectFlexGrow(item.productAspect)),
-                    "--tile-aspect-ratio": item.productAspect.replace(/\s+/g, " "),
+                    "--tile-width-grow": String(frameGridCellFlexGrow(item.orientation)),
+                    "--tile-aspect-ratio": frameGridStageAspect(item.orientation),
                   } as CSSProperties
                 }
               >
