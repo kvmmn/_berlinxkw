@@ -13,9 +13,8 @@ import {
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
-import { tabloGridWallTone } from "@/lib/tablo-grid-wall-tone";
+import { tabloGridStageStyle } from "@/lib/tablo-grid-wall-tone";
 import type { FrameFinish, Tablo } from "@/lib/types";
-import type { CSSProperties } from "react";
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
   if (kind === "framed") return `${tablo.title} — framed tablo on wall`;
@@ -93,9 +92,7 @@ export function TabloCardMedia({
     <TabloOptimizedPicture {...pictureProps} alt={alt} layout={fit} />
   );
 
-  const gridStageStyle = gridOrientation
-    ? ({ ["--bk-grid-wall-tone"]: tabloGridWallTone(tablo) } as CSSProperties)
-    : undefined;
+  const gridStageStyle = gridOrientation ? tabloGridStageStyle(tablo) : undefined;
 
   return (
     <div

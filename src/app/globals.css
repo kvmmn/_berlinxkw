@@ -1059,7 +1059,7 @@ textarea.bk-input[dir="auto"] {
     width: 100%;
     height: var(--bk-row-stage-h);
     overflow: hidden;
-    background: var(--bk-grid-wall-tone, #e6ded4);
+    background-color: #e6ded4;
   }
 
   .bk-tablo-grid-mockup-inner {
@@ -1114,6 +1114,7 @@ textarea.bk-input[dir="auto"] {
       );
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
+    filter: var(--bk-grid-mockup-filter, none);
   }
 
   .bk-tablo-tile-media--frame-stage[data-grid-orientation="landscape"] .bk-tablo-grid-frame-mockup,
