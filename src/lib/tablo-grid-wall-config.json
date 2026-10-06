@@ -3,12 +3,11 @@
   "items": [
     {
       "slug": "berlin-clouds-01",
-      "top": "#e2dbcf",
-      "bottom": "#dfd6cc",
+      "top": "#e1dacd",
+      "bottom": "#ded5ca",
       "left": "#e2dace",
       "right": "#dad0c3",
-      "horizontalBlend": true,
-      "mockupFilter": "brightness(0.978) saturate(0.93)"
+      "horizontalBlend": true
     },
     {
       "slug": "berlin-sunset-2",

@@ -9,6 +9,8 @@ import { join } from "path";
 
 const SHOP = "https://berlinxkw.vercel.app/api/shop";
 const STRIP_FRAC = 0.02;
+/** Own edge-matched stage; not pulled toward shared sunset target. */
+const STAGE_INDEPENDENT_SLUGS = new Set(["berlin-clouds-01"]);
 
 const SLUG_URLS = [
   {
@@ -148,15 +150,12 @@ function mockupFilterForMid(mid, targetRgb) {
 }
 
 function normalizeSlugs(raw) {
+  const sharedRaw = raw.filter((s) => !STAGE_INDEPENDENT_SLUGS.has(s.slug));
   const target = meanRgb(
-    raw.flatMap((s) => [hexToRgb(s.top), hexToRgb(s.bottom), hexToRgb(s.left), hexToRgb(s.right)]),
+    sharedRaw.flatMap((s) => [hexToRgb(s.top), hexToRgb(s.bottom), hexToRgb(s.left), hexToRgb(s.right)]),
   );
 
-  const rawMids = raw.map((s) =>
-    meanRgb([hexToRgb(s.top), hexToRgb(s.bottom), hexToRgb(s.left), hexToRgb(s.right)]),
-  );
-
-  let items = raw.map((s) => ({
+  let sharedItems = sharedRaw.map((s) => ({
     slug: s.slug,
     edges: {
       top: hexToRgb(s.top),
@@ -167,7 +166,7 @@ function normalizeSlugs(raw) {
   }));
 
   for (let iter = 0; iter < 48; iter++) {
-    const mids = items.map((it) => meanRgb([it.edges.top, it.edges.bottom]));
+    const mids = sharedItems.map((it) => meanRgb([it.edges.top, it.edges.bottom]));
     let maxPair = 0;
     for (let i = 0; i < mids.length; i++) {
       for (let j = i + 1; j < mids.length; j++) {
@@ -175,7 +174,7 @@ function normalizeSlugs(raw) {
       }
     }
     if (maxPair <= 2) break;
-    items = items.map((it) => ({
+    sharedItems = sharedItems.map((it) => ({
       ...it,
       edges: {
         top: mix(it.edges.top, target, 0.12),
@@ -187,25 +186,40 @@ function normalizeSlugs(raw) {
   }
 
   const lift = (rgb) => mix(rgb, { r: 255, g: 255, b: 255 }, 0.035);
-
-  return {
-    target: rgbToHex(target),
-    items: items.map((it, index) => {
-      const horizontalBlend = deltaE(it.edges.left, it.edges.right) > 2;
-      const stageMid = meanRgb([it.edges.top, it.edges.bottom]);
-      const filterFromRaw = mockupFilterForMid(rawMids[index], target);
-      const filterFromStage = mockupFilterForMid(stageMid, target);
-      return {
-        slug: it.slug,
+  const sharedBySlug = new Map(
+    sharedItems.map((it) => [
+      it.slug,
+      {
         top: rgbToHex(lift(it.edges.top)),
         bottom: rgbToHex(lift(it.edges.bottom)),
         left: rgbToHex(it.edges.left),
         right: rgbToHex(it.edges.right),
-        horizontalBlend,
-        mockupFilter: filterFromRaw ?? filterFromStage,
+        horizontalBlend: deltaE(it.edges.left, it.edges.right) > 2,
+      },
+    ]),
+  );
+
+  const items = raw.map((s) => {
+    if (STAGE_INDEPENDENT_SLUGS.has(s.slug)) {
+      const edges = {
+        top: hexToRgb(s.top),
+        bottom: hexToRgb(s.bottom),
+        left: hexToRgb(s.left),
+        right: hexToRgb(s.right),
       };
-    }),
-  };
+      return {
+        slug: s.slug,
+        top: s.top,
+        bottom: s.bottom,
+        left: s.left,
+        right: s.right,
+        horizontalBlend: deltaE(edges.left, edges.right) > 2,
+      };
+    }
+    return { slug: s.slug, ...sharedBySlug.get(s.slug) };
+  });
+
+  return { target: rgbToHex(target), items };
 }
 
 async function main() {

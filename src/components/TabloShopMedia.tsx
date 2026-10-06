@@ -13,6 +13,7 @@ import {
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
 import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
+import { tabloGridDisplayImage } from "@/lib/tablo-grid-display-image";
 import { tabloGridStageStyle } from "@/lib/tablo-grid-wall-tone";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
@@ -66,7 +67,7 @@ export function TabloCardMedia({
   /** When set, crop wall mockup to a uniform frame viewport for shop/landing grids. */
   gridOrientation?: TabloOrientation;
 }) {
-  const product = tabloProductImage(tablo);
+  const product = gridOrientation ? tabloGridDisplayImage(tablo) : tabloProductImage(tablo);
   if (!product?.url) {
     return <div className="bk-tablo-card-placeholder bk-meta">no image</div>;
   }
