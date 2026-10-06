@@ -64,9 +64,26 @@ export async function readBlobByPrefix(prefix: string): Promise<string | null> {
   return readBlobText(blobs[0].pathname, false);
 }
 
+export async function headBlob(pathname: string): Promise<{
+  size: number;
+  contentType: string;
+} | null> {
+  const { head } = await import("@vercel/blob");
+  try {
+    const meta = await head(pathname);
+    return {
+      size: meta.size,
+      contentType: meta.contentType ?? "application/octet-stream",
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function streamBlob(pathname: string): Promise<{
   stream: ReadableStream<Uint8Array>;
   contentType: string;
+  size?: number;
 } | null> {
   const { get } = await import("@vercel/blob");
   const result = await get(pathname, { access: BLOB_ACCESS, useCache: true });
@@ -74,5 +91,37 @@ export async function streamBlob(pathname: string): Promise<{
   return {
     stream: result.stream,
     contentType: result.blob.contentType ?? "application/octet-stream",
+    size: result.blob.size,
+  };
+}
+
+export async function streamBlobWithRange(
+  pathname: string,
+  rangeHeader: string | null,
+): Promise<{
+  status: 200 | 206;
+  stream: ReadableStream<Uint8Array>;
+  contentType: string;
+  size: number;
+  contentRange?: string;
+} | null> {
+  const { get } = await import("@vercel/blob");
+  const result = await get(pathname, {
+    access: BLOB_ACCESS,
+    useCache: true,
+    ...(rangeHeader ? { headers: { Range: rangeHeader } } : {}),
+  });
+  if (!result || result.statusCode !== 200 || !result.stream) return null;
+
+  const size = result.blob.size;
+  const contentRange = result.headers.get("Content-Range");
+  const status: 200 | 206 = contentRange ? 206 : 200;
+
+  return {
+    status,
+    stream: result.stream,
+    contentType: result.blob.contentType ?? "application/octet-stream",
+    size,
+    contentRange: contentRange ?? undefined,
   };
 }
