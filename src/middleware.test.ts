@@ -20,6 +20,13 @@ describe("isPublicStaticAssetPath", () => {
   it("allows public ig assets", () => {
     assert.equal(isPublicStaticAssetPath("/ig/sunset-02/1-brass.jpg"), true);
     assert.equal(isPublicStaticAssetPath("/ig/third/1-hook.jpg"), true);
+    assert.equal(isPublicStaticAssetPath("/ig/sunset-03/reel-ig.mp4"), true);
+  });
+
+  it("denies mp4 outside public ig paths", () => {
+    assert.equal(isPublicStaticAssetPath("/secret/reel.mp4"), false);
+    assert.equal(isPublicStaticAssetPath("/ig/reel-ig.mp4"), false);
+    assert.equal(isPublicStaticAssetPath("/api/shop/media.mp4"), false);
   });
 
   it("denies api paths even with image extensions", () => {
@@ -66,6 +73,12 @@ describe("middleware auth", () => {
 
   it("passes public ig static assets without session", async () => {
     const res = await middleware(req("/ig/sunset-02/1-brass.jpg"));
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("x-middleware-next"), "1");
+  });
+
+  it("passes public ig reel mp4 without session", async () => {
+    const res = await middleware(req("/ig/sunset-03/reel-ig.mp4"));
     assert.equal(res.status, 200);
     assert.equal(res.headers.get("x-middleware-next"), "1");
   });

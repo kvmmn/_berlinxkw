@@ -13,6 +13,9 @@ const BEARER_AUTH_API_PATHS = ["/api/instagram/publish", "/api/instagram/refresh
 
 const STATIC_EXT = /\.(png|jpg|svg|ico|webp)$/i;
 
+/** Reels under public/ig/{slug}/*.mp4 — not a global .mp4 bypass. */
+const PUBLIC_IG_MP4 = /^\/ig\/[^/]+\/[^/]+\.mp4$/i;
+
 function matchesPrefix(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
@@ -23,6 +26,7 @@ export function isPublicStaticAssetPath(pathname: string): boolean {
     return false;
   }
   if (pathname.startsWith("/favicon")) return true;
+  if (PUBLIC_IG_MP4.test(pathname)) return true;
   return STATIC_EXT.test(pathname);
 }
 
