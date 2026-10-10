@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloJustifiedGallery } from "@/components/TabloJustifiedGallery";
 import { TabloShopGridTile } from "@/components/TabloShopGridTile";
 import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
+import { prepareShopTablos } from "@/lib/tablo-shop-prepare";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
+import { SITE_HERO_HEADLINE, SITE_HERO_SUBLINE } from "@/lib/site-brand";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -17,19 +18,25 @@ export const viewport = {
 
 export default async function Home() {
   const { state } = await loadState();
-  const tablos = withPublicTabloImages(
-    [...tablosFromState(state)]
-      .filter((t) => t.status === "listed")
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+  const tablos = prepareShopTablos(
+    withPublicTabloImages(
+      [...tablosFromState(state)]
+        .filter((t) => t.status === "listed")
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+    ),
   );
   const layout = planTabloGalleryLayout(await tablosWithLayout(tablos));
 
   return (
     <PublicSiteShell footerNote="original works · berlin">
       <div className="bk-landing-page">
-        <section className="bk-landing-hero" aria-labelledby="landing-tagline">
-          <h1 className="bk-sr-only">berlin × kawe</h1>
-          <LandingTagline id="landing-tagline" className="bk-landing-hero-lead" />
+        <section className="bk-landing-hero" aria-labelledby="landing-headline">
+          <h1 id="landing-headline" className="bk-landing-headline">
+            {SITE_HERO_HEADLINE}
+          </h1>
+          <p id="landing-tagline" className="bk-meta bk-landing-tagline bk-landing-hero-lead">
+            {SITE_HERO_SUBLINE}
+          </p>
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
               view shop

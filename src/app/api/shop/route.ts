@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { normalizeTabloFrameFields } from "@/lib/frame-finish";
+import { prepareShopTablos } from "@/lib/tablo-shop-prepare";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -11,6 +11,6 @@ export async function GET() {
   const tablos = [...tablosFromState(state)]
     .filter((t) => t.status === "listed")
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-  const listed = withPublicTabloImages(tablos).map(normalizeTabloFrameFields);
+  const listed = prepareShopTablos(withPublicTabloImages(tablos));
   return NextResponse.json({ tablos: listed });
 }

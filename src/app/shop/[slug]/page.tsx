@@ -4,7 +4,9 @@ import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
-import { normalizeTabloFrameFields, tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
+import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
 import { frameSizeLabel, orientationCopy } from "@/lib/tablo-frame-spec";
@@ -34,7 +36,7 @@ export default async function TabloDetailPage({
   if (!raw) notFound();
 
   const [tabloRaw] = withPublicTabloImages([raw]);
-  const tablo = normalizeTabloFrameFields(tabloRaw);
+  const tablo = prepareShopTablo(tabloRaw);
   const priceLabel = formatEur(tablo.priceEur);
   const initialFinish = tabloDefaultFrameFinish(tablo);
   const [orientation, framedSlotAspect, artworkAspect] = await Promise.all([
@@ -62,6 +64,7 @@ export default async function TabloDetailPage({
           <div className="bk-tablo-detail-copy">
             <p className="bk-meta bk-tablo-detail-eyebrow">original tablo · berlin</p>
             <h1 className="bk-tablo-detail-title">{tabloTitleWithBoundEmDash(tablo.title)}</h1>
+            <TabloImprovisationSubtitle tablo={tablo} className="bk-tablo-detail-improvisation" />
             <p className="bk-tablo-detail-price">{priceLabel}</p>
             <p className="bk-meta bk-tablo-detail-frame-spec">
               <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>
