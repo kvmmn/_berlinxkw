@@ -94,4 +94,10 @@ describe("middleware auth", () => {
     assert.equal(res.status, 200);
     assert.equal(res.headers.get("x-middleware-next"), "1");
   });
+
+  it("passes instagram insights without portal cookie (handler bearer auth)", async () => {
+    const res = await middleware(req("/api/instagram/insights"));
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("x-middleware-next"), "1");
+  });
 });
