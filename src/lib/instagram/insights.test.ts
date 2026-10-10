@@ -98,6 +98,13 @@ describe("GET /api/instagram/insights auth and methods", () => {
     );
   });
 
+  it("does not accept portal session cookie without bearer", () => {
+    const req = new Request(insightsUrl("recent=5"), {
+      headers: { cookie: "bk_portal_session=forged-session-token" },
+    });
+    assert.equal(authorizeInstagramInsights(req), false);
+  });
+
   it("returns 400 for invalid media ids", () => {
     const parsed = parseInsightsQuery(new URL(insightsUrl("media=12abc")).searchParams);
     assert.ok(parsed && "error" in parsed);
