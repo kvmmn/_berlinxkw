@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { PublicAdvisorMark } from "@/components/PublicAdvisorMark";
 import { PublicSiteHeader } from "@/components/PublicSiteHeader";
+import { COLLECTION_FOOTER } from "@/lib/site-brand";
 
 export function PublicSiteShell({
   children,
-  footerNote = "original tablos · berlin",
+  footerNote = COLLECTION_FOOTER,
 }: {
   children: React.ReactNode;
   footerNote?: string;

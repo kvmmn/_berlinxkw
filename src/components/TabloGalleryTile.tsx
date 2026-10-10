@@ -9,7 +9,11 @@ import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from 
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
-import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
+import {
+  tabloImageAltSuffix,
+  tabloTitleWithBoundEmDash,
+  tabloVisibleTitle,
+} from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -39,9 +43,7 @@ export function TabloGalleryTile({
     trustServer: true,
   });
   const framed = tabloFramedImageForFinish(tablo);
-  const alt = framed
-    ? `${tablo.title} — framed tablo on wall`
-    : `${tablo.title} — original artwork`;
+  const alt = tabloImageAltSuffix(tablo, framed ? "framed" : "artwork");
 
   return (
     <article className="bk-tablo-tile">
@@ -64,7 +66,9 @@ export function TabloGalleryTile({
       </TabloAspectFrame>
       <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+          <h2 className="bk-tablo-tile-title">
+            {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
+          </h2>
         </Link>
         <p className="bk-meta bk-tablo-tile-meta">
           <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>

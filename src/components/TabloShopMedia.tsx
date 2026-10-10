@@ -15,13 +15,15 @@ import { aspectRatioFromImage } from "@/lib/tablo-aspect";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloGridDisplayImage } from "@/lib/tablo-grid-display-image";
 import { tabloGridStageStyle } from "@/lib/tablo-grid-wall-tone";
+import { tabloImageAltSuffix } from "@/lib/tablo-title-display";
 import type { FrameFinish, Tablo } from "@/lib/types";
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
-  if (kind === "framed") return `${tablo.title} — framed tablo on wall`;
-  if (kind === "artwork") return `${tablo.title} — original artwork`;
   const hasFramed = Boolean(tabloFramedImageForFinish(tablo));
-  return hasFramed ? `${tablo.title} — framed tablo on wall` : `${tablo.title} — tablo artwork`;
+  if (kind === "product") {
+    return tabloImageAltSuffix(tablo, hasFramed ? "framed" : "artwork");
+  }
+  return tabloImageAltSuffix(tablo, kind);
 }
 
 type MediaFrameProps = {
@@ -150,7 +152,7 @@ export function TabloDetailGalleryAllFinishes({
             {framed?.url ? (
               <MediaFrame
                 src={framed.url}
-                alt={`${tablo.title} — framed tablo on wall`}
+                alt={tabloImageAltSuffix(tablo, "framed")}
                 mime={framed.mime}
                 sizes={tabloPictureSizes("detail")}
                 priority={finish === priorityFinish}
@@ -177,7 +179,7 @@ export function TabloDetailGalleryAllFinishes({
         <figure className="bk-tablo-detail-figure">
           <MediaFrame
             src={artwork.url}
-            alt={`${tablo.title} — original artwork`}
+            alt={tabloImageAltSuffix(tablo, "artwork")}
             mime={artwork.mime}
             sizes={tabloPictureSizes("detail")}
             aspectRatio={artworkAspect}

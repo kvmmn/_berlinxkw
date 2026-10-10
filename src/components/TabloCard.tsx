@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
@@ -8,7 +9,7 @@ import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
-import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
+import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -43,14 +44,17 @@ export function TabloCard({
       <Link
         href={`/shop/${tablo.slug}`}
         className="bk-tablo-tile-media-link"
-        aria-label={`View ${tablo.title}`}
+        aria-label={`View ${tabloVisibleTitle(tablo)}`}
       >
         <TabloCardMedia tablo={tablo} aspectRatio={productAspect} />
       </Link>
       <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+          <h2 className="bk-tablo-tile-title">
+            {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
+          </h2>
         </Link>
+        <TabloImprovisationSubtitle tablo={tablo} />
         <p className="bk-meta bk-tablo-tile-meta">
           <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import {
   frameGridStageAspect,
@@ -7,7 +8,7 @@ import {
 } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
-import { tabloTitleWithBoundEmDash } from "@/lib/tablo-title-display";
+import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
 import type { Tablo } from "@/lib/types";
 
 function formatEur(price: number): string {
@@ -39,7 +40,7 @@ export function TabloShopGridTile({
       <Link
         href={`/shop/${tablo.slug}`}
         className="bk-tablo-tile-media-link"
-        aria-label={`View ${tablo.title}`}
+        aria-label={`View ${tabloVisibleTitle(tablo)}`}
       >
         <TabloCardMedia
           tablo={tablo}
@@ -52,8 +53,11 @@ export function TabloShopGridTile({
       </Link>
       <div className="bk-tablo-tile-caption">
         <Link href={`/shop/${tablo.slug}`}>
-          <h2 className="bk-tablo-tile-title">{tabloTitleWithBoundEmDash(tablo.title)}</h2>
+          <h2 className="bk-tablo-tile-title">
+            {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
+          </h2>
         </Link>
+        <TabloImprovisationSubtitle tablo={tablo} />
         <p className="bk-meta bk-tablo-tile-meta">
           <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>

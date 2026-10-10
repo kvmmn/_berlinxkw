@@ -125,6 +125,10 @@ export interface Tablo {
   marketplaceUrl?: string;
   /** Instagram caption template; use {shopLink} for the public listing URL. */
   captionDraft?: string;
+  /** Optional improvisation index (rendered zero-padded on shop). */
+  improvisationNo?: number;
+  /** Short line after the improvisation number, e.g. "ten minutes of orange". */
+  improvisationLine?: string;
 }
 
 export interface AppState {

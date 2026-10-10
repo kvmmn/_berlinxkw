@@ -2000,6 +2000,28 @@ textarea.bk-input[dir="auto"] {
   margin: 0;
 }
 
+.bk-landing-headline {
+  margin: 0;
+  font-family: var(--bk-font-display);
+  font-size: clamp(1.65rem, 4.5vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.bk-tablo-improvisation {
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.bk-tablo-detail-improvisation {
+  margin-top: 0.35rem;
+}
+
 .bk-skip-link {
   position: absolute;
   left: -9999px;
