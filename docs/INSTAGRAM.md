@@ -45,6 +45,7 @@ All Instagram routes except public media are gated by portal cookie `bk_portal_s
 | Method | Path | Auth | Purpose |
 |--------|------|------|---------|
 | `POST` | `/api/instagram/publish` | Portal **or** `Authorization: Bearer $IG_PUBLISH_SECRET` | Validate and publish |
+| `GET` | `/api/instagram/insights` | `Authorization: Bearer $IG_PUBLISH_SECRET` only | Read-only media/account insights (Graph GET) |
 | `GET` | `/api/instagram/status` | Portal | Token expiry, username, refresh health |
 | `GET` | `/api/instagram/refresh-token` | `CRON_SECRET` **or** portal | Refresh long-lived token (daily cron) |
 | `POST` | `/api/instagram/media` | Portal | Upload JPEG → public Blob URL |

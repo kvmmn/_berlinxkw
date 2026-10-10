@@ -9,7 +9,11 @@ const PUBLIC_PAGE_PREFIXES = ["/shop", "/login"] as const;
 const PUBLIC_API_PREFIXES = ["/api/shop", "/api/auth/login"] as const;
 
 /** Routes that authenticate via Bearer secret inside the handler (not portal cookie). */
-const BEARER_AUTH_API_PATHS = ["/api/instagram/publish", "/api/instagram/refresh-token"] as const;
+const BEARER_AUTH_API_PATHS = [
+  "/api/instagram/publish",
+  "/api/instagram/refresh-token",
+  "/api/instagram/insights",
+] as const;
 
 const STATIC_EXT = /\.(png|jpg|svg|ico|webp)$/i;
 
