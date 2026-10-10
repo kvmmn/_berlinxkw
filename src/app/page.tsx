@@ -5,7 +5,13 @@ import { TabloShopGridTile } from "@/components/TabloShopGridTile";
 import { planTabloGalleryLayout } from "@/lib/tablo-gallery-layout";
 import { prepareShopTablos } from "@/lib/tablo-shop-prepare";
 import { tablosWithLayout } from "@/lib/tablo-shop-list";
-import { SITE_HERO_HEADLINE, SITE_HERO_SUBLINE } from "@/lib/site-brand";
+import {
+  COLLECTION_FOOTER,
+  COLLECTION_HOME_ALL_LINK,
+  COLLECTION_HOME_SECTION,
+  SITE_HERO_HEADLINE,
+  SITE_HERO_SUBLINE,
+} from "@/lib/site-brand";
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
@@ -28,7 +34,7 @@ export default async function Home() {
   const layout = planTabloGalleryLayout(await tablosWithLayout(tablos));
 
   return (
-    <PublicSiteShell footerNote="original works · berlin">
+    <PublicSiteShell footerNote={COLLECTION_FOOTER}>
       <div className="bk-landing-page">
         <section className="bk-landing-hero" aria-labelledby="landing-headline">
           <h1 id="landing-headline" className="bk-landing-headline">
@@ -56,10 +62,10 @@ export default async function Home() {
           <section className="bk-landing-gallery-section" aria-labelledby="landing-tablos-heading">
             <div className="bk-landing-gallery-head">
               <h2 id="landing-tablos-heading" className="bk-meta bk-landing-gallery-label">
-                listed tablos
+                {COLLECTION_HOME_SECTION}
               </h2>
               <Link href="/shop" className="bk-meta bk-landing-gallery-all">
-                all works
+                {COLLECTION_HOME_ALL_LINK}
               </Link>
             </div>
             <TabloJustifiedGallery

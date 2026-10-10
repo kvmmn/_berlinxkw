@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 
 export default function NotFound() {
   return (
-    <PublicSiteShell footerNote="original tablos · berlin">
+    <PublicSiteShell>
       <div className="bk-public-not-found">
         <p className="bk-meta">404</p>
         <h1 className="bk-public-not-found-title">page not found</h1>

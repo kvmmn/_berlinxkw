@@ -1,19 +1,13 @@
 import "server-only";
 
 import { isAuthenticated } from "@/lib/auth";
+import {
+  authorizeInstagramInsights,
+  bearerToken,
+  verifyPublishSecret,
+} from "@/lib/instagram/publish-auth";
 
-export function bearerToken(req: Request): string | null {
-  const header = req.headers.get("authorization");
-  if (!header?.toLowerCase().startsWith("bearer ")) return null;
-  return header.slice(7).trim() || null;
-}
-
-export function verifyPublishSecret(req: Request): boolean {
-  const secret = process.env.IG_PUBLISH_SECRET?.trim();
-  if (!secret) return false;
-  const token = bearerToken(req);
-  return Boolean(token && token === secret);
-}
+export { authorizeInstagramInsights, bearerToken, verifyPublishSecret };
 
 export function verifyCronSecret(req: Request): boolean {
   const secret = process.env.CRON_SECRET?.trim();

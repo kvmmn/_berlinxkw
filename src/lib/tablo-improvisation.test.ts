@@ -24,23 +24,10 @@ function stubTablo(overrides: Partial<Tablo> & Pick<Tablo, "slug">): Tablo {
 }
 
 describe("tablo-improvisation", () => {
-  it("applies canonical fields for Berlin listed slugs", () => {
-    const clouds = applyTabloImprovisationFields(stubTablo({ slug: "berlin-clouds-01" }));
-    assert.equal(clouds.improvisationNo, 1);
-    assert.equal(clouds.improvisationLine, "one contrail at dusk");
-    assert.equal(
-      tabloImprovisationLabel(clouds),
-      "Improvisation No. 01 — one contrail at dusk",
-    );
-
-    const sunset2 = applyTabloImprovisationFields(stubTablo({ slug: "berlin-sunset-02" }));
-    assert.equal(
-      tabloImprovisationLabel(sunset2),
-      "Improvisation No. 02 — ten minutes of orange",
-    );
-
-    const sunset3 = applyTabloImprovisationFields(stubTablo({ slug: "berlin-sunset-03" }));
-    assert.equal(tabloImprovisationLabel(sunset3), "Improvisation No. 03 — Berlin goes gold");
+  it("applies canonical numbers for Berlin listed slugs", () => {
+    assert.equal(tabloImprovisationLabel(stubTablo({ slug: "berlin-clouds-01" })), "Improvisation No. 01");
+    assert.equal(tabloImprovisationLabel(stubTablo({ slug: "berlin-sunset-02" })), "Improvisation No. 02");
+    assert.equal(tabloImprovisationLabel(stubTablo({ slug: "berlin-sunset-03" })), "Improvisation No. 03");
   });
 
   it("leaves unrelated tablos without improvisation", () => {
@@ -49,12 +36,8 @@ describe("tablo-improvisation", () => {
     assert.equal(tabloImprovisationLabel(demo), null);
   });
 
-  it("prefers persisted values over canonical defaults", () => {
-    const tablo = stubTablo({
-      slug: "berlin-clouds-01",
-      improvisationNo: 9,
-      improvisationLine: "custom line",
-    });
-    assert.equal(tabloImprovisationLabel(tablo), "Improvisation No. 09 — custom line");
+  it("prefers persisted improvisationNo over canonical defaults", () => {
+    const tablo = stubTablo({ slug: "berlin-clouds-01", improvisationNo: 9 });
+    assert.equal(tabloImprovisationLabel(tablo), "Improvisation No. 09");
   });
 });
