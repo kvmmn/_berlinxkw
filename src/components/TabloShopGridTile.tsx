@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import {
   frameGridStageAspect,
@@ -57,7 +56,6 @@ export function TabloShopGridTile({
             {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
           </h2>
         </Link>
-        <TabloImprovisationSubtitle tablo={tablo} />
         <p className="bk-meta bk-tablo-tile-meta">
           <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>

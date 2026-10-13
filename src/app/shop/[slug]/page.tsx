@@ -5,7 +5,6 @@ import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
-import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
@@ -93,7 +92,6 @@ export default async function TabloDetailPage({
             <h1 className="bk-tablo-detail-title">
               {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
             </h1>
-            <TabloImprovisationSubtitle tablo={tablo} className="bk-tablo-detail-improvisation" />
             <p className="bk-tablo-detail-price">{priceLabel}</p>
             <p className="bk-meta bk-tablo-detail-frame-spec">
               <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>
