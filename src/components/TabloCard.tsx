@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { TabloImprovisationSubtitle } from "@/components/TabloImprovisationSubtitle";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
@@ -54,7 +53,6 @@ export function TabloCard({
             {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
           </h2>
         </Link>
-        <TabloImprovisationSubtitle tablo={tablo} />
         <p className="bk-meta bk-tablo-tile-meta">
           <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
           <span aria-hidden="true"> · </span>
