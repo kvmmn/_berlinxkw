@@ -1,4 +1,4 @@
-import { RunEn, RunFa } from "@/components/BidiRun";
+import { RunEn, RunFa, RunLtrToken } from "@/components/BidiRun";
 import {
   formatShopPriceEur,
   tabloShopSizeById,
@@ -51,7 +51,8 @@ export function TabloDetailSizeFieldset({
                   {config.label} — {dimLabel}, {mat.en} — {price}
                 </RunEn>
                 <RunFa className="bk-tablo-size-option-secondary">
-                  {config.labelFa} — {dimLabel}، {mat.fa} — {price}
+                  {config.labelFa} — <RunLtrToken>{dimLabel}</RunLtrToken>، {mat.fa} —{" "}
+                  <RunLtrToken>{price}</RunLtrToken>
                 </RunFa>
               </span>
             </label>

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
-import { RunEn, RunFa, RunSep } from "@/components/BidiRun";
+import { RunEn, RunFa, RunLtrToken, RunSep } from "@/components/BidiRun";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
@@ -127,6 +127,8 @@ export default async function TabloDetailPage({
                     {dir.en}
                   </RunEn>
                   <RunFa className="bk-tablo-detail-frame-spec-fa">
+                    <RunLtrToken>{tabloSizeFrameLabel(sizeOpt.id, orientation)}</RunLtrToken>
+                    <RunSep />
                     {mat.fa}
                     <RunSep />
                     {dir.fa}

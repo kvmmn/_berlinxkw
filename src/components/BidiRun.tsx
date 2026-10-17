@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 /** English (LTR) run — keeps mixed-script lines from reordering in RTL contexts. */
 export function RunEn({
@@ -31,6 +31,21 @@ export function RunFa({
       lang="fa"
       className={`bk-run-fa bk-text-fa ${nowrap ? "bk-run-fa-nowrap" : ""} ${className}`.trim()}
     >
+      {children}
+    </span>
+  );
+}
+
+/** Numeric tokens (dimensions, prices) embedded in RTL copy — keep LTR visual order. */
+export function RunLtrToken({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span dir="ltr" lang="en" className={`bk-run-ltr-token ${className}`.trim()}>
       {children}
     </span>
   );

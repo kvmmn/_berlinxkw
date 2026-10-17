@@ -1607,8 +1607,13 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-run-en,
-.bk-run-fa {
+.bk-run-fa,
+.bk-run-ltr-token {
   unicode-bidi: isolate;
+}
+
+.bk-run-ltr-token {
+  white-space: nowrap;
 }
 
 .bk-run-fa-nowrap {
