@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LandingTagline } from "@/components/LandingTagline";
 import { PublicSiteShell } from "@/components/PublicSiteShell";
 import { TabloJustifiedGallery } from "@/components/TabloJustifiedGallery";
 import { TabloShopGridTile } from "@/components/TabloShopGridTile";
@@ -40,9 +41,8 @@ export default async function Home() {
           <h1 id="landing-headline" className="bk-landing-headline">
             {SITE_HERO_HEADLINE}
           </h1>
-          <p id="landing-tagline" className="bk-meta bk-landing-tagline bk-landing-hero-lead">
-            {SITE_HERO_SUBLINE}
-          </p>
+          <p className="bk-meta bk-landing-hero-lead">{SITE_HERO_SUBLINE}</p>
+          <LandingTagline id="landing-tagline" className="bk-landing-hero-lead" />
           <div className="bk-landing-actions">
             <Link href="/shop" className="bk-btn bk-btn-primary">
               view shop

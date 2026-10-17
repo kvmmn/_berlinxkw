@@ -1368,15 +1368,34 @@ textarea.bk-input[dir="auto"] {
   gap: clamp(1.25rem, 3vw, 1.75rem);
 }
 
-.bk-tablo-detail-grid .bk-tablo-detail-figure-finish {
+.bk-tablo-detail-grid .bk-tablo-detail-figure-finish,
+.bk-tablo-detail-grid .bk-tablo-detail-price,
+.bk-tablo-detail-grid .bk-tablo-detail-frame-spec {
   display: none;
 }
 
-.bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
-.bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
-  .bk-tablo-detail-finish-matte-black-brushed,
-.bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
-  .bk-tablo-detail-finish-matte-steel-brushed {
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="bronze"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-black-brushed"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-steel-brushed"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="bronze"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-black-brushed"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-steel-brushed"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed {
+  display: block;
+}
+
+.bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-price-size-large,
+.bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-price-size-mini {
+  display: block;
+}
+
+.bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-frame-spec-size-large,
+.bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-frame-spec-size-mini {
   display: block;
 }
 
@@ -1402,11 +1421,22 @@ textarea.bk-input[dir="auto"] {
 }
 
 @supports selector(:has(*)) {
-  .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
-  .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
-    .bk-tablo-detail-finish-matte-black-brushed,
-  .bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
-    .bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="bronze"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-black-brushed"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-steel-brushed"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="bronze"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-black-brushed"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-steel-brushed"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-price-size-large,
+  .bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-price-size-mini,
+  .bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-frame-spec-size-large,
+  .bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-frame-spec-size-mini,
   .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-buy-btn-finish-bronze,
   .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
     .bk-tablo-detail-buy-btn-finish-matte-black-brushed,
@@ -1420,12 +1450,44 @@ textarea.bk-input[dir="auto"] {
     display: none;
   }
 
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
-    .bk-tablo-detail-finish-bronze,
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
-    .bk-tablo-detail-finish-matte-black-brushed,
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
-    .bk-tablo-detail-finish-matte-steel-brushed {
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="bronze"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-black-brushed"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="bronze"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-black-brushed"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed {
+    display: block;
+  }
+
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked)
+    .bk-tablo-detail-price-size-large,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked)
+    .bk-tablo-detail-price-size-mini {
+    display: block;
+  }
+
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked)
+    .bk-tablo-detail-frame-spec-size-large,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked)
+    .bk-tablo-detail-frame-spec-size-mini {
     display: block;
   }
 
@@ -1446,6 +1508,26 @@ textarea.bk-input[dir="auto"] {
     .bk-tablo-detail-buy-note-finish-matte-steel-brushed {
     display: block;
   }
+}
+
+.bk-tablo-size-fieldset .bk-tablo-size-option input[type="radio"] {
+  flex-shrink: 0;
+}
+
+.bk-tablo-size-option-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.bk-tablo-size-option-title {
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.bk-tablo-size-option-meta {
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .bk-tablo-detail-figure {

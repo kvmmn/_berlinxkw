@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { orderTablosForGalleryGrid, type TabloGalleryLayoutItem } from "./tablo-gallery-order";
+import { prepareShopTablo } from "./tablo-shop-prepare";
 import type { Tablo } from "./types";
 
 function stubTablo(id: string): Tablo {
@@ -21,7 +22,7 @@ function stubTablo(id: string): Tablo {
 
 function item(id: string, orientation: "landscape" | "portrait"): TabloGalleryLayoutItem {
   return {
-    tablo: stubTablo(id),
+    tablo: prepareShopTablo(stubTablo(id)),
     orientation,
     productAspect: "4 / 3",
     artworkAspect: "4 / 3",

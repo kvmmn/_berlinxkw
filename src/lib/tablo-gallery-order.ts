@@ -1,8 +1,8 @@
 import type { TabloOrientation } from "./tablo-frame-spec";
-import type { Tablo } from "./types";
+import type { ShopTablo } from "./types";
 
 export type TabloGalleryLayoutItem = {
-  tablo: Tablo;
+  tablo: ShopTablo;
   orientation: TabloOrientation;
   productAspect: string;
   artworkAspect: string;

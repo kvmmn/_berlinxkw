@@ -1,9 +1,12 @@
 import { TabloDetailFinishFieldset } from "@/components/TabloDetailFinishFieldset";
+import { TabloDetailSizeFieldset } from "@/components/TabloDetailSizeFieldset";
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
-import type { FrameFinish, Tablo } from "@/lib/types";
+import type { TabloShopSizeId } from "@/lib/types";
+import type { TabloOrientation } from "@/lib/tablo-frame-spec";
+import type { FrameFinish, ShopTablo } from "@/lib/types";
 
-function finishNoteCopy(tablo: Tablo, finish: FrameFinish, external: boolean) {
+function finishNoteCopy(tablo: ShopTablo, finish: FrameFinish, external: boolean) {
   const label = FRAME_FINISH_LABELS[finish];
   if (external) {
     return <>If the shop link omits finish, choose {label.en} at checkout.</>;
@@ -22,19 +25,29 @@ function finishNoteCopy(tablo: Tablo, finish: FrameFinish, external: boolean) {
   );
 }
 
-/** SSR purchase UI: finish radios, buy CTA, and note toggled via CSS :has(). */
+/** SSR purchase UI: size + finish radios, buy CTA, and note toggled via CSS :has(). */
 export function TabloDetailPurchaseBlock({
   tablo,
+  orientation,
   initialFinish,
+  initialSize,
 }: {
-  tablo: Tablo;
+  tablo: ShopTablo;
+  orientation: TabloOrientation;
   initialFinish: FrameFinish;
+  initialSize: TabloShopSizeId;
 }) {
   const external = tabloBuyExternal(tablo);
   const externalAttrs = external ? { target: "_blank" as const, rel: "noopener noreferrer" } : {};
+  const sizeIds = tablo.sizes.map((s) => s.id);
 
   return (
     <>
+      <TabloDetailSizeFieldset
+        sizeIds={sizeIds}
+        orientation={orientation}
+        initialSize={initialSize}
+      />
       <TabloDetailFinishFieldset initialFinish={initialFinish} />
       <div className="bk-tablo-detail-cta">
         {FRAME_FINISHES.map((finish) => (

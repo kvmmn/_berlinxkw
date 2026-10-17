@@ -6,25 +6,18 @@ import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
-import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { shopGridPriceLabel } from "@/lib/tablo-sizes";
+import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
-import type { Tablo } from "@/lib/types";
-
-function formatEur(price: number): string {
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
+import type { ShopTablo } from "@/lib/types";
 
 export function TabloCard({
   tablo,
   orientation: initialOrientation = "portrait",
   productAspect: initialProductAspect,
 }: {
-  tablo: Tablo;
+  tablo: ShopTablo;
   orientation?: TabloOrientation;
   productAspect: string;
 }) {
@@ -54,9 +47,7 @@ export function TabloCard({
           </h2>
         </Link>
         <p className="bk-meta bk-tablo-tile-meta">
-          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
-          <span aria-hidden="true"> · </span>
-          <span>{frameSizeLabel(orientation)}</span>
+          <span className="bk-tablo-tile-price">{shopGridPriceLabel()}</span>
         </p>
         {tablo.status === "sold" ? (
           <span className="bk-meta bk-tablo-sold">sold</span>
