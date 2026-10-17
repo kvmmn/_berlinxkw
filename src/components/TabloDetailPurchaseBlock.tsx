@@ -1,3 +1,4 @@
+import { RunEn, RunFa } from "@/components/BidiRun";
 import { TabloDetailFinishFieldset } from "@/components/TabloDetailFinishFieldset";
 import { TabloDetailSizeFieldset } from "@/components/TabloDetailSizeFieldset";
 import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
@@ -16,11 +17,11 @@ function finishNoteCopy(tablo: ShopTablo, finish: FrameFinish, external: boolean
   }
   return (
     <>
-      DM @berlinxkw — finish: {label.en} (
-      <span className="bk-text-fa" lang="fa">
-        {label.fa}
-      </span>
-      ).
+      <RunEn>
+        DM @berlinxkw — finish: {label.en} (
+      </RunEn>
+      <RunFa nowrap>{label.fa}</RunFa>
+      <RunEn>).</RunEn>
     </>
   );
 }

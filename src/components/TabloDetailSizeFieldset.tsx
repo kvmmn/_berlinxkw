@@ -1,3 +1,4 @@
+import { RunEn, RunFa } from "@/components/BidiRun";
 import {
   formatShopPriceEur,
   tabloShopSizeById,
@@ -24,13 +25,17 @@ export function TabloDetailSizeFieldset({
   return (
     <fieldset className="bk-frame-finish-fieldset bk-frame-finish-fieldset--shop bk-tablo-size-fieldset">
       <legend className="bk-meta">
-        size · <span lang="fa">اندازه</span>
+        <RunEn>size</RunEn>
+        <span aria-hidden="true"> · </span>
+        <RunFa>اندازه</RunFa>
       </legend>
       <div className="bk-frame-finish-options bk-tablo-size-options" role="radiogroup" aria-label="Size">
         {sizeIds.map((sizeId) => {
           const config = tabloShopSizeById(sizeId);
           const dims = tabloSizeDimensionsForOrientation(sizeId, orientation);
           const mat = tabloSizeMatLabel(sizeId);
+          const dimLabel = `${dims.widthCm}×${dims.heightCm} cm`;
+          const price = formatShopPriceEur(config.priceEur);
           const inputId = `${idPrefix}-size-${sizeId}`;
           return (
             <label key={sizeId} className="bk-frame-finish-option bk-tablo-size-option" htmlFor={inputId}>
@@ -42,22 +47,12 @@ export function TabloDetailSizeFieldset({
                 defaultChecked={sizeId === initialSize}
               />
               <span className="bk-tablo-size-option-copy">
-                <span className="bk-tablo-size-option-title">
-                  {config.label}
-                  <span className="bk-text-fa" lang="fa">
-                    {" "}
-                    · {config.labelFa}
-                  </span>
-                </span>
-                <span className="bk-meta bk-tablo-size-option-meta">
-                  {dims.widthCm}×{dims.heightCm} cm · {mat.en}
-                  <span className="bk-text-fa" lang="fa">
-                    {" "}
-                    · {mat.fa}
-                  </span>
-                  <span aria-hidden="true"> · </span>
-                  {formatShopPriceEur(config.priceEur)}
-                </span>
+                <RunEn className="bk-tablo-size-option-primary">
+                  {config.label} — {dimLabel}, {mat.en} — {price}
+                </RunEn>
+                <RunFa className="bk-tablo-size-option-secondary bk-meta">
+                  {config.labelFa} — {dimLabel}، {mat.fa} — {price}
+                </RunFa>
               </span>
             </label>
           );

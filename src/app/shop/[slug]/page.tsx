@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
+import { RunEn, RunFa, RunSep } from "@/components/BidiRun";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
@@ -118,21 +119,18 @@ export default async function TabloDetailPage({
                   key={sizeOpt.id}
                   className={`bk-meta bk-tablo-detail-frame-spec bk-tablo-detail-frame-spec-size-${sizeOpt.id}`}
                 >
-                  <span className="bk-tablo-detail-frame-size">
+                  <RunEn className="bk-tablo-detail-frame-spec-en">
                     {tabloSizeFrameLabel(sizeOpt.id, orientation)}
-                  </span>
-                  <span aria-hidden="true"> · </span>
-                  <span>{mat.en}</span>
-                  <span className="bk-text-fa" lang="fa">
-                    {" "}
-                    · {mat.fa}
-                  </span>
-                  <span aria-hidden="true"> · </span>
-                  <span className="bk-tablo-detail-frame-dir">{dir.en}</span>
-                  <span aria-hidden="true"> · </span>
-                  <span className="bk-text-fa bk-tablo-detail-frame-dir-fa" lang="fa">
+                    <RunSep />
+                    {mat.en}
+                    <RunSep />
+                    {dir.en}
+                  </RunEn>
+                  <RunFa className="bk-tablo-detail-frame-spec-fa">
+                    {mat.fa}
+                    <RunSep />
                     {dir.fa}
-                  </span>
+                  </RunFa>
                 </p>
               );
             })}
