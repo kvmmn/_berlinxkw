@@ -50,7 +50,7 @@ export function TabloDetailSizeFieldset({
                 <RunEn className="bk-tablo-size-option-primary">
                   {config.label} — {dimLabel}, {mat.en} — {price}
                 </RunEn>
-                <RunFa className="bk-tablo-size-option-secondary bk-meta">
+                <RunFa className="bk-tablo-size-option-secondary">
                   {config.labelFa} — {dimLabel}، {mat.fa} — {price}
                 </RunFa>
               </span>

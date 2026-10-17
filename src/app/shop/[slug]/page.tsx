@@ -117,7 +117,7 @@ export default async function TabloDetailPage({
               return (
                 <p
                   key={sizeOpt.id}
-                  className={`bk-meta bk-tablo-detail-frame-spec bk-tablo-detail-frame-spec-size-${sizeOpt.id}`}
+                  className={`bk-tablo-detail-frame-spec bk-tablo-detail-frame-spec-size-${sizeOpt.id}`}
                 >
                   <RunEn className="bk-tablo-detail-frame-spec-en">
                     {tabloSizeFrameLabel(sizeOpt.id, orientation)}
