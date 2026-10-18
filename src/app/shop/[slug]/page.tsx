@@ -6,7 +6,6 @@ import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { RunEn, RunFa, RunLtrToken, RunSep } from "@/components/BidiRun";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
-import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
@@ -64,7 +63,6 @@ export default async function TabloDetailPage({
 
   const [tabloRaw] = withPublicTabloImages([raw]);
   const tablo = prepareShopTablo(tabloRaw);
-  const initialFinish = tabloDefaultFrameFinish(tablo);
   const initialSize: TabloShopSizeId = tablo.sizes.some((s) => s.id === "large")
     ? "large"
     : tablo.sizes[0]?.id ?? "large";
@@ -84,18 +82,13 @@ export default async function TabloDetailPage({
         <Link href="/shop" className="bk-meta bk-shop-back">
           {COLLECTION_SHOP_BACK}
         </Link>
-        <div
-          className="bk-tablo-detail-grid"
-          data-default-finish={initialFinish}
-          data-default-size={initialSize}
-        >
+        <div className="bk-tablo-detail-grid" data-default-size={initialSize}>
           <div className="bk-tablo-detail-media bk-tablo-detail-root">
             <TabloDetailGalleryAllFinishes
               tablo={tablo}
               orientation={orientation}
               framedSlotAspect={framedSlotAspect}
               artworkAspect={artworkAspect}
-              priorityFinish={initialFinish}
               prioritySize={initialSize}
             />
           </div>
@@ -140,7 +133,6 @@ export default async function TabloDetailPage({
             <TabloDetailPurchaseBlock
               tablo={tablo}
               orientation={orientation}
-              initialFinish={initialFinish}
               initialSize={initialSize}
             />
           </div>

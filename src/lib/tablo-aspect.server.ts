@@ -6,7 +6,7 @@ import {
   MOCKUP_FALLBACK_PORTRAIT,
 } from "./tablo-aspect";
 import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "./tablo-images";
-import { FRAME_FINISHES, tabloDefaultFrameFinish } from "./frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "./shop-public-frame-finish";
 import { orientationFromDimensions } from "./tablo-frame-spec";
 import type { Tablo, TabloImage } from "./types";
 
@@ -31,7 +31,7 @@ export async function tabloArtworkAspect(tablo: Tablo): Promise<string> {
 }
 
 export async function tabloProductAspect(tablo: Tablo): Promise<string> {
-  const product = tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
+  const product = tabloProductImage(tablo, SHOP_PUBLIC_FRAME_FINISH);
   const artwork = tabloArtworkImage(tablo);
   const artDims = artwork ? await probeTabloImageDimensions(artwork) : null;
   const fallback =
@@ -43,10 +43,7 @@ export async function tabloProductAspect(tablo: Tablo): Promise<string> {
 
 /** Shared framed slot ratio for all finishes on a tablo (zero layout shift). */
 export async function tabloFramedSlotAspect(tablo: Tablo): Promise<string> {
-  const framedCandidates = FRAME_FINISHES.map((finish) => tabloFramedImageForFinish(tablo, finish)).filter(
-    (img): img is TabloImage => Boolean(img),
-  );
-  const framed = framedCandidates[0] ?? tabloFramedImageForFinish(tablo, tabloDefaultFrameFinish(tablo));
+  const framed = tabloFramedImageForFinish(tablo, SHOP_PUBLIC_FRAME_FINISH);
   const artwork = tabloArtworkImage(tablo);
   const artDims = artwork ? await probeTabloImageDimensions(artwork) : null;
   const fallback =
@@ -57,5 +54,5 @@ export async function tabloFramedSlotAspect(tablo: Tablo): Promise<string> {
 }
 
 function productFallbackImage(tablo: Tablo): TabloImage | null {
-  return tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
+  return tabloProductImage(tablo, SHOP_PUBLIC_FRAME_FINISH);
 }

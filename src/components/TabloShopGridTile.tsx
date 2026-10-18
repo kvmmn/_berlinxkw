@@ -2,8 +2,7 @@ import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
 import { frameGridStageAspect, type TabloOrientation } from "@/lib/tablo-frame-spec";
 import { shopGridPriceLabel } from "@/lib/tablo-sizes";
-import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
-import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { tabloBuyExternal, tabloBuyLabel, tabloShopBuyUrl } from "@/lib/shop-buy";
 import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
 import type { ShopTablo } from "@/lib/types";
 
@@ -20,7 +19,7 @@ export function TabloShopGridTile({
   priority?: boolean;
 }) {
   const stageAspect = frameGridStageAspect(orientation);
-  const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
+  const buyHref = tabloShopBuyUrl(tablo);
   const external = tabloBuyExternal(tablo);
 
   return (

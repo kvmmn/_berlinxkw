@@ -1,41 +1,47 @@
 import { RunEn, RunFa } from "@/components/BidiRun";
-import { TabloDetailFinishFieldset } from "@/components/TabloDetailFinishFieldset";
 import { TabloDetailSizeFieldset } from "@/components/TabloDetailSizeFieldset";
-import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
-import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
+import { tabloBuyExternal, tabloBuyLabel, tabloShopBuyUrl } from "@/lib/shop-buy";
+import { tabloShopSizeById } from "@/lib/tablo-sizes";
+import { tabloVisibleTitle } from "@/lib/tablo-title-display";
 import type { TabloShopSizeId } from "@/lib/types";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
-import type { FrameFinish, ShopTablo } from "@/lib/types";
+import type { ShopTablo } from "@/lib/types";
 
-function finishNoteCopy(tablo: ShopTablo, finish: FrameFinish, external: boolean) {
-  const label = FRAME_FINISH_LABELS[finish];
+function purchaseNoteCopy(tablo: ShopTablo, sizeId: TabloShopSizeId, external: boolean) {
+  const size = tabloShopSizeById(sizeId);
+  const title = tabloVisibleTitle(tablo);
   if (external) {
-    return <>If the shop link omits finish, choose {label.en} at checkout.</>;
+    return (
+      <RunEn>
+        Brass frame only — choose {size.label} at checkout if size options appear.
+      </RunEn>
+    );
   }
   if (tablo.marketplaceUrl?.trim()) {
-    return <>Finish is in the link when supported — else note {label.en}.</>;
+    return (
+      <RunEn>
+        Size is in the link when supported — else note {size.label} ({title}).
+      </RunEn>
+    );
   }
   return (
     <>
       <RunEn>
-        DM @berlinxkw — finish: {label.en} (
+        DM @berlinxkw — {title}, {size.label}
       </RunEn>
-      <RunFa nowrap>{label.fa}</RunFa>
-      <RunEn>).</RunEn>
+      <RunFa className="bk-tablo-detail-buy-note-fa">{size.labelFa}</RunFa>
     </>
   );
 }
 
-/** SSR purchase UI: size + finish radios, buy CTA, and note toggled via CSS :has(). */
+/** SSR purchase UI: size radios, buy CTA, and DM note toggled via CSS :has() on size. */
 export function TabloDetailPurchaseBlock({
   tablo,
   orientation,
-  initialFinish,
   initialSize,
 }: {
   tablo: ShopTablo;
   orientation: TabloOrientation;
-  initialFinish: FrameFinish;
   initialSize: TabloShopSizeId;
 }) {
   const external = tabloBuyExternal(tablo);
@@ -49,24 +55,20 @@ export function TabloDetailPurchaseBlock({
         orientation={orientation}
         initialSize={initialSize}
       />
-      <TabloDetailFinishFieldset initialFinish={initialFinish} />
       <div className="bk-tablo-detail-cta">
-        {FRAME_FINISHES.map((finish) => (
-          <a
-            key={finish}
-            href={tabloBuyUrl(tablo, finish)}
-            className={`bk-btn bk-btn-primary bk-tablo-buy-lg bk-tablo-detail-buy-btn-finish bk-tablo-detail-buy-btn-finish-${finish}`}
-            {...externalAttrs}
-          >
-            {tabloBuyLabel(tablo)}
-          </a>
-        ))}
-        {FRAME_FINISHES.map((finish) => (
+        <a
+          href={tabloShopBuyUrl(tablo)}
+          className="bk-btn bk-btn-primary bk-tablo-buy-lg bk-tablo-detail-buy-btn"
+          {...externalAttrs}
+        >
+          {tabloBuyLabel(tablo)}
+        </a>
+        {sizeIds.map((sizeId) => (
           <p
-            key={finish}
-            className={`bk-tablo-buy-note bk-tablo-detail-buy-note-finish bk-tablo-detail-buy-note-finish-${finish}`}
+            key={sizeId}
+            className={`bk-tablo-buy-note bk-tablo-detail-buy-note-size bk-tablo-detail-buy-note-size-${sizeId}`}
           >
-            {finishNoteCopy(tablo, finish, external)}
+            {purchaseNoteCopy(tablo, sizeId, external)}
           </p>
         ))}
       </div>

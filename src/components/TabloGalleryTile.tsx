@@ -4,7 +4,7 @@ import Link from "next/link";
 import { TabloAspectFrame } from "@/components/TabloAspectFrame";
 import { TabloPicture, tabloPictureSizes } from "@/components/TabloPicture";
 import { intrinsicDimensionsFromAspect } from "@/lib/tablo-image-intrinsic";
-import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "@/lib/shop-public-frame-finish";
 import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
@@ -31,7 +31,7 @@ export function TabloGalleryTile({
   const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
     trustServer: true,
   });
-  const product = tabloProductImage(tablo, tabloDefaultFrameFinish(tablo));
+  const product = tabloProductImage(tablo, SHOP_PUBLIC_FRAME_FINISH);
   const productAspect = useTabloImageAspect(initialProductAspect, product?.url, {
     trustServer: true,
   });

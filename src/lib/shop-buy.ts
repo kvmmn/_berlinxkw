@@ -1,4 +1,5 @@
 import { FRAME_FINISH_LABELS } from "./frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "./shop-public-frame-finish";
 import type { FrameFinish, Tablo } from "./types";
 
 const INSTAGRAM_BUY_FALLBACK = "https://instagram.com/berlinxkw";
@@ -19,6 +20,11 @@ export function tabloBuyUrl(tablo: Tablo, finish?: FrameFinish): string {
   const base = url || INSTAGRAM_BUY_FALLBACK;
   if (!finish) return base;
   return appendFrameFinishQuery(base, finish);
+}
+
+/** Public shop CTA — brass only. */
+export function tabloShopBuyUrl(tablo: Tablo): string {
+  return tabloBuyUrl(tablo, SHOP_PUBLIC_FRAME_FINISH);
 }
 
 export function tabloBuyLabel(tablo: Tablo): string {

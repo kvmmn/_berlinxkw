@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
-import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "@/lib/shop-public-frame-finish";
 import { tabloArtworkImage, tabloProductImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
 import { shopGridPriceLabel } from "@/lib/tablo-sizes";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
-import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
+import { tabloBuyExternal, tabloBuyLabel, tabloShopBuyUrl } from "@/lib/shop-buy";
 import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
 import type { ShopTablo } from "@/lib/types";
 
@@ -24,11 +24,11 @@ export function TabloCard({
   const orientation = useTabloOrientation(initialOrientation, tabloArtworkImage(tablo)?.url, {
     trustServer: true,
   });
-  const product = tabloProductImage(tablo);
+  const product = tabloProductImage(tablo, SHOP_PUBLIC_FRAME_FINISH);
   const productAspect = useTabloImageAspect(initialProductAspect, product?.url, {
     trustServer: true,
   });
-  const buyHref = tabloBuyUrl(tablo, tabloDefaultFrameFinish(tablo));
+  const buyHref = tabloShopBuyUrl(tablo);
   const external = tabloBuyExternal(tablo);
 
   return (
