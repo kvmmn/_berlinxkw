@@ -20,7 +20,7 @@ export const TABLO_SHOP_SIZE_LARGE: TabloShopSizeConfig = {
   shortCm: 50,
   longCm: 70,
   mat: true,
-  priceEur: 109,
+  priceEur: 99,
 };
 
 export const TABLO_SHOP_SIZE_MINI: TabloShopSizeConfig = {
@@ -30,7 +30,7 @@ export const TABLO_SHOP_SIZE_MINI: TabloShopSizeConfig = {
   shortCm: 30,
   longCm: 40,
   mat: false,
-  priceEur: 79,
+  priceEur: 69,
 };
 
 export const TABLO_SHOP_SIZES: readonly TabloShopSizeConfig[] = [
