@@ -1,4 +1,3 @@
-import { RunEn, RunFa } from "@/components/BidiRun";
 import { TabloDetailSizeFieldset } from "@/components/TabloDetailSizeFieldset";
 import { tabloBuyExternal, tabloBuyLabel, tabloShopBuyUrl } from "@/lib/shop-buy";
 import { tabloShopSizeById } from "@/lib/tablo-sizes";
@@ -7,31 +6,16 @@ import type { TabloShopSizeId } from "@/lib/types";
 import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import type { ShopTablo } from "@/lib/types";
 
-function purchaseNoteCopy(tablo: ShopTablo, sizeId: TabloShopSizeId, external: boolean) {
+function purchaseNoteCopy(tablo: ShopTablo, sizeId: TabloShopSizeId, external: boolean): string {
   const size = tabloShopSizeById(sizeId);
   const title = tabloVisibleTitle(tablo);
   if (external) {
-    return (
-      <RunEn>
-        Brass frame only — choose {size.label} at checkout if size options appear.
-      </RunEn>
-    );
+    return `Brass frame only — choose ${size.label} at checkout if size options appear.`;
   }
   if (tablo.marketplaceUrl?.trim()) {
-    return (
-      <RunEn>
-        Size is in the link when supported — else note {size.label} ({title}).
-      </RunEn>
-    );
+    return `Size is in the link when supported — else note ${size.label} (${title}).`;
   }
-  return (
-    <>
-      <RunEn>
-        DM @berlinxkw — {title}, {size.label}
-      </RunEn>
-      <RunFa className="bk-tablo-detail-buy-note-fa">{size.labelFa}</RunFa>
-    </>
-  );
+  return `DM @berlinxkw — ${title}, ${size.label}`;
 }
 
 /** SSR purchase UI: size radios, buy CTA, and DM note toggled via CSS :has() on size. */

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { vazirmatn } from "@/lib/fonts";
 import {
   SITE_HERO_HEADLINE,
   SITE_META_DESCRIPTION,
@@ -34,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={vazirmatn.variable}>
+    <html lang="en">
       <body>
         {children}
         <Analytics />

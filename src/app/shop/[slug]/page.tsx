@@ -4,13 +4,13 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
-import { RunEn, RunFa, RunLtrToken, RunSep } from "@/components/BidiRun";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
 import { orientationCopy } from "@/lib/tablo-frame-spec";
+import { tabloSizeMaterialLineDe } from "@/lib/tablo-shop-material-de";
 import {
   formatShopPriceEur,
   tabloShopSizeById,
@@ -112,20 +112,12 @@ export default async function TabloDetailPage({
                   key={sizeOpt.id}
                   className={`bk-tablo-detail-frame-spec bk-tablo-detail-frame-spec-size-${sizeOpt.id}`}
                 >
-                  <RunEn className="bk-tablo-detail-frame-spec-en">
-                    {tabloSizeFrameLabel(sizeOpt.id, orientation)}
-                    <RunSep />
-                    {mat.en}
-                    <RunSep />
-                    {dir.en}
-                  </RunEn>
-                  <RunFa className="bk-tablo-detail-frame-spec-fa">
-                    <RunLtrToken>{tabloSizeFrameLabel(sizeOpt.id, orientation)}</RunLtrToken>
-                    <RunSep />
-                    {mat.fa}
-                    <RunSep />
-                    {dir.fa}
-                  </RunFa>
+                  <span className="bk-tablo-detail-frame-spec-en">
+                    {tabloSizeFrameLabel(sizeOpt.id, orientation)} · {mat} · {dir.en}
+                  </span>
+                  <span className="bk-tablo-detail-frame-spec-de" lang="de">
+                    {tabloSizeMaterialLineDe(sizeOpt.id, orientation)}
+                  </span>
                 </p>
               );
             })}

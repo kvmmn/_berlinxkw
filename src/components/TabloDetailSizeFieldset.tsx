@@ -1,4 +1,3 @@
-import { RunEn, RunFa, RunLtrToken } from "@/components/BidiRun";
 import {
   formatShopPriceEur,
   tabloShopSizeById,
@@ -24,11 +23,7 @@ export function TabloDetailSizeFieldset({
 
   return (
     <fieldset className="bk-frame-finish-fieldset bk-frame-finish-fieldset--shop bk-tablo-size-fieldset">
-      <legend className="bk-meta">
-        <RunEn>size</RunEn>
-        <span aria-hidden="true"> · </span>
-        <RunFa>اندازه</RunFa>
-      </legend>
+      <legend className="bk-meta">size</legend>
       <div className="bk-frame-finish-options bk-tablo-size-options" role="radiogroup" aria-label="Size">
         {sizeIds.map((sizeId) => {
           const config = tabloShopSizeById(sizeId);
@@ -47,13 +42,9 @@ export function TabloDetailSizeFieldset({
                 defaultChecked={sizeId === initialSize}
               />
               <span className="bk-tablo-size-option-copy">
-                <RunEn className="bk-tablo-size-option-primary">
-                  {config.label} — {dimLabel}, {mat.en} — {price}
-                </RunEn>
-                <RunFa className="bk-tablo-size-option-secondary">
-                  {config.labelFa} — <RunLtrToken>{dimLabel}</RunLtrToken>، {mat.fa} —{" "}
-                  <RunLtrToken>{price}</RunLtrToken>
-                </RunFa>
+                <span className="bk-tablo-size-option-primary">
+                  {config.label} — {dimLabel}, {mat} — {price}
+                </span>
               </span>
             </label>
           );

@@ -545,40 +545,9 @@ textarea.bk-input[dir="auto"] {
   --bk-muted-dim: #7a7a72;
   --bk-border: var(--bk-public-border);
   --bk-surface: var(--bk-public-surface);
-  --bk-public-type-label: 0.8125rem;
-  --bk-public-type-body: 1.0625rem;
-  --bk-public-type-price: clamp(1.15rem, 2.5vw, 1.35rem);
-  --bk-public-label-tracking: 0.05em;
   background: var(--bk-public-bg);
   color: var(--bk-public-ink);
-  font-family: var(--bk-font-text);
-}
-
-/* Public copy: Nimbus sans + Vazirmatn — no typewriter mono on labels/meta */
-.bk-public-root .bk-meta,
-.bk-landing .bk-meta,
-.bk-shop-root .bk-meta {
-  font-family: var(--bk-font-text);
-  font-size: var(--bk-public-type-label);
-  text-transform: none;
-  letter-spacing: 0.03em;
-  font-variant-numeric: tabular-nums;
-}
-
-.bk-public-root .bk-meta :lang(fa),
-.bk-public-root .bk-run-fa.bk-text-fa,
-.bk-landing .bk-meta :lang(fa),
-.bk-shop-root .bk-meta :lang(fa) {
-  font-family: var(--bk-font-persian);
-}
-
-.bk-public-root :is(
-    .bk-tablo-detail-price,
-    .bk-tablo-tile-meta,
-    .bk-tablo-size-option-primary,
-    .bk-run-ltr-token
-  ) {
-  font-variant-numeric: tabular-nums;
+  --bk-font-material-de: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
 }
 
 .bk-public-root .bk-lockup,
@@ -647,10 +616,6 @@ textarea.bk-input[dir="auto"] {
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
-  font-family: var(--bk-font-text);
-  font-weight: 500;
-  letter-spacing: var(--bk-public-label-tracking);
-  font-variant-numeric: tabular-nums;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
 }
@@ -752,10 +717,9 @@ textarea.bk-input[dir="auto"] {
   padding: 0.15rem 0;
   color: var(--bk-public-nav-ink);
   text-transform: uppercase;
-  letter-spacing: var(--bk-public-label-tracking);
+  letter-spacing: 0.06em;
   font-size: 0.875rem;
-  font-family: var(--bk-font-text);
-  font-weight: 500;
+  font-family: var(--bk-font-mono);
 }
 
 @media (max-width: 420px) {
@@ -790,10 +754,9 @@ textarea.bk-input[dir="auto"] {
   min-height: 44px;
   color: var(--bk-muted);
   text-transform: uppercase;
-  letter-spacing: var(--bk-public-label-tracking);
+  letter-spacing: 0.06em;
   font-size: var(--bk-size-meta);
-  font-family: var(--bk-font-text);
-  font-weight: 500;
+  font-family: var(--bk-font-mono);
 }
 
 .bk-shop-root .bk-shop-nav-link:hover,
@@ -1430,15 +1393,6 @@ textarea.bk-input[dir="auto"] {
   flex-direction: column;
 }
 
-.bk-tablo-detail-buy-note-fa {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  text-align: end;
-  font-family: var(--bk-font-persian);
-  color: var(--bk-public-muted);
-  font-size: 0.875rem;
-}
 
 @supports selector(:has(*)) {
   .bk-tablo-detail-grid[data-default-size="large"]
@@ -1551,12 +1505,10 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-detail-price {
   color: var(--bk-public-accent);
-  font-size: var(--bk-public-type-price, clamp(1.15rem, 2.5vw, 1.35rem));
+  font-size: clamp(1.15rem, 2.5vw, 1.35rem);
   margin: 0 0 1rem;
-  font-family: var(--bk-font-text);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--bk-font-mono);
+  letter-spacing: 0.02em;
 }
 
 .bk-tablo-detail-frame-spec {
@@ -1571,8 +1523,7 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: 0.04em;
   line-height: 1.45;
   font-size: clamp(0.875rem, 2vw, 1.0625rem);
-  font-family: var(--bk-font-text);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--bk-font-mono);
 }
 
 .bk-tablo-detail-frame-size,
@@ -1609,18 +1560,18 @@ textarea.bk-input[dir="auto"] {
   text-align: start;
 }
 
-.bk-tablo-detail-frame-spec-fa,
-.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+.bk-tablo-detail-frame-spec-de {
   display: block;
   width: 100%;
-  margin-top: 0.35rem;
-  text-align: end;
+  margin-top: 0.55rem;
+  text-align: start;
   text-transform: none;
-  letter-spacing: normal;
-  font-family: var(--bk-font-persian);
-  color: var(--bk-public-muted);
+  letter-spacing: 0.01em;
+  font-family: var(--bk-font-material-de);
+  font-weight: 400;
+  color: color-mix(in srgb, var(--bk-public-ink) 86%, transparent);
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
 .bk-tablo-size-fieldset .bk-tablo-size-option {
@@ -1638,17 +1589,13 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: normal;
 }
 
-.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
-  font-size: 0.8rem;
-}
-
 .bk-tablo-detail-desc {
   margin: 0 0 1.75rem;
   line-height: 1.65;
   max-width: 42ch;
   color: var(--bk-public-muted);
   font-size: 1.0625rem;
-  font-family: var(--bk-font-text), var(--bk-font-persian), sans-serif;
+  font-family: var(--bk-font-text);
   text-wrap: pretty;
 }
 
@@ -1684,7 +1631,7 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: 0;
   font-size: 0.8125rem;
   min-height: 2.75rem;
-  font-family: var(--bk-font-text), var(--bk-font-persian), sans-serif;
+  font-family: var(--bk-font-text);
   color: var(--bk-public-muted);
 }
 
@@ -1733,7 +1680,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-options {
   margin-top: 0;
-  min-height: 7.5rem;
+  min-height: 0;
 }
 
 .bk-frame-finish-option {
@@ -2143,11 +2090,8 @@ textarea.bk-input[dir="auto"] {
   padding: 0.75rem 1rem;
   background: var(--bk-white);
   color: var(--bk-black);
-  font-family: var(--bk-font-text);
+  font-family: var(--bk-font-mono);
   font-size: var(--bk-size-meta);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: none;
 }
 
 .bk-skip-link:focus {
@@ -2180,9 +2124,7 @@ textarea.bk-input[dir="auto"] {
   min-height: 44px;
   color: var(--bk-muted);
   text-transform: uppercase;
-  letter-spacing: var(--bk-public-label-tracking, 0.05em);
-  font-family: var(--bk-font-text);
-  font-weight: 500;
+  letter-spacing: 0.06em;
 }
 
 .bk-landing-nav-link:hover,

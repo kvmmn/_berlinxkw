@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PublicAdvisorMark } from "@/components/PublicAdvisorMark";
 import { PublicSiteHeader } from "@/components/PublicSiteHeader";
+import { newsreader } from "@/lib/fonts";
 import { COLLECTION_FOOTER } from "@/lib/site-brand";
 
 export function PublicSiteShell({
@@ -11,7 +12,7 @@ export function PublicSiteShell({
   footerNote?: string;
 }) {
   return (
-    <div className="bk-public-root">
+    <div className={`bk-public-root ${newsreader.variable}`}>
       <a href="#main-content" className="bk-skip-link">
         Skip to content
       </a>

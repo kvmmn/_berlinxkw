@@ -17,4 +17,15 @@ describe("sanitizeTabloDescriptionForShop", () => {
   it("returns trimmed empty-safe input", () => {
     assert.equal(sanitizeTabloDescriptionForShop(""), "");
   });
+
+  it("strips Persian script from public copy", () => {
+    const raw = "Neon study · توضیح فارسی · glass print.";
+    assert.equal(sanitizeTabloDescriptionForShop(raw), "Neon study · glass print.");
+  });
+
+  it("collapses empty middot segments after Persian removal (Berlin Sunsets blob)", () => {
+    const raw =
+      "Berlin Sunsets · غروب‌های برلین · berlin × kawe. Original photo · Neon study on glass.";
+    assert.equal(sanitizeTabloDescriptionForShop(raw), "Berlin Sunsets · berlin × kawe.");
+  });
 });
