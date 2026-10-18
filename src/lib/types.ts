@@ -90,6 +90,19 @@ export interface Session {
 
 export type TabloStatus = "draft" | "listed" | "sold";
 
+export type TabloShopSizeId = "large" | "mini";
+
+export interface TabloShopSizeOption {
+  id: TabloShopSizeId;
+  label: string;
+  dimensions: { shortCm: number; longCm: number };
+  mat: boolean;
+  priceEur: number;
+}
+
+/** Listed tablo payload for public shop + `/api/shop` (stored fields + derived sizes). */
+export type ShopTablo = Tablo & { sizes: TabloShopSizeOption[] };
+
 /** Frame metal finish slug on shop tablos (`bronze` | `matte-black-brushed` | `matte-steel-brushed`). */
 export type FrameFinish = "bronze" | "matte-black-brushed" | "matte-steel-brushed";
 

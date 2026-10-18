@@ -1,22 +1,11 @@
 import Link from "next/link";
 import { TabloCardMedia } from "@/components/TabloShopMedia";
-import {
-  frameGridStageAspect,
-  frameSizeLabel,
-  type TabloOrientation,
-} from "@/lib/tablo-frame-spec";
+import { frameGridStageAspect, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { shopGridPriceLabel } from "@/lib/tablo-sizes";
 import { tabloBuyExternal, tabloBuyLabel, tabloBuyUrl } from "@/lib/shop-buy";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloTitleWithBoundEmDash, tabloVisibleTitle } from "@/lib/tablo-title-display";
-import type { Tablo } from "@/lib/types";
-
-function formatEur(price: number): string {
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
+import type { ShopTablo } from "@/lib/types";
 
 /** SSR gallery / shop grid tile — no client probes (stable hydration). */
 export function TabloShopGridTile({
@@ -25,7 +14,7 @@ export function TabloShopGridTile({
   showBuy = true,
   priority = false,
 }: {
-  tablo: Tablo;
+  tablo: ShopTablo;
   orientation: TabloOrientation;
   showBuy?: boolean;
   priority?: boolean;
@@ -57,9 +46,13 @@ export function TabloShopGridTile({
           </h2>
         </Link>
         <p className="bk-meta bk-tablo-tile-meta">
-          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
-          <span aria-hidden="true"> · </span>
-          <span>{frameSizeLabel(orientation)}</span>
+          <span className="bk-tablo-tile-price">{shopGridPriceLabel()}</span>
+          {tablo.sizes.length > 1 ? (
+            <>
+              <span aria-hidden="true"> · </span>
+              <span>2 sizes</span>
+            </>
+          ) : null}
         </p>
         {showBuy &&
           (tablo.status === "sold" ? (

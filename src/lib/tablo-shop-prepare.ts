@@ -1,10 +1,22 @@
 import { normalizeTabloFrameFields } from "./frame-finish";
-import type { Tablo } from "./types";
+import { tabloHasMiniMockups } from "./tablo-mini-images";
+import { tabloShopSizesForApi, type TabloShopSizeId } from "./tablo-sizes";
+import type { ShopTablo, Tablo } from "./types";
 
-export function prepareShopTablo(tablo: Tablo): Tablo {
-  return normalizeTabloFrameFields(tablo);
+function shopSizeIdsForTablo(slug: string): TabloShopSizeId[] {
+  const ids: TabloShopSizeId[] = ["large"];
+  if (tabloHasMiniMockups(slug)) ids.push("mini");
+  return ids;
 }
 
-export function prepareShopTablos(tablos: Tablo[]): Tablo[] {
+export function prepareShopTablo(tablo: Tablo): ShopTablo {
+  const normalized = normalizeTabloFrameFields(tablo);
+  return {
+    ...normalized,
+    sizes: tabloShopSizesForApi(shopSizeIdsForTablo(normalized.slug)),
+  };
+}
+
+export function prepareShopTablos(tablos: Tablo[]): ShopTablo[] {
   return tablos.map(prepareShopTablo);
 }

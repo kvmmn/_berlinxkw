@@ -17,6 +17,13 @@ function req(pathname: string, cookie?: string): NextRequest {
 }
 
 describe("isPublicStaticAssetPath", () => {
+  it("allows public shop-mini framed assets", () => {
+    assert.equal(
+      isPublicStaticAssetPath("/shop-mini/berlin-clouds-01/framed-bronze.jpg"),
+      true,
+    );
+  });
+
   it("allows public ig assets", () => {
     assert.equal(isPublicStaticAssetPath("/ig/sunset-02/1-brass.jpg"), true);
     assert.equal(isPublicStaticAssetPath("/ig/third/1-hook.jpg"), true);

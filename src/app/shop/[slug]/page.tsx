@@ -4,12 +4,20 @@ import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
+import { RunEn, RunFa, RunLtrToken, RunSep } from "@/components/BidiRun";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
 import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
+import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
-import { frameSizeLabel, orientationCopy } from "@/lib/tablo-frame-spec";
+import { orientationCopy } from "@/lib/tablo-frame-spec";
+import {
+  formatShopPriceEur,
+  tabloShopSizeById,
+  tabloSizeFrameLabel,
+  tabloSizeMatLabel,
+} from "@/lib/tablo-sizes";
 import {
   tabloMetaDocumentTitle,
   tabloTitleWithBoundEmDash,
@@ -19,16 +27,9 @@ import { COLLECTION_DETAIL_EYEBROW, COLLECTION_SHOP_BACK } from "@/lib/site-bran
 import { withPublicTabloImages } from "@/lib/tablo-media";
 import { tablosFromState } from "@/lib/tablo-store";
 import { loadState } from "@/lib/storage";
+import type { TabloShopSizeId } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-function formatEur(price: number): string {
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
 
 export async function generateMetadata({
   params,
@@ -63,14 +64,19 @@ export default async function TabloDetailPage({
 
   const [tabloRaw] = withPublicTabloImages([raw]);
   const tablo = prepareShopTablo(tabloRaw);
-  const priceLabel = formatEur(tablo.priceEur);
   const initialFinish = tabloDefaultFrameFinish(tablo);
+  const initialSize: TabloShopSizeId = tablo.sizes.some((s) => s.id === "large")
+    ? "large"
+    : tablo.sizes[0]?.id ?? "large";
   const [orientation, framedSlotAspect, artworkAspect] = await Promise.all([
     tabloArtworkOrientation(tablo),
     tabloFramedSlotAspect(tablo),
     tabloArtworkAspect(tablo),
   ]);
   const dir = orientationCopy(orientation);
+  const description = tablo.description
+    ? sanitizeTabloDescriptionForShop(tablo.description)
+    : null;
 
   return (
     <ShopShell>
@@ -78,13 +84,19 @@ export default async function TabloDetailPage({
         <Link href="/shop" className="bk-meta bk-shop-back">
           {COLLECTION_SHOP_BACK}
         </Link>
-        <div className="bk-tablo-detail-grid" data-default-finish={initialFinish}>
+        <div
+          className="bk-tablo-detail-grid"
+          data-default-finish={initialFinish}
+          data-default-size={initialSize}
+        >
           <div className="bk-tablo-detail-media bk-tablo-detail-root">
             <TabloDetailGalleryAllFinishes
               tablo={tablo}
+              orientation={orientation}
               framedSlotAspect={framedSlotAspect}
               artworkAspect={artworkAspect}
               priorityFinish={initialFinish}
+              prioritySize={initialSize}
             />
           </div>
           <div className="bk-tablo-detail-copy">
@@ -92,18 +104,45 @@ export default async function TabloDetailPage({
             <h1 className="bk-tablo-detail-title">
               {tabloTitleWithBoundEmDash(tabloVisibleTitle(tablo))}
             </h1>
-            <p className="bk-tablo-detail-price">{priceLabel}</p>
-            <p className="bk-meta bk-tablo-detail-frame-spec">
-              <span className="bk-tablo-detail-frame-size">{frameSizeLabel(orientation)}</span>
-              <span aria-hidden="true"> · </span>
-              <span className="bk-tablo-detail-frame-dir">{dir.en}</span>
-              <span aria-hidden="true"> · </span>
-              <span className="bk-text-fa bk-tablo-detail-frame-dir-fa" lang="fa">
-                {dir.fa}
-              </span>
-            </p>
-            {tablo.description ? <TabloDescription text={tablo.description} /> : null}
-            <TabloDetailPurchaseBlock tablo={tablo} initialFinish={initialFinish} />
+            {tablo.sizes.map((sizeOpt) => (
+              <p
+                key={sizeOpt.id}
+                className={`bk-tablo-detail-price bk-tablo-detail-price-size-${sizeOpt.id}`}
+              >
+                {formatShopPriceEur(tabloShopSizeById(sizeOpt.id).priceEur)}
+              </p>
+            ))}
+            {tablo.sizes.map((sizeOpt) => {
+              const mat = tabloSizeMatLabel(sizeOpt.id);
+              return (
+                <p
+                  key={sizeOpt.id}
+                  className={`bk-tablo-detail-frame-spec bk-tablo-detail-frame-spec-size-${sizeOpt.id}`}
+                >
+                  <RunEn className="bk-tablo-detail-frame-spec-en">
+                    {tabloSizeFrameLabel(sizeOpt.id, orientation)}
+                    <RunSep />
+                    {mat.en}
+                    <RunSep />
+                    {dir.en}
+                  </RunEn>
+                  <RunFa className="bk-tablo-detail-frame-spec-fa">
+                    <RunLtrToken>{tabloSizeFrameLabel(sizeOpt.id, orientation)}</RunLtrToken>
+                    <RunSep />
+                    {mat.fa}
+                    <RunSep />
+                    {dir.fa}
+                  </RunFa>
+                </p>
+              );
+            })}
+            {description ? <TabloDescription text={description} /> : null}
+            <TabloDetailPurchaseBlock
+              tablo={tablo}
+              orientation={orientation}
+              initialFinish={initialFinish}
+              initialSize={initialSize}
+            />
           </div>
         </div>
       </div>

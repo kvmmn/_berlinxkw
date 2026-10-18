@@ -8,21 +8,14 @@ import { tabloDefaultFrameFinish } from "@/lib/frame-finish";
 import { tabloArtworkImage, tabloFramedImageForFinish, tabloProductImage } from "@/lib/tablo-images";
 import { useTabloImageAspect } from "@/lib/tablo-image-aspect-client";
 import { useTabloOrientation } from "@/lib/tablo-orientation-client";
-import { frameSizeLabel, type TabloOrientation } from "@/lib/tablo-frame-spec";
+import { shopGridPriceLabel } from "@/lib/tablo-sizes";
+import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import {
   tabloImageAltSuffix,
   tabloTitleWithBoundEmDash,
   tabloVisibleTitle,
 } from "@/lib/tablo-title-display";
-import type { Tablo } from "@/lib/types";
-
-function formatEur(price: number): string {
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
+import type { ShopTablo } from "@/lib/types";
 
 export function TabloGalleryTile({
   tablo,
@@ -30,7 +23,7 @@ export function TabloGalleryTile({
   orientation: initialOrientation = "portrait",
   productAspect: initialProductAspect,
 }: {
-  tablo: Tablo;
+  tablo: ShopTablo;
   priority?: boolean;
   orientation?: TabloOrientation;
   productAspect: string;
@@ -71,9 +64,7 @@ export function TabloGalleryTile({
           </h2>
         </Link>
         <p className="bk-meta bk-tablo-tile-meta">
-          <span className="bk-tablo-tile-price">{formatEur(tablo.priceEur)}</span>
-          <span aria-hidden="true"> · </span>
-          <span>{frameSizeLabel(orientation)}</span>
+          <span className="bk-tablo-tile-price">{shopGridPriceLabel()}</span>
         </p>
       </div>
     </article>

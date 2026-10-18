@@ -1368,16 +1368,36 @@ textarea.bk-input[dir="auto"] {
   gap: clamp(1.25rem, 3vw, 1.75rem);
 }
 
-.bk-tablo-detail-grid .bk-tablo-detail-figure-finish {
+.bk-tablo-detail-grid .bk-tablo-detail-figure-finish,
+.bk-tablo-detail-grid .bk-tablo-detail-price,
+.bk-tablo-detail-grid .bk-tablo-detail-frame-spec {
   display: none;
 }
 
-.bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
-.bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
-  .bk-tablo-detail-finish-matte-black-brushed,
-.bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
-  .bk-tablo-detail-finish-matte-steel-brushed {
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="bronze"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-black-brushed"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-steel-brushed"]
+  .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="bronze"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-black-brushed"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+.bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-steel-brushed"]
+  .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed {
   display: block;
+}
+
+.bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-price-size-large,
+.bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-price-size-mini {
+  display: block;
+}
+
+.bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-frame-spec-size-large,
+.bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-frame-spec-size-mini {
+  display: flex;
+  flex-direction: column;
 }
 
 .bk-tablo-detail-grid .bk-tablo-detail-buy-btn-finish,
@@ -1402,11 +1422,22 @@ textarea.bk-input[dir="auto"] {
 }
 
 @supports selector(:has(*)) {
-  .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-finish-bronze,
-  .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
-    .bk-tablo-detail-finish-matte-black-brushed,
-  .bk-tablo-detail-grid[data-default-finish="matte-steel-brushed"]
-    .bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="bronze"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-black-brushed"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"][data-default-finish="matte-steel-brushed"]
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="bronze"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-black-brushed"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid[data-default-size="mini"][data-default-finish="matte-steel-brushed"]
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-price-size-large,
+  .bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-price-size-mini,
+  .bk-tablo-detail-grid[data-default-size="large"] .bk-tablo-detail-frame-spec-size-large,
+  .bk-tablo-detail-grid[data-default-size="mini"] .bk-tablo-detail-frame-spec-size-mini,
   .bk-tablo-detail-grid[data-default-finish="bronze"] .bk-tablo-detail-buy-btn-finish-bronze,
   .bk-tablo-detail-grid[data-default-finish="matte-black-brushed"]
     .bk-tablo-detail-buy-btn-finish-matte-black-brushed,
@@ -1420,13 +1451,46 @@ textarea.bk-input[dir="auto"] {
     display: none;
   }
 
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
-    .bk-tablo-detail-finish-bronze,
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-black-brushed"]:checked)
-    .bk-tablo-detail-finish-matte-black-brushed,
-  .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked)
-    .bk-tablo-detail-finish-matte-steel-brushed {
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="bronze"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-black-brushed"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked
+    )
+    .bk-tablo-detail-size-large.bk-tablo-detail-finish-matte-steel-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="bronze"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-bronze,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-black-brushed"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-black-brushed,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked):has(
+      input[name="detail-frame-finish"][value="matte-steel-brushed"]:checked
+    )
+    .bk-tablo-detail-size-mini.bk-tablo-detail-finish-matte-steel-brushed {
     display: block;
+  }
+
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked)
+    .bk-tablo-detail-price-size-large,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked)
+    .bk-tablo-detail-price-size-mini {
+    display: block;
+  }
+
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="large"]:checked)
+    .bk-tablo-detail-frame-spec-size-large,
+  .bk-tablo-detail-grid:has(input[name="detail-tablo-size"][value="mini"]:checked)
+    .bk-tablo-detail-frame-spec-size-mini {
+    display: flex;
+    flex-direction: column;
   }
 
   .bk-tablo-detail-grid:has(input[name="detail-frame-finish"][value="bronze"]:checked)
@@ -1446,6 +1510,19 @@ textarea.bk-input[dir="auto"] {
     .bk-tablo-detail-buy-note-finish-matte-steel-brushed {
     display: block;
   }
+}
+
+.bk-tablo-size-fieldset .bk-tablo-size-option input[type="radio"] {
+  flex-shrink: 0;
+}
+
+.bk-tablo-size-option-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-width: 0;
 }
 
 .bk-tablo-detail-figure {
@@ -1508,6 +1585,10 @@ textarea.bk-input[dir="auto"] {
 }
 
 .bk-tablo-detail-frame-spec {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
   margin: 0 0 1.25rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--bk-public-border);
@@ -1525,11 +1606,64 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: inherit;
 }
 
+.bk-run-en,
+.bk-run-fa,
+.bk-run-ltr-token {
+  unicode-bidi: isolate;
+}
+
+.bk-run-ltr-token {
+  white-space: nowrap;
+}
+
+.bk-run-fa-nowrap {
+  white-space: nowrap;
+}
+
 .bk-text-fa,
 .bk-frame-finish-label-fa,
 .bk-frame-finish-fieldset legend [lang="fa"],
 .bk-tablo-detail-frame-dir [lang="fa"] {
   font-family: var(--bk-font-persian);
+}
+
+.bk-tablo-detail-frame-spec-en {
+  display: block;
+  width: 100%;
+  text-align: start;
+}
+
+.bk-tablo-detail-frame-spec-fa,
+.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  text-align: end;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--bk-font-persian);
+  color: var(--bk-public-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.bk-tablo-size-fieldset .bk-tablo-size-option {
+  align-items: flex-start;
+}
+
+.bk-tablo-size-fieldset .bk-tablo-size-option-primary {
+  display: block;
+  width: 100%;
+  text-align: start;
+  font-family: var(--bk-font-text);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+  font-size: 0.8rem;
 }
 
 .bk-tablo-detail-desc {

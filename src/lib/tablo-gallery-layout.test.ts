@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { planTabloGalleryLayout } from "./tablo-gallery-layout";
 import type { TabloGalleryLayoutItem } from "./tablo-gallery-order";
+import { prepareShopTablo } from "./tablo-shop-prepare";
 import type { Tablo } from "./types";
 import {
   chunkTabloGalleryRows,
@@ -27,7 +28,7 @@ function stubTablo(id: string): Tablo {
 
 function item(id: string, orientation: "landscape" | "portrait"): TabloGalleryLayoutItem {
   return {
-    tablo: stubTablo(id),
+    tablo: prepareShopTablo(stubTablo(id)),
     orientation,
     productAspect: orientation === "landscape" ? "4 / 3" : "3 / 4",
     artworkAspect: "4 / 3",

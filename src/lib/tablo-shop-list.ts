@@ -5,17 +5,17 @@ import {
   tabloProductAspect,
 } from "./tablo-aspect.server";
 import type { TabloOrientation } from "./tablo-frame-spec";
-import type { Tablo } from "./types";
+import type { ShopTablo } from "./types";
 
 export type TabloWithLayout = {
-  tablo: Tablo;
+  tablo: ShopTablo;
   orientation: TabloOrientation;
   productAspect: string;
   artworkAspect: string;
   framedSlotAspect: string;
 };
 
-export async function tablosWithLayout(tablos: Tablo[]): Promise<TabloWithLayout[]> {
+export async function tablosWithLayout(tablos: ShopTablo[]): Promise<TabloWithLayout[]> {
   return Promise.all(
     tablos.map(async (tablo) => ({
       tablo,
@@ -30,6 +30,6 @@ export async function tablosWithLayout(tablos: Tablo[]): Promise<TabloWithLayout
 export { orderTablosForGalleryGrid } from "./tablo-gallery-order";
 
 /** @deprecated Use tablosWithLayout */
-export async function tablosWithOrientation(tablos: Tablo[]) {
+export async function tablosWithOrientation(tablos: ShopTablo[]) {
   return tablosWithLayout(tablos);
 }
