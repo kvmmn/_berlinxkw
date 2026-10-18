@@ -1568,9 +1568,9 @@ textarea.bk-input[dir="auto"] {
   text-transform: none;
   letter-spacing: 0.01em;
   font-family: var(--bk-font-material-de);
-  font-weight: 300;
-  color: var(--bk-public-muted);
-  font-size: 0.8125rem;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--bk-public-ink) 86%, transparent);
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 

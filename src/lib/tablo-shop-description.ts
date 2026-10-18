@@ -4,10 +4,25 @@ const ORIGINAL_PHOTO_MARKER = "Original photo ·";
 const PERSIAN_SCRIPT =
   /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+/g;
 
+/** ZWNJ/ZWJ etc. often left behind after removing Persian words. */
+const BIDI_AND_FORMAT_CHARS = /[\u200c\u200d\u2060\ufeff\u061c\u180e]/g;
+
+function collapseMiddotSegments(text: string): string {
+  return text
+    .split(/\s*·\s*/)
+    .map((part) => part.replace(BIDI_AND_FORMAT_CHARS, "").trim())
+    .filter(Boolean)
+    .join(" · ")
+    .trim();
+}
+
 function stripPersianScript(text: string): string {
-  let s = text.replace(PERSIAN_SCRIPT, "").trim();
-  s = s.replace(/(?:\s*·\s*)+/g, " · ").replace(/^\s*·\s*|\s*·\s*$/g, "").trim();
-  return s.replace(/\s{2,}/g, " ");
+  const withoutPersian = text
+    .replace(PERSIAN_SCRIPT, "")
+    .replace(BIDI_AND_FORMAT_CHARS, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  return collapseMiddotSegments(withoutPersian);
 }
 
 function isCommerceSegment(segment: string): boolean {
@@ -27,7 +42,7 @@ function stripCommerceSegments(text: string): string {
     .map((p) => p.trim())
     .filter(Boolean)
     .filter((p) => !isCommerceSegment(p));
-  return parts.join(" · ").trim();
+  return collapseMiddotSegments(parts.join(" · "));
 }
 
 /** Public shop copy — omit stored price / frame / shipping lines from Blob descriptions. */
