@@ -5,7 +5,7 @@ import {
   tabloProductImage,
 } from "@/lib/tablo-images";
 import { tabloSizeDimensionsForOrientation, type TabloShopSizeId } from "@/lib/tablo-sizes";
-import { FRAME_FINISHES, FRAME_FINISH_LABELS } from "@/lib/frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "@/lib/shop-public-frame-finish";
 import { TabloOptimizedPicture } from "@/components/TabloOptimizedPicture";
 import { tabloPictureSizes } from "@/components/TabloPicture";
 import {
@@ -18,7 +18,7 @@ import type { TabloOrientation } from "@/lib/tablo-frame-spec";
 import { tabloGridDisplayImage } from "@/lib/tablo-grid-display-image";
 import { tabloGridStageStyle } from "@/lib/tablo-grid-wall-tone";
 import { tabloImageAltSuffix } from "@/lib/tablo-title-display";
-import type { FrameFinish, ShopTablo, Tablo } from "@/lib/types";
+import type { ShopTablo, Tablo } from "@/lib/types";
 
 function productAlt(tablo: Tablo, kind: "framed" | "artwork" | "product"): string {
   const hasFramed = Boolean(tabloFramedImageForFinish(tablo));
@@ -130,27 +130,25 @@ function framedAspectForSize(
   return tabloSizeDimensionsForOrientation(sizeId, orientation).aspectRatio;
 }
 
-/** SSR: finish × size variants in the DOM; visibility toggled via CSS :has() on radios. */
+/** SSR: brass mockup per size; visibility toggled via CSS :has() on size radios. */
 export function TabloDetailGalleryAllFinishes({
   tablo,
   orientation,
   framedSlotAspect,
   artworkAspect,
-  priorityFinish,
   prioritySize = "large",
 }: {
   tablo: ShopTablo;
   orientation: TabloOrientation;
   framedSlotAspect: string;
   artworkAspect: string;
-  /** Which finish figure is visible on first paint (LCP / fetchpriority). */
-  priorityFinish: FrameFinish;
   prioritySize?: TabloShopSizeId;
 }) {
   const artwork = tabloArtworkImage(tablo);
   const sizeIds = tablo.sizes.map((s) => s.id);
-  const hasAnyFramed = sizeIds.some((sizeId) =>
-    FRAME_FINISHES.some((finish) => tabloFramedImageForFinishAndSize(tablo, finish, sizeId)?.url),
+  const finish = SHOP_PUBLIC_FRAME_FINISH;
+  const hasAnyFramed = sizeIds.some(
+    (sizeId) => tabloFramedImageForFinishAndSize(tablo, finish, sizeId)?.url,
   );
 
   if (!artwork?.url && !hasAnyFramed) {
@@ -159,43 +157,36 @@ export function TabloDetailGalleryAllFinishes({
 
   return (
     <div className="bk-tablo-detail-gallery">
-      {sizeIds.flatMap((sizeId) =>
-        FRAME_FINISHES.map((finish) => {
-          const framed = tabloFramedImageForFinishAndSize(tablo, finish, sizeId);
-          const finishLabel = FRAME_FINISH_LABELS[finish];
-          const slotAspect = framedAspectForSize(sizeId, orientation, framedSlotAspect);
-          const isPriority = finish === priorityFinish && sizeId === prioritySize;
-          return (
-            <figure
-              key={`${sizeId}-${finish}`}
-              className={`bk-tablo-detail-figure bk-tablo-detail-figure-finish bk-tablo-detail-finish-${finish} bk-tablo-detail-size-${sizeId}`}
-            >
-              {framed?.url ? (
-                <MediaFrame
-                  src={framed.url}
-                  alt={tabloImageAltSuffix(tablo, "framed")}
-                  mime={framed.mime}
-                  sizes={tabloPictureSizes("detail")}
-                  priority={isPriority}
-                  aspectRatio={slotAspect}
-                />
-              ) : (
-                <div
-                  className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
-                  style={{ aspectRatio: slotAspect }}
-                >
-                  <p className="bk-meta bk-tablo-framed-slot">
-                    Framed mockup for {finishLabel.en} — coming soon
-                  </p>
-                </div>
-              )}
-              <figcaption className="bk-meta bk-tablo-detail-caption">
-                framed · {finishLabel.en}
-              </figcaption>
-            </figure>
-          );
-        }),
-      )}
+      {sizeIds.map((sizeId) => {
+        const framed = tabloFramedImageForFinishAndSize(tablo, finish, sizeId);
+        const slotAspect = framedAspectForSize(sizeId, orientation, framedSlotAspect);
+        const isPriority = sizeId === prioritySize;
+        return (
+          <figure
+            key={sizeId}
+            className={`bk-tablo-detail-figure bk-tablo-detail-figure-framed bk-tablo-detail-size-${sizeId}`}
+          >
+            {framed?.url ? (
+              <MediaFrame
+                src={framed.url}
+                alt={tabloImageAltSuffix(tablo, "framed")}
+                mime={framed.mime}
+                sizes={tabloPictureSizes("detail")}
+                priority={isPriority}
+                aspectRatio={slotAspect}
+              />
+            ) : (
+              <div
+                className="bk-tablo-detail-figure-media bk-tablo-detail-figure-empty"
+                style={{ aspectRatio: slotAspect }}
+              >
+                <p className="bk-meta bk-tablo-framed-slot">Framed mockup — coming soon</p>
+              </div>
+            )}
+            <figcaption className="bk-meta bk-tablo-detail-caption">framed · brass</figcaption>
+          </figure>
+        );
+      })}
 
       {artwork?.url ? (
         <figure className="bk-tablo-detail-figure">

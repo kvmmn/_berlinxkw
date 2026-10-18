@@ -1,5 +1,5 @@
 import { tabloProductImage } from "./tablo-images";
-import { tabloDefaultFrameFinish } from "./frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "./shop-public-frame-finish";
 import type { FrameFinish, Tablo, TabloImage } from "./types";
 
 /** Grid-only mockups (shop product / detail assets unchanged). */
@@ -8,7 +8,7 @@ const GRID_MOCKUP_URL_BY_SLUG: Record<string, string> = {
 };
 
 export function tabloGridDisplayImage(tablo: Tablo, finish?: FrameFinish): TabloImage | null {
-  const base = tabloProductImage(tablo, finish ?? tabloDefaultFrameFinish(tablo));
+  const base = tabloProductImage(tablo, finish ?? SHOP_PUBLIC_FRAME_FINISH);
   const gridUrl = GRID_MOCKUP_URL_BY_SLUG[tablo.slug];
   if (!gridUrl || !base) return base;
   return {
