@@ -17,4 +17,9 @@ describe("sanitizeTabloDescriptionForShop", () => {
   it("returns trimmed empty-safe input", () => {
     assert.equal(sanitizeTabloDescriptionForShop(""), "");
   });
+
+  it("strips Persian script from public copy", () => {
+    const raw = "Neon study · توضیح فارسی · glass print.";
+    assert.equal(sanitizeTabloDescriptionForShop(raw), "Neon study · glass print.");
+  });
 });

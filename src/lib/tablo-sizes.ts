@@ -6,7 +6,6 @@ export type { TabloShopSizeId };
 export type TabloShopSizeConfig = {
   id: TabloShopSizeId;
   label: string;
-  labelFa: string;
   shortCm: number;
   longCm: number;
   mat: boolean;
@@ -16,7 +15,6 @@ export type TabloShopSizeConfig = {
 export const TABLO_SHOP_SIZE_LARGE: TabloShopSizeConfig = {
   id: "large",
   label: "Large",
-  labelFa: "بزرگ",
   shortCm: 50,
   longCm: 70,
   mat: true,
@@ -26,7 +24,6 @@ export const TABLO_SHOP_SIZE_LARGE: TabloShopSizeConfig = {
 export const TABLO_SHOP_SIZE_MINI: TabloShopSizeConfig = {
   id: "mini",
   label: "Mini",
-  labelFa: "مینی",
   shortCm: 30,
   longCm: 40,
   mat: false,
@@ -91,10 +88,8 @@ export function tabloSizeFrameLabel(sizeId: TabloShopSizeId, orientation: TabloO
   return `${widthCm}×${heightCm} cm`;
 }
 
-export function tabloSizeMatLabel(sizeId: TabloShopSizeId): { en: string; fa: string } {
-  return sizeId === "large"
-    ? { en: "with mat", fa: "با پاسپارت" }
-    : { en: "no mat", fa: "بدون پاسپارت" };
+export function tabloSizeMatLabel(sizeId: TabloShopSizeId): string {
+  return sizeId === "large" ? "with mat" : "no mat";
 }
 
 export function formatShopPriceEur(price: number): string {

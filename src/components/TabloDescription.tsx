@@ -10,15 +10,11 @@ export function TabloDescription({ text }: { text: string }) {
     .filter(Boolean);
 
   if (segments.length <= 1) {
-    return (
-      <p className="bk-tablo-detail-desc" dir="auto">
-        {normalizeDescriptionSegment(text)}
-      </p>
-    );
+    return <p className="bk-tablo-detail-desc">{normalizeDescriptionSegment(text)}</p>;
   }
 
   return (
-    <p className="bk-tablo-detail-desc" dir="auto">
+    <p className="bk-tablo-detail-desc">
       {segments.map((segment, index) => (
         <span key={index} className="bk-desc-chunk">
           {segment}

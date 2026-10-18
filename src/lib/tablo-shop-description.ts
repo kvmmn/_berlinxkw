@@ -1,5 +1,15 @@
 const ORIGINAL_PHOTO_MARKER = "Original photo ·";
 
+/** Arabic/Persian blocks — public shop is English-only. */
+const PERSIAN_SCRIPT =
+  /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+/g;
+
+function stripPersianScript(text: string): string {
+  let s = text.replace(PERSIAN_SCRIPT, "").trim();
+  s = s.replace(/(?:\s*·\s*)+/g, " · ").replace(/^\s*·\s*|\s*·\s*$/g, "").trim();
+  return s.replace(/\s{2,}/g, " ");
+}
+
 function isCommerceSegment(segment: string): boolean {
   const s = segment.trim();
   if (!s) return true;
@@ -28,11 +38,12 @@ export function sanitizeTabloDescriptionForShop(description: string): string {
   const markerIdx = trimmed.indexOf(ORIGINAL_PHOTO_MARKER);
   if (markerIdx >= 0) {
     const before = stripCommerceSegments(trimmed.slice(0, markerIdx));
-    if (before) return before;
+    if (before) return stripPersianScript(before);
     const after = stripCommerceSegments(trimmed.slice(markerIdx + ORIGINAL_PHOTO_MARKER.length));
-    return after || trimmed;
+    return stripPersianScript(after || trimmed);
   }
 
   const stripped = stripCommerceSegments(trimmed);
-  return stripped || trimmed;
+  const result = stripped || trimmed;
+  return stripPersianScript(result);
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLockup } from "@/components/BrandLockup";
 import { BrandLogoMark } from "@/components/BrandLogoMark";
+import { vazirmatn } from "@/lib/fonts";
 
 const NAV = [
   { href: "/portal", label: "weekly report" },
@@ -25,7 +26,7 @@ export function PortalShell({
   const pathname = usePathname();
 
   return (
-    <div className="bk-portal-root">
+    <div className={`bk-portal-root ${vazirmatn.variable}`}>
       <header className="bk-portal-header">
         <div className="bk-portal-brand">
           <Link href="/" className="bk-portal-brand-link" aria-label="berlin × kawe home">

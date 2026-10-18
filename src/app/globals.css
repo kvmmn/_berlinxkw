@@ -547,77 +547,7 @@ textarea.bk-input[dir="auto"] {
   --bk-surface: var(--bk-public-surface);
   background: var(--bk-public-bg);
   color: var(--bk-public-ink);
-}
-
-/* Public Persian — Vazirmatn tuning only (Latin mono/meta unchanged) */
-.bk-public-root .bk-run-fa,
-.bk-public-root .bk-text-fa,
-.bk-public-root :lang(fa) {
-  font-family: var(--bk-font-persian);
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.bk-public-root .bk-meta .bk-run-fa,
-.bk-public-root .bk-meta :lang(fa),
-.bk-public-root .bk-frame-finish-fieldset legend .bk-run-fa {
-  letter-spacing: 0;
-  text-transform: none;
-  font-weight: 400;
-}
-
-.bk-public-root .bk-run-fa .bk-run-ltr-token {
-  font-family: var(--bk-font-text);
-  letter-spacing: 0.02em;
-  text-transform: none;
-}
-
-.bk-public-root .bk-tablo-detail-frame-spec-fa,
-.bk-public-root .bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
-  line-height: 1.7;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.bk-public-root .bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
-  font-size: 0.8125rem;
-  margin-top: 0.3rem;
-}
-
-.bk-public-root .bk-tablo-detail-frame-spec-fa {
-  font-size: 0.875rem;
-  margin-top: 0.45rem;
-}
-
-.bk-public-root .bk-tablo-detail-buy-note {
-  min-height: 0;
-  line-height: 1.55;
-}
-
-.bk-public-root .bk-tablo-detail-buy-note-fa {
-  line-height: 1.7;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  margin-top: 0.35rem;
-}
-
-.bk-public-root .bk-tablo-detail-desc {
-  line-height: 1.7;
-  max-width: 46ch;
-}
-
-.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-options {
-  min-height: 0;
-}
-
-.bk-public-root .bk-frame-finish-fieldset--shop .bk-tablo-size-option {
-  align-items: flex-start;
-  min-height: 0;
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
+  --bk-font-material-de: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
 }
 
 .bk-public-root .bk-lockup,
@@ -1463,15 +1393,6 @@ textarea.bk-input[dir="auto"] {
   flex-direction: column;
 }
 
-.bk-tablo-detail-buy-note-fa {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  text-align: end;
-  font-family: var(--bk-font-persian);
-  color: var(--bk-public-muted);
-  font-size: 0.875rem;
-}
 
 @supports selector(:has(*)) {
   .bk-tablo-detail-grid[data-default-size="large"]
@@ -1639,18 +1560,18 @@ textarea.bk-input[dir="auto"] {
   text-align: start;
 }
 
-.bk-tablo-detail-frame-spec-fa,
-.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+.bk-tablo-detail-frame-spec-de {
   display: block;
   width: 100%;
-  margin-top: 0.35rem;
-  text-align: end;
+  margin-top: 0.55rem;
+  text-align: start;
   text-transform: none;
-  letter-spacing: normal;
-  font-family: var(--bk-font-persian);
+  letter-spacing: 0.01em;
+  font-family: var(--bk-font-material-de);
+  font-weight: 300;
   color: var(--bk-public-muted);
-  font-size: 0.875rem;
-  line-height: 1.45;
+  font-size: 0.8125rem;
+  line-height: 1.55;
 }
 
 .bk-tablo-size-fieldset .bk-tablo-size-option {
@@ -1668,17 +1589,13 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: normal;
 }
 
-.bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
-  font-size: 0.8rem;
-}
-
 .bk-tablo-detail-desc {
   margin: 0 0 1.75rem;
   line-height: 1.65;
   max-width: 42ch;
   color: var(--bk-public-muted);
   font-size: 1.0625rem;
-  font-family: var(--bk-font-text), var(--bk-font-persian), sans-serif;
+  font-family: var(--bk-font-text);
   text-wrap: pretty;
 }
 
@@ -1714,7 +1631,7 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: 0;
   font-size: 0.8125rem;
   min-height: 2.75rem;
-  font-family: var(--bk-font-text), var(--bk-font-persian), sans-serif;
+  font-family: var(--bk-font-text);
   color: var(--bk-public-muted);
 }
 
@@ -1763,7 +1680,7 @@ textarea.bk-input[dir="auto"] {
 
 .bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-options {
   margin-top: 0;
-  min-height: 7.5rem;
+  min-height: 0;
 }
 
 .bk-frame-finish-option {
