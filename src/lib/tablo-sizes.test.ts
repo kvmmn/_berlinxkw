@@ -12,8 +12,8 @@ import {
 
 describe("tablo shop sizes", () => {
   it("fixes large and mini prices in code", () => {
-    assert.equal(TABLO_SHOP_SIZE_LARGE.priceEur, 99);
-    assert.equal(TABLO_SHOP_SIZE_MINI.priceEur, 69);
+    assert.equal(TABLO_SHOP_SIZE_LARGE.priceEur, 89);
+    assert.equal(TABLO_SHOP_SIZE_MINI.priceEur, 59);
     assert.equal(TABLO_SHOP_SIZE_LARGE.mat, true);
     assert.equal(TABLO_SHOP_SIZE_MINI.mat, false);
   });
@@ -27,8 +27,8 @@ describe("tablo shop sizes", () => {
   });
 
   it("formats grid from-price label", () => {
-    assert.equal(formatShopPriceEur(69), "69\u00a0€");
-    assert.equal(shopGridPriceLabel(), "from 69\u00a0€");
+    assert.equal(formatShopPriceEur(59), "59\u00a0€");
+    assert.equal(shopGridPriceLabel(), "from 59\u00a0€");
   });
 
   it("exports API size payloads from constants", () => {
@@ -39,14 +39,14 @@ describe("tablo shop sizes", () => {
       label: "Large",
       dimensions: { shortCm: 50, longCm: 70 },
       mat: true,
-      priceEur: 99,
+      priceEur: 89,
     });
     assert.deepEqual(sizes[1], {
       id: "mini",
       label: "Mini",
       dimensions: { shortCm: 30, longCm: 40 },
       mat: false,
-      priceEur: 69,
+      priceEur: 59,
     });
   });
 });
