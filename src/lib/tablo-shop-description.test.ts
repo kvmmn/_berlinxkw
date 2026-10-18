@@ -28,4 +28,16 @@ describe("sanitizeTabloDescriptionForShop", () => {
       "Berlin Sunsets · غروب‌های برلین · berlin × kawe. Original photo · Neon study on glass.";
     assert.equal(sanitizeTabloDescriptionForShop(raw), "Berlin Sunsets · berlin × kawe.");
   });
+
+  it("strips legacy spec, finishes, price, and shipping after Original photo marker", () => {
+    const raw =
+      "Berlin Sunsets · غروب‌های برلین · berlin × kawe. Original photo · 30×45 cm fine-art print · handmade 50×70 cm metal frame with wide mat · brass, matte black or brushed steel · €149 · Free shipping in Germany · Neon study on glass.";
+    assert.equal(sanitizeTabloDescriptionForShop(raw), "Berlin Sunsets · berlin × kawe.");
+  });
+
+  it("returns empty when only commerce segments remain after marker", () => {
+    const raw =
+      "Original photo · 30×45 cm fine-art print · handmade 50×70 cm · brass, matte black or brushed steel · €149 · Free shipping in Germany";
+    assert.equal(sanitizeTabloDescriptionForShop(raw), "");
+  });
 });

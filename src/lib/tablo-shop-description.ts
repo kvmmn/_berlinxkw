@@ -28,10 +28,14 @@ function stripPersianScript(text: string): string {
 function isCommerceSegment(segment: string): boolean {
   const s = segment.trim();
   if (!s) return true;
+  if (/original photo/i.test(s)) return true;
   if (/€\s*\d/.test(s)) return true;
   if (/\d+\s*×\s*\d+\s*cm/i.test(s)) return true;
+  if (/fine-art print|fine art print/i.test(s)) return true;
+  if (/handmade/i.test(s)) return true;
   if (/metal frame|wide mat|with mat|no mat/i.test(s)) return true;
-  if (/shipping/i.test(s)) return true;
+  if (/brass|matte black|brushed steel|matte-black|matte-steel/i.test(s)) return true;
+  if (/shipping|versand|ships framed/i.test(s)) return true;
   if (/free shipping/i.test(s)) return true;
   return false;
 }
@@ -55,7 +59,7 @@ export function sanitizeTabloDescriptionForShop(description: string): string {
     const before = stripCommerceSegments(trimmed.slice(0, markerIdx));
     if (before) return stripPersianScript(before);
     const after = stripCommerceSegments(trimmed.slice(markerIdx + ORIGINAL_PHOTO_MARKER.length));
-    return stripPersianScript(after || trimmed);
+    return stripPersianScript(after);
   }
 
   const stripped = stripCommerceSegments(trimmed);

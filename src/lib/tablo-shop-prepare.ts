@@ -1,6 +1,8 @@
 import { normalizeTabloFrameFields } from "./frame-finish";
+import { SHOP_PUBLIC_FRAME_FINISH } from "./shop-public-frame-finish";
+import { sanitizeTabloDescriptionForShop } from "./tablo-shop-description";
 import { tabloHasMiniMockups } from "./tablo-mini-images";
-import { tabloShopSizesForApi, type TabloShopSizeId } from "./tablo-sizes";
+import { TABLO_SHOP_MIN_PRICE_EUR, tabloShopSizesForApi, type TabloShopSizeId } from "./tablo-sizes";
 import type { ShopTablo, Tablo } from "./types";
 
 function shopSizeIdsForTablo(slug: string): TabloShopSizeId[] {
@@ -11,9 +13,14 @@ function shopSizeIdsForTablo(slug: string): TabloShopSizeId[] {
 
 export function prepareShopTablo(tablo: Tablo): ShopTablo {
   const normalized = normalizeTabloFrameFields(tablo);
+  const sizes = tabloShopSizesForApi(shopSizeIdsForTablo(normalized.slug));
   return {
     ...normalized,
-    sizes: tabloShopSizesForApi(shopSizeIdsForTablo(normalized.slug)),
+    sizes,
+    priceEur: TABLO_SHOP_MIN_PRICE_EUR,
+    frameFinishes: [SHOP_PUBLIC_FRAME_FINISH],
+    defaultFrameFinish: SHOP_PUBLIC_FRAME_FINISH,
+    description: sanitizeTabloDescriptionForShop(normalized.description),
   };
 }
 
