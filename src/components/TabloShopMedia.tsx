@@ -4,7 +4,6 @@ import {
   tabloFramedImageForFinish,
   tabloProductImage,
 } from "@/lib/tablo-images";
-import { SHOP_SCALE_IMAGE_PUBLIC_PATH } from "@/lib/shop-scale-image";
 import {
   tabloGalleryRenderCaption,
   tabloSizeDimensionsForOrientation,
@@ -142,14 +141,16 @@ export function TabloDetailGalleryAllFinishes({
   framedSlotAspect,
   artworkAspect,
   prioritySize = "large",
-  showScaleImage = false,
+  scaleImageSrc,
+  scaleImageAlt,
 }: {
   tablo: ShopTablo;
   orientation: TabloOrientation;
   framedSlotAspect: string;
   artworkAspect: string;
   prioritySize?: TabloShopSizeId;
-  showScaleImage?: boolean;
+  scaleImageSrc?: string;
+  scaleImageAlt?: string;
 }) {
   const artwork = tabloArtworkImage(tablo);
   const sizeIds = tablo.sizes.map((s) => s.id);
@@ -198,11 +199,11 @@ export function TabloDetailGalleryAllFinishes({
         );
       })}
 
-      {showScaleImage ? (
+      {scaleImageSrc ? (
         <figure className="bk-tablo-detail-figure bk-tablo-detail-figure-scale" id="detail-render-scale">
           <MediaFrame
-            src={SHOP_SCALE_IMAGE_PUBLIC_PATH}
-            alt="Scale reference — console, large and mini frames, 175 cm person"
+            src={scaleImageSrc}
+            alt={scaleImageAlt ?? "Scale reference — console, large and mini frames, 175 cm person"}
             sizes={tabloPictureSizes("detail")}
             aspectRatio="4 / 3"
           />

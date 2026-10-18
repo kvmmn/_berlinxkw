@@ -6,7 +6,10 @@ import { TabloDescription } from "@/components/TabloDescription";
 import { TabloDetailSizeScrollSync } from "@/components/TabloDetailSizeScrollSync";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
-import { shopScaleImageAvailable } from "@/lib/shop-scale-image";
+import {
+  shopScaleImageAltForOrientation,
+  shopScaleImagePathForOrientation,
+} from "@/lib/shop-scale-image";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
@@ -77,7 +80,8 @@ export default async function TabloDetailPage({
   const description = tablo.description
     ? sanitizeTabloDescriptionForShop(tablo.description)
     : null;
-  const showScaleImage = shopScaleImageAvailable();
+  const scaleImageSrc = shopScaleImagePathForOrientation(orientation);
+  const scaleImageAlt = shopScaleImageAltForOrientation(orientation);
 
   return (
     <ShopShell>
@@ -94,7 +98,8 @@ export default async function TabloDetailPage({
               framedSlotAspect={framedSlotAspect}
               artworkAspect={artworkAspect}
               prioritySize={initialSize}
-              showScaleImage={showScaleImage}
+              scaleImageSrc={scaleImageSrc}
+              scaleImageAlt={scaleImageAlt}
             />
           </div>
           <div className="bk-tablo-detail-copy">
