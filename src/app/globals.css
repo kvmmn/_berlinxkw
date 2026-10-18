@@ -545,8 +545,40 @@ textarea.bk-input[dir="auto"] {
   --bk-muted-dim: #7a7a72;
   --bk-border: var(--bk-public-border);
   --bk-surface: var(--bk-public-surface);
+  --bk-public-type-label: 0.8125rem;
+  --bk-public-type-body: 1.0625rem;
+  --bk-public-type-price: clamp(1.15rem, 2.5vw, 1.35rem);
+  --bk-public-label-tracking: 0.05em;
   background: var(--bk-public-bg);
   color: var(--bk-public-ink);
+  font-family: var(--bk-font-text);
+}
+
+/* Public copy: Nimbus sans + Vazirmatn — no typewriter mono on labels/meta */
+.bk-public-root .bk-meta,
+.bk-landing .bk-meta,
+.bk-shop-root .bk-meta {
+  font-family: var(--bk-font-text);
+  font-size: var(--bk-public-type-label);
+  text-transform: none;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bk-public-root .bk-meta :lang(fa),
+.bk-public-root .bk-run-fa.bk-text-fa,
+.bk-landing .bk-meta :lang(fa),
+.bk-shop-root .bk-meta :lang(fa) {
+  font-family: var(--bk-font-persian);
+}
+
+.bk-public-root :is(
+    .bk-tablo-detail-price,
+    .bk-tablo-tile-meta,
+    .bk-tablo-size-option-primary,
+    .bk-run-ltr-token
+  ) {
+  font-variant-numeric: tabular-nums;
 }
 
 .bk-public-root .bk-lockup,
@@ -615,6 +647,10 @@ textarea.bk-input[dir="auto"] {
   border-color: var(--bk-public-border);
   color: var(--bk-public-fg);
   background: transparent;
+  font-family: var(--bk-font-text);
+  font-weight: 500;
+  letter-spacing: var(--bk-public-label-tracking);
+  font-variant-numeric: tabular-nums;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
 }
@@ -716,9 +752,10 @@ textarea.bk-input[dir="auto"] {
   padding: 0.15rem 0;
   color: var(--bk-public-nav-ink);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--bk-public-label-tracking);
   font-size: 0.875rem;
-  font-family: var(--bk-font-mono);
+  font-family: var(--bk-font-text);
+  font-weight: 500;
 }
 
 @media (max-width: 420px) {
@@ -753,9 +790,10 @@ textarea.bk-input[dir="auto"] {
   min-height: 44px;
   color: var(--bk-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--bk-public-label-tracking);
   font-size: var(--bk-size-meta);
-  font-family: var(--bk-font-mono);
+  font-family: var(--bk-font-text);
+  font-weight: 500;
 }
 
 .bk-shop-root .bk-shop-nav-link:hover,
@@ -1513,10 +1551,12 @@ textarea.bk-input[dir="auto"] {
 
 .bk-tablo-detail-price {
   color: var(--bk-public-accent);
-  font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+  font-size: var(--bk-public-type-price, clamp(1.15rem, 2.5vw, 1.35rem));
   margin: 0 0 1rem;
-  font-family: var(--bk-font-mono);
-  letter-spacing: 0.02em;
+  font-family: var(--bk-font-text);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .bk-tablo-detail-frame-spec {
@@ -1531,7 +1571,8 @@ textarea.bk-input[dir="auto"] {
   letter-spacing: 0.04em;
   line-height: 1.45;
   font-size: clamp(0.875rem, 2vw, 1.0625rem);
-  font-family: var(--bk-font-mono);
+  font-family: var(--bk-font-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .bk-tablo-detail-frame-size,
@@ -2102,8 +2143,11 @@ textarea.bk-input[dir="auto"] {
   padding: 0.75rem 1rem;
   background: var(--bk-white);
   color: var(--bk-black);
-  font-family: var(--bk-font-mono);
+  font-family: var(--bk-font-text);
   font-size: var(--bk-size-meta);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: none;
 }
 
 .bk-skip-link:focus {
@@ -2136,7 +2180,9 @@ textarea.bk-input[dir="auto"] {
   min-height: 44px;
   color: var(--bk-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--bk-public-label-tracking, 0.05em);
+  font-family: var(--bk-font-text);
+  font-weight: 500;
 }
 
 .bk-landing-nav-link:hover,
