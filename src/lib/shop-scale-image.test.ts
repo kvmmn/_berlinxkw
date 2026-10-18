@@ -11,9 +11,7 @@ describe("shop scale image", () => {
     assert.equal(SHOP_SCALE_IMAGE_PUBLIC_PATH, "/shop-scale/scale.png");
   });
 
-  it("reports availability from public/shop-scale/scale.png on disk", () => {
-    const cwd = path.join(process.cwd());
-    const available = shopScaleImageAvailable(cwd);
-    assert.equal(typeof available, "boolean");
+  it("is available when public/shop-scale/scale.png exists in the repo", () => {
+    assert.equal(shopScaleImageAvailable(process.cwd()), true);
   });
 });

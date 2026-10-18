@@ -1481,6 +1481,16 @@ textarea.bk-input[dir="auto"] {
   line-height: 1.35;
 }
 
+.bk-tablo-detail-figure-scale .bk-tablo-detail-figure-media {
+  background: #f4f4ee;
+}
+
+.bk-tablo-detail-figure-scale .bk-tablo-detail-caption {
+  color: var(--bk-public-muted);
+  letter-spacing: 0.03em;
+  max-width: 36rem;
+}
+
 .bk-tablo-framed-slot {
   margin: 0;
   padding: 0.65rem;
