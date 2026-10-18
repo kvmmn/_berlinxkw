@@ -549,6 +549,77 @@ textarea.bk-input[dir="auto"] {
   color: var(--bk-public-ink);
 }
 
+/* Public Persian — Vazirmatn tuning only (Latin mono/meta unchanged) */
+.bk-public-root .bk-run-fa,
+.bk-public-root .bk-text-fa,
+.bk-public-root :lang(fa) {
+  font-family: var(--bk-font-persian);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.bk-public-root .bk-meta .bk-run-fa,
+.bk-public-root .bk-meta :lang(fa),
+.bk-public-root .bk-frame-finish-fieldset legend .bk-run-fa {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.bk-public-root .bk-run-fa .bk-run-ltr-token {
+  font-family: var(--bk-font-text);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.bk-public-root .bk-tablo-detail-frame-spec-fa,
+.bk-public-root .bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.bk-public-root .bk-tablo-size-fieldset .bk-tablo-size-option-secondary {
+  font-size: 0.8125rem;
+  margin-top: 0.3rem;
+}
+
+.bk-public-root .bk-tablo-detail-frame-spec-fa {
+  font-size: 0.875rem;
+  margin-top: 0.45rem;
+}
+
+.bk-public-root .bk-tablo-detail-buy-note {
+  min-height: 0;
+  line-height: 1.55;
+}
+
+.bk-public-root .bk-tablo-detail-buy-note-fa {
+  line-height: 1.7;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-top: 0.35rem;
+}
+
+.bk-public-root .bk-tablo-detail-desc {
+  line-height: 1.7;
+  max-width: 46ch;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop .bk-frame-finish-options {
+  min-height: 0;
+}
+
+.bk-public-root .bk-frame-finish-fieldset--shop .bk-tablo-size-option {
+  align-items: flex-start;
+  min-height: 0;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
 .bk-public-root .bk-lockup,
 .bk-public-brand,
 .bk-public-brand-link {

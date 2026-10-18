@@ -67,6 +67,7 @@ export function TabloDetailPurchaseBlock({
           <p
             key={sizeId}
             className={`bk-tablo-buy-note bk-tablo-detail-buy-note-size bk-tablo-detail-buy-note-size-${sizeId}`}
+            dir="auto"
           >
             {purchaseNoteCopy(tablo, sizeId, external)}
           </p>
