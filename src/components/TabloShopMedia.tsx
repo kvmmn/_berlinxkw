@@ -4,7 +4,12 @@ import {
   tabloFramedImageForFinish,
   tabloProductImage,
 } from "@/lib/tablo-images";
-import { tabloSizeDimensionsForOrientation, type TabloShopSizeId } from "@/lib/tablo-sizes";
+import { SHOP_SCALE_IMAGE_PUBLIC_PATH } from "@/lib/shop-scale-image";
+import {
+  tabloGalleryRenderCaption,
+  tabloSizeDimensionsForOrientation,
+  type TabloShopSizeId,
+} from "@/lib/tablo-sizes";
 import { SHOP_PUBLIC_FRAME_FINISH } from "@/lib/shop-public-frame-finish";
 import { TabloOptimizedPicture } from "@/components/TabloOptimizedPicture";
 import { tabloPictureSizes } from "@/components/TabloPicture";
@@ -137,12 +142,14 @@ export function TabloDetailGalleryAllFinishes({
   framedSlotAspect,
   artworkAspect,
   prioritySize = "large",
+  showScaleImage = false,
 }: {
   tablo: ShopTablo;
   orientation: TabloOrientation;
   framedSlotAspect: string;
   artworkAspect: string;
   prioritySize?: TabloShopSizeId;
+  showScaleImage?: boolean;
 }) {
   const artwork = tabloArtworkImage(tablo);
   const sizeIds = tablo.sizes.map((s) => s.id);
@@ -164,6 +171,7 @@ export function TabloDetailGalleryAllFinishes({
         return (
           <figure
             key={sizeId}
+            id={`detail-render-${sizeId}`}
             className={`bk-tablo-detail-figure bk-tablo-detail-figure-framed bk-tablo-detail-size-${sizeId}`}
           >
             {framed?.url ? (
@@ -183,10 +191,26 @@ export function TabloDetailGalleryAllFinishes({
                 <p className="bk-meta bk-tablo-framed-slot">Framed mockup — coming soon</p>
               </div>
             )}
-            <figcaption className="bk-meta bk-tablo-detail-caption">framed · brass</figcaption>
+            <figcaption className="bk-meta bk-tablo-detail-caption">
+              {tabloGalleryRenderCaption(sizeId, orientation)}
+            </figcaption>
           </figure>
         );
       })}
+
+      {showScaleImage ? (
+        <figure className="bk-tablo-detail-figure bk-tablo-detail-figure-scale" id="detail-render-scale">
+          <MediaFrame
+            src={SHOP_SCALE_IMAGE_PUBLIC_PATH}
+            alt="Scale reference — console, large and mini frames, 175 cm person"
+            sizes={tabloPictureSizes("detail")}
+            aspectRatio="4 / 3"
+          />
+          <figcaption className="bk-meta bk-tablo-detail-caption">
+            scale · console, large and mini, 175 cm person
+          </figcaption>
+        </figure>
+      ) : null}
 
       {artwork?.url ? (
         <figure className="bk-tablo-detail-figure">

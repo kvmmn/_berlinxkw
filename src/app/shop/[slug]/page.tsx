@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ShopShell } from "@/components/ShopShell";
 import { TabloDescription } from "@/components/TabloDescription";
+import { TabloDetailSizeScrollSync } from "@/components/TabloDetailSizeScrollSync";
 import { TabloDetailGalleryAllFinishes } from "@/components/TabloShopMedia";
 import { TabloDetailPurchaseBlock } from "@/components/TabloDetailPurchaseBlock";
+import { shopScaleImageAvailable } from "@/lib/shop-scale-image";
 import { prepareShopTablo } from "@/lib/tablo-shop-prepare";
 import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
@@ -75,6 +77,7 @@ export default async function TabloDetailPage({
   const description = tablo.description
     ? sanitizeTabloDescriptionForShop(tablo.description)
     : null;
+  const showScaleImage = shopScaleImageAvailable();
 
   return (
     <ShopShell>
@@ -83,6 +86,7 @@ export default async function TabloDetailPage({
           {COLLECTION_SHOP_BACK}
         </Link>
         <div className="bk-tablo-detail-grid" data-default-size={initialSize}>
+          <TabloDetailSizeScrollSync />
           <div className="bk-tablo-detail-media bk-tablo-detail-root">
             <TabloDetailGalleryAllFinishes
               tablo={tablo}
@@ -90,6 +94,7 @@ export default async function TabloDetailPage({
               framedSlotAspect={framedSlotAspect}
               artworkAspect={artworkAspect}
               prioritySize={initialSize}
+              showScaleImage={showScaleImage}
             />
           </div>
           <div className="bk-tablo-detail-copy">
