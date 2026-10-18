@@ -6,6 +6,7 @@ import {
   formatShopPriceEur,
   shopGridPriceLabel,
   tabloSizeDimensionsForOrientation,
+  tabloGalleryRenderCaption,
   tabloSizeFrameLabel,
   tabloShopSizesForApi,
 } from "./tablo-sizes";
@@ -24,6 +25,17 @@ describe("tablo shop sizes", () => {
     assert.equal(tabloSizeFrameLabel("mini", "landscape"), "40×30 cm");
     assert.equal(tabloSizeFrameLabel("mini", "portrait"), "30×40 cm");
     assert.equal(tabloSizeDimensionsForOrientation("mini", "landscape").aspectRatio, "40 / 30");
+  });
+
+  it("formats gallery render captions", () => {
+    assert.equal(
+      tabloGalleryRenderCaption("large", "portrait"),
+      "large · 50×70 cm · with mat",
+    );
+    assert.equal(
+      tabloGalleryRenderCaption("mini", "landscape"),
+      "mini · 40×30 cm · no mat",
+    );
   });
 
   it("formats grid from-price label", () => {

@@ -103,3 +103,14 @@ export function formatShopPriceEur(price: number): string {
 export function shopGridPriceLabel(): string {
   return `from ${formatShopPriceEur(TABLO_SHOP_MIN_PRICE_EUR)}`;
 }
+
+/** Mono gallery caption under room renders on the product page. */
+export function tabloGalleryRenderCaption(
+  sizeId: TabloShopSizeId,
+  orientation: TabloOrientation,
+): string {
+  const config = tabloShopSizeById(sizeId);
+  const dims = tabloSizeFrameLabel(sizeId, orientation);
+  const mat = tabloSizeMatLabel(sizeId);
+  return `${config.label.toLowerCase()} · ${dims} · ${mat}`;
+}
