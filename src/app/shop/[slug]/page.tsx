@@ -12,6 +12,7 @@ import { sanitizeTabloDescriptionForShop } from "@/lib/tablo-shop-description";
 import { tabloArtworkAspect, tabloFramedSlotAspect } from "@/lib/tablo-aspect.server";
 import { tabloArtworkOrientation } from "@/lib/tablo-frame-spec.server";
 import { orientationCopy } from "@/lib/tablo-frame-spec";
+import { shopShippingLineLabel } from "@/lib/shipping";
 import { tabloSizeMaterialLineDe } from "@/lib/tablo-shop-material-de";
 import {
   formatShopPriceEur,
@@ -126,6 +127,7 @@ export default async function TabloDetailPage({
                 </p>
               );
             })}
+            <p className="bk-meta bk-tablo-detail-shipping">{shopShippingLineLabel()}</p>
             {description ? <TabloDescription text={description} /> : null}
             <TabloDetailPurchaseBlock
               tablo={tablo}

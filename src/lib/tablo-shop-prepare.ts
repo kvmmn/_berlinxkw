@@ -1,4 +1,5 @@
 import { normalizeTabloFrameFields } from "./frame-finish";
+import { SHOP_SHIPPING_RATES } from "./shipping";
 import { tabloHasMiniMockups } from "./tablo-mini-images";
 import { tabloShopSizesForApi, type TabloShopSizeId } from "./tablo-sizes";
 import type { ShopTablo, Tablo } from "./types";
@@ -14,6 +15,7 @@ export function prepareShopTablo(tablo: Tablo): ShopTablo {
   return {
     ...normalized,
     sizes: tabloShopSizesForApi(shopSizeIdsForTablo(normalized.slug)),
+    shipping: { ...SHOP_SHIPPING_RATES },
   };
 }
 
