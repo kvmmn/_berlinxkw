@@ -1,5 +1,6 @@
 import { normalizeTabloFrameFields } from "./frame-finish";
 import { SHOP_PUBLIC_FRAME_FINISH } from "./shop-public-frame-finish";
+import { SHOP_SHIPPING_RATES } from "./shipping";
 import { sanitizeTabloDescriptionForShop } from "./tablo-shop-description";
 import { tabloHasMiniMockups } from "./tablo-mini-images";
 import { TABLO_SHOP_MIN_PRICE_EUR, tabloShopSizesForApi, type TabloShopSizeId } from "./tablo-sizes";
@@ -21,6 +22,7 @@ export function prepareShopTablo(tablo: Tablo): ShopTablo {
     frameFinishes: [SHOP_PUBLIC_FRAME_FINISH],
     defaultFrameFinish: SHOP_PUBLIC_FRAME_FINISH,
     description: sanitizeTabloDescriptionForShop(normalized.description),
+    shipping: { ...SHOP_SHIPPING_RATES },
   };
 }
 
