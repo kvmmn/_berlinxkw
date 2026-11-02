@@ -1505,6 +1505,14 @@ textarea.bk-input[dir="auto"] {
   max-width: 36rem;
 }
 
+.bk-tablo-detail-shipping {
+  margin: 0 0 1.25rem;
+  color: var(--bk-public-muted);
+  text-transform: none;
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+}
+
 .bk-tablo-detail-eyebrow {
   margin: 0 0 0.75rem;
   text-transform: lowercase;

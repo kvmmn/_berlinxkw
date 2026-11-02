@@ -1,3 +1,7 @@
+import type { ShopShippingRates } from "./shipping";
+
+export type { ShopShippingRates };
+
 export type DecisionOwner = "advisor" | "brain";
 export type DecisionStatus = "proposed" | "accepted" | "deferred";
 
@@ -101,7 +105,10 @@ export interface TabloShopSizeOption {
 }
 
 /** Listed tablo payload for public shop + `/api/shop` (stored fields + derived sizes). */
-export type ShopTablo = Tablo & { sizes: TabloShopSizeOption[] };
+export type ShopTablo = Tablo & {
+  sizes: TabloShopSizeOption[];
+  shipping: ShopShippingRates;
+};
 
 /** Frame metal finish slug on shop tablos (`bronze` | `matte-black-brushed` | `matte-steel-brushed`). */
 export type FrameFinish = "bronze" | "matte-black-brushed" | "matte-steel-brushed";
